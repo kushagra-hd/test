@@ -1,0 +1,366 @@
+openapi: 3.0.0
+
+info:
+  description: |
+    # Introduction
+    Credit Score APIs Returns the credit score abstracts associated to the context.
+    # Getting started
+    1. Browse the specifications & evaluate against the Sandbox using our Postman collections.
+    2. When you are ready for your own Test/UAT environment, initiate an Onboarding Request as explained in the Consumer Data Suite User Guide.
+    3. Following the Security Standards and Authentication, you will get an Access Token from our OAuth endpoint using the JWT you created.
+    4. Then enroll your consumer in the Consumer Data Suite platform and add product features to the enrollee identifier.
+    5.  Finally, access the product APIs, fulfilling and delivering data to your consumers.
+    
+          Read more in our Consumer Data Suite User Guide under Additional API Docs.
+
+  version: v1
+  title: Equifax Credit Score API
+  contact:
+    name: Equifax API Support
+    email: gcs.professionalservices@equifax.com
+servers:
+  - url: https://api.equifax.com/personal/consumer-data-suite
+    description: Saas server
+tags:
+  - name: creditScore
+paths:
+  /v1/creditScore:
+    get:
+      tags:
+        - creditScore
+      summary: Returns the credit score abstracts associated to the context
+      description: ''
+      operationId: getCreditScores
+      parameters:
+        - name: scoreType
+          in: query
+          description: Score type to filter by. If not supplied assumes all score types
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the credit score abstracts associated to the context
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditScoreAbstract'
+        '204':
+          description: No credit score found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '500':
+          description: System Error
+  /v1/creditScore/history:
+    get:
+      tags:
+        - creditScore
+      summary: Returns a historical list of scores available to the consumer
+      description: ''
+      operationId: getHistoricalCreditScores
+      parameters:
+        - name: historicalLimit
+          in: query
+          description: number of months of history to return. If not supplied will use default
+          required: false
+          schema:
+            type: integer
+        - name: scoreType
+          in: query
+          description: Score type to filter by. If not supplied assumes all score types
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a historical list of scores available to the consumer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScoreHistory'
+        '204':
+          description: No credit score found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '500':
+          description: System Error
+  /v1/creditScore/latest:
+    get:
+      tags:
+        - creditScore
+      summary: Returns the latest credit score
+      description: ''
+      operationId: getLatestCreditScore
+      responses:
+        '200':
+          description: Returns the latest credit score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScore'
+        '204':
+          description: No credit score found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '500':
+          description: System Error
+  '/v1/creditScore/latest/{creditScoreType}':
+    get:
+      tags:
+        - creditScore
+      summary: Returns the latest credit score by the supplied type
+      description: ''
+      operationId: getLatestCreditScoreByType
+      parameters:
+        - name: creditScoreType
+          in: path
+          description: Score Type to filter by
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the latest credit score by the supplied type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScore'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: No credit score found
+        '500':
+          description: System Error
+  '/v1/creditScore/{creditScoreId}':
+    get:
+      tags:
+        - creditScore
+      summary: Returns the specified credit score
+      description: ''
+      operationId: getCreditScore
+      parameters:
+        - name: creditScoreId
+          in: path
+          description: ID of the Credit Score to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the specified credit score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScore'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: No credit score found
+        '500':
+          description: System Error
+  '/v1/creditScore/{creditScoreType}':
+    post:
+      tags:
+        - creditScore
+      summary: Returns the id to the newly requested credit score
+      description: ''
+      operationId: requestNewCreditScore
+      parameters:
+        - name: creditScoreType
+          in: path
+          description: Score type to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the id to the newly requested credit score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScoreAbstract'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: No credit score found
+        '500':
+          description: System Error
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+
+  schemas:
+    CreditScore:
+      properties:
+        providerViews:
+          type: array
+          description: ' : Collection of score views by provider (EFX, EXP, TU). _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreProviderView'
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        scoreType:
+          type: string
+          description: ' : Type of score (1B vs. 3B). _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        scoreModel:
+          type: string
+          description: ' : Model used to derive the score from the credit file. _Optional_'
+          enum:
+            - VANTAGE
+            - ERS
+            - FICO
+            - UNKNOWN
+        generatedDate:
+          type: string
+          format: date-time
+          description: ' : Date the score is generated. _Optional_'
+      xml:
+        name: creditScore
+    CreditScoreAbstract:
+      properties:
+        generatedDate:
+          type: string
+          format: date-time
+          description: ' : Date the score is generated. _Optional_'
+        scoreType:
+          type: string
+          description: ' : Type of score (1B vs. 3B). _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        creditReportId:
+          type: string
+          description: ' : ID indicates an report ID associated with a given Score Abstract ID. _Optional_'
+      xml:
+        name: creditScoreAbstract
+    CreditScoreHistory:
+      properties:
+        generatedDate:
+          type: string
+          format: date-time
+          description: ' : Date the score is generated. _Optional_'
+        scoreType:
+          type: string
+          description: ' : Type of score (1B vs. 3B). _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        scoreModel:
+          type: string
+          description: ' : Model used to derive the score from the credit file. _Optional_'
+          enum:
+            - VANTAGE
+            - ERS
+            - FICO
+            - UNKNOWN
+        providerViews:
+          type: array
+          description: ' : The list of the scores by provider. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreHistoryProviderView'
+      xml:
+        name: creditScoreHistory
+    CreditScoreHistoryProviderView:
+      properties:
+        score:
+          type: integer
+          format: int32
+          description: ' : A score compiled based upon variables in a consumer''s credit file that is indicative of the consumer''s creditworthiness. _Optional_'
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion. There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA).. _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+      xml:
+        name: providerViews
+    CreditScoreLoanRiskRange:
+      properties:
+        low:
+          type: integer
+          format: int32
+          description: _Optional_
+        high:
+          type: integer
+          format: int32
+          description: _Optional_
+        name:
+          type: string
+          description: _Optional_
+      xml:
+        name: creditScoreLoanRiskRange
+    CreditScoreProviderView:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion. There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        score:
+          type: integer
+          format: int32
+          description: ' : A score compiled based upon variables in a consumer''s credit file that is indicative of the consumer''s creditworthiness. _Optional_'
+        scoreRanges:
+          type: array
+          description: ' : The list of the credit score ranges and the corresponding score rating for each range associated with the particular score model. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreRange'
+        loanRiskRanges:
+          type: array
+          description: ' : The list of loan risk ranges and the corresponding risk rating for each range associated with a particular score model. The Loan Risk Rating describes how lenders may view the consumer''s level of credit risk based on the consumer''s score. People with higher credit scores have a greater likelihood to repay loans on time, over time. People with lower scores have a higher risk of becoming delinquent on loan payments. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreLoanRiskRange'
+        scoreReasons:
+          type: array
+          description: ' : A list of codes returned based on the Vantage 3.0 method of scoring that are either positive or negative adverse actions. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreReason'
+      xml:
+        name: creditScoreProviderView
+    CreditScoreRange:
+      properties:
+        low:
+          type: integer
+          format: int32
+          description: _Optional_
+        high:
+          type: integer
+          format: int32
+          description: _Optional_
+        name:
+          type: string
+          description: _Optional_
+      xml:
+        name: creditScoreRange
+    CreditScoreReason:
+      properties:
+        code:
+          type: string
+          description: _Optional_
+        description:
+          type: string
+          description: _Optional_
+        creditScoreFactorEffect:
+          type: string
+          description: _Optional_
+          enum:
+            - HELPING
+            - HURTING
+            - NEUTRAL

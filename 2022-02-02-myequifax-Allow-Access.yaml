@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: 'MyEquifax Allow Access Setup API'
+  description: >
+    # Introduction
+    
+    MyEquifax Allow Access Setup API allows to set up MyEquifax Widget on Lender's site
+    
+    # Getting started
+    
+    1. **<a href="/user/applications" target="_blank">Subscribe</a>** to get API credentials.
+    
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    
+    3. Check if user's token is valid.
+    
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://api.sandbox.equifax.com/business/myequifax/lift/v1
+security:
+  - OAuth 2.0: ["Scopes: https://api.equifax.com/business/myequifax/lift"]
+paths:
+  /setup:
+    post:
+      operationId: postsetupRequest
+      description: API to set up My Equifax Widget.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - setupRequest
+              properties:
+                setupRequest:
+                  $ref: '#/components/schemas/setupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionId:
+                    type: string
+                    description: Transaction ID created for Consumer Request
+                    example: "7390dc07-a0ef-34ed-8e3e-05629f75ae"
+                  link:
+                    type: string
+                    description: Link to redirect Consumer to MyEquifax Login page
+                    example: "https://my.equifax.com/membercenter/#/login"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    # BasicAuth:
+    #   type: http
+    #   scheme: basic
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+
+  schemas:
+    setupRequest:
+      type: object
+      required: [consumer,address,mobileNumber,memberNumbers,customerReferenceNumber,proposedEndLiftDate,returnLiftLink,productName,companyName,currentFileStatus]
+      description: setup request object
+      properties:
+        consumer:
+          $ref: '#/components/schemas/Consumer'
+        address:
+          $ref: '#/components/schemas/Address'
+        emailAddress:
+          type: string
+          description: emailAddress
+          example: "test@test.com"
+        mobileNumber:
+          type: string
+          pattern: '^\d{3}-\d{3}-\d{4}$'
+          description: Mobile Number
+          example: "678-22-2222"
+        memberNumbers:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            pattern: '[a-zA-Z0-9]*'
+        customerReferenceNumber:
+          type: string
+          description: customer reference number
+          pattern: '\d{1,19}'
+          example: "111111111111112321"
+        proposedEndLiftDate:
+          type: string
+          pattern: '([0-9]{2})/(?:[0-9]{2})/([0-9]{4})'
+          example: "12/17/2021"
+          description: proposed end date
+        returnLiftLink:
+          type: boolean
+          description: Returns a lift link
+        productName:
+          type: string
+          description: Product Name
+          example: "Perfect Bank Credit Card"
+        companyName:
+          type: string
+          description: Company Name
+          example: "Perfect Bank"
+        currentFileStatus:
+          type: string
+          pattern: '[a-zA-Z]*'
+          description: Current File Status
+          example: "frozen"
+    Consumer:
+      type: object
+      required: [firstName,lastName,dateOfBirth,ssn]
+      description: Consumer
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 25
+          description: First Name
+          pattern: '[a-zA-Z\-'']+'
+          example: 'Ali'
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 25
+          description: Last Name
+          pattern: '[a-zA-Z\-'']+'
+          example: 'Baba'
+        dateOfBirth:
+          type: string
+          pattern: '([0-9]{2})/(?:[0-9]{2})/([0-9]{4})'
+          example: "05/17/2000"
+          description: Date of Birth
+        ssn:
+          type: string
+          pattern: '^\d{3}-\d{2}-\d{4}$'
+          description: SSN
+          example: "666-11-1234"
+    Address:
+      type: object
+      required: [line1,city,state,zipCode]
+      description: Address
+      properties:
+        line1:
+          type: string
+          description: Address Line1
+        line2:
+          type: string
+          description: Address Line2
+        city:
+          type: string
+          pattern: '[a-zA-Z0-9]*'
+          description: Address City
+        stateOrProvince:
+          type: string
+          pattern: '[a-zA-Z0-9]*'
+          description: Address State
+        zipCode:
+          type: string
+          pattern: '[a-zA-Z0-9]*'
+          description: Address PostalCode
+          example: "30005"
+    Error:
+      required:
+        - error
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+  responses:
+    BadRequest:
+      description: Input Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: User Not Found
+    Forbidden:
+      description: Forbidden

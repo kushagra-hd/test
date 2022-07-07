@@ -1,0 +1,614 @@
+openapi: 3.0.0
+info:
+  title: Secure MFA
+  description: |
+    # Introduction
+    The Secure MFA product enhances the quality of a consumer's interaction by including an added layer of identity incorporating the mobile device number and/or email address.  Secure MFA requires the consumer to enter their mobile number (knowledge) or Email address and click the dynamic link to validate the Mobile Device Number (possession) or Email address (access)  and ensure that each element is a legitimate device or email address.
+    
+    When initiated using the send Secure MFA call, an unique verification URL is sent via SMS or Email address to be launched by the consumer. The authentication process sends details to determine the legitimacy of the mobile number or email address. The Validate Secure MFA call confirms the status/result of the verification process along with the risk level associated to the device or email address.
+
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    3. Invoke the **[Send SecureMFA call](#tag/SendSecureMFA-call)** with the mobile number entered by the consumer.
+    4. Call the **[Validate SecureMFA call](#tag/ValidateSecureMFA-call)** to obtain the progress and status of the Secure MFA consumer completion.
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: V1
+servers:
+- url: https://api.sandbox.equifax.com/business/secure-mfa/v2
+paths:
+  /authentications/initiate:
+    post:
+      tags:
+      - SendSecureMFA-call
+      description: |2
+        The Send Secure MFA API sends the url to the consumer via SMS or Email address to be launched.
+      operationId: Send url
+      
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMfaRequest'
+            examples:
+              Send SMS URL Request:
+                $ref: '#/components/examples/Send_mfa_req'
+              Send Email URL Request:
+                $ref: '#/components/examples/Send_mfa_email_req'  
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MFAResponse'
+              examples:
+                Secure Send OTP Response:
+                  $ref: '#/components/examples/Send_mfa_res'
+                Secure Send Email Response:
+                  $ref: '#/components/examples/Send_mfa_email_res'  
+                Verified Send OTP Response:
+                  $ref: '#/components/examples/Verified_Send_mfa_res'    
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth2.0: ["scopes: https://api.equifax.com/business/secure-mfa"]
+  /authentications/status:
+    post:
+      tags:
+      - ValidateSecureMFA-call
+      description: |
+        After the consumer receives the URL onto their device or email address, the integrating application will call this API to check the status of Secure MFA Verification process. Once consumer's device or email address is confirmed to be authenticated, then this call will return a "Success" HTTP status/transaction.
+      operationId: Validate secure URL
+      parameters:
+      - name: efx-sessionId
+        in: header
+        description: Unique identifier for the current consumer interaction
+        required: true
+        explode: false
+        schema:
+          type: string
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateMfaRequest'
+            examples:
+              Check URL Status:
+                $ref: '#/components/examples/Validate_mfa_req'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateMfaResponse'
+              examples:
+                Validate Secure MFA SMS Response:
+                  $ref: '#/components/examples/Validate_mfa_res'
+                Validate Secure MFA Email Response:
+                  $ref: '#/components/examples/Validate_mfa_email_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Consumer did not launch SecureMFA URL from SMS.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+                422.02:
+                  $ref: '#/components/examples/422.02'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth2.0: ["scopes: https://api.equifax.com/business/secure-mfa"]
+components:
+  schemas:
+    MFAResponse:
+      required:
+      - otpLifecycle
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          $ref: '#/components/schemas/OtpLifecycle'
+        redirectUrl:
+          maxLength: 200
+          type: string
+          description: Customer will be redirected when they will click sms url.
+          example: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/verification-tokens/123/verify
+        instaTouch:
+          maxLength: 200
+          type: string
+          description: This field returns the base URL for Secure MFA.
+          example: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/status
+    ValidateMfaResponse:
+      required:
+      - instaTouch
+      - response
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        response:
+          $ref: '#/components/schemas/Response'
+        sessionId:
+          type: string
+        emailTrustworthinessScore:
+          type: integer
+        dateFirstSeen:
+          type: string
+          format: date-time
+        dateLastSeen:
+          type: string
+          format: date-time
+        domainDateFirstSeen:
+          type: string
+          format: date-time
+        dateFirstSeenMessage:
+          type: string
+        dateLastSeenMessage:
+          type: string
+        domainDateFirstSeenMessage:
+          type: string
+        emailVerifiedDomain:
+          type: boolean
+        emailVerifiedDomainMessage:
+          type: string
+        reasonCodes:
+          $ref: "#/components/schemas/reasonCodes"
+    reasonCodes:
+      type: array
+      items: 
+        type: object
+        properties: 
+          code:
+            type: string
+            description: "Risk Reason Code"
+            example: "FS02"
+            maxLength: 10
+          description:
+            type: string
+            description: "Reason Code Description"
+            example: "FS02 Refund Risk"             
+    SendMfaRequest:
+      required:
+      - consumerIdentifier
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        usecase:
+          maxLength: 2
+          description: Unique identifier to specify the intended use case for this feature. The value is SO (Secure MFA).
+          type: string
+          example: SO   
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifierSendMFA'
+    ValidateMfaRequest:
+      required:
+      - consumerIdentifier
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        usecase:
+          maxLength: 2
+          description: Unique identifier to specify the intended use case for this feature. The value is SO (Secure MFA).
+          type: string
+          example: SO  
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifier'
+    ConsumerIdentifier:
+      required:
+      - subjectIdentifier
+      - subjectType
+      type: object
+      properties:
+        subjectIdentifier:
+          maxLength: 50
+          type: string
+          description: Subject identifying value
+          example: "4041234567"
+        subjectType:
+          maxLength: 50
+          type: string
+          description: Subject type that indicates what the subjectIdentifier field represents.
+          example: MDN
+    ConsumerIdentifierSendMFA:
+       required:
+       - subjectIdentifier
+       - subjectType
+       type: object
+       properties:
+         subjectIdentifier:
+           maxLength: 50
+           type: string
+           description: Subject identifying value.
+           example: "4041234567"
+         subjectType:
+           maxLength: 50
+           type: string
+           description: Subject type that indicates what the subjectIdentifier field represents.
+           example: MDN
+         targetUrl:
+           maxLength: 100
+           type: string
+           description: Merchant URL to continue flow from SMS link browser.
+           example: "https://www.myCustomer.com/continue?id=1"
+         smsUrl:
+           maxLength: 160
+           type: string
+           description: Merchant's unique URL to send to consumer's mobile device.
+           example: "https://www.myCustomer.com/redirect/123" 
+    Response:
+      required:
+      - path
+      type: object
+      properties:
+        path:
+          maxLength: 36
+          type: string
+          description: Color-Coded indication representing the legitimacy of the mobile.
+          example: Green
+          enum:
+          - Green
+          - Yellow
+          - Orange
+          - Red
+    OtpLifecycle:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          maxLength: 36
+          type: string
+          description: Status of send secure MFA call.
+          example: Success      
+    ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditional when additional error details are available.
+  examples:
+    Send_mfa_req:
+      value:
+        merchantId: efxtest
+        usecase: SO
+        consumerIdentifier:
+          subjectIdentifier: "4041234567"
+          subjectType: MDN
+          targetUrl: https://www.mycompany.com/continue
+          smsUrl: https://www.mycompany.com/redirect/123
+    Send_mfa_email_req:
+      value:
+        merchantId: efxtest
+        usecase: SO
+        consumerIdentifier:
+          subjectIdentifier: "mytest@test.com"
+          subjectType: EMAIL
+          targetUrl: https://www.mycompany.com/continue
+    Send_mfa_email_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          status: Success
+        sessionId: ef9a792bda2e4981a689fec7ee314ae8
+        instaTouch: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/status
+    Send_mfa_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          status: Success
+        sessionId: ef9a792bda2e4981a689fec7ee314ae8
+        redirectUrl: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/verification-tokens/123/verify
+        instaTouch: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/status
+    Verified_Send_mfa_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          status: Success
+        redirectUrl: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/verification-tokens/123/verify
+        instaTouch: https://api.uat.equifax.com/business/secure-mfa/v2/authentications/status
+    Redirect_res:
+      value:
+        response.header.location: https://api.mycarrierurl.com?id=mycarrierId
+    Redirect_res_new:
+      value:
+        response.header.location: https://www.myCustomer.com/continue?id=1
+    Validate_mfa_verified:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          status: SUCCESS
+        instaTouch: https://api.uat.equifax.com/business/instatouch-verified/v2/user-sessions/verified-user-attributes
+    Validate_mfa_req:
+      value:
+        merchantId: efxtest
+        usecase: SO
+        consumerIdentifier:
+          subjectIdentifier: "4041234567"
+          subjectType: MDN
+    Validate_mfa_email_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        response:
+          path: Green
+        sessionId: e25e4e1604654a5ab602218a33ssce2
+        emailTrustworthinessScore: 39
+        dateFirstSeen: '2020-05-03T16:46:24.024Z'
+        domainDateFirstSeen: '2019-11-04T05:09:15.015Z'
+        dateLastSeen: '2021-07-27T02:22:19.019Z'
+        dateFirstSeenMessage: Date first seen is greater than 6 months
+        dateLastSeenMessage: Date last seen is less than 3 months ago
+        domainDateFirstSeenMessage: Domain name appears older than 6 months
+        emailVerifiedDomain: true
+        emailVerifiedDomainMessage: Domain name was verified
+        reasonCodes: 
+          - code: FS02
+            description: FS02 Refund Risk
+          - code: FS01
+            description: FS01 Chargeback Risk
+    Validate_mfa_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        response:
+          path: Green
+    400.01:
+      value:
+        efxErrorCode: "400.01"
+        description: Invalid JSON payload.
+    401.03:
+      value:
+        efxErrorCode: "401.03"
+        description: Invalid mandatory parameters.
+    403.01:
+      value:
+        efxErrorCode: "403.01"
+        description: Access Denied.
+    404.01:
+      value:
+        efxErrorCode: "404.01"
+        description: The specified resource does not exist.
+    415.01:
+      value:
+        efxErrorCode: "415.01"
+        description: Payload Format is in an Unsupported Format.
+    422.01:
+      value:
+        efxErrorCode: "422.01"
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    422.02:
+      value:
+        efxErrorCode: "422.02"
+        description: Customer didn't click on SMS Url. Please try again.
+        additionalErrorDetails:
+          errorCode: OP.V1027
+          developerMessage: Email link is not veified. Please Try again.
+          errorType: validation_error
+    429.01:
+      value:
+        efxErrorCode: "429.01"
+        description: Exceeded the maximum number of requests within a specified time frame.
+    500.01:
+      value:
+        efxErrorCode: "500.01"
+        description: An internal error has occurred.
+    501.01:
+      value:
+        efxErrorCode: "501.01"
+        description: Not implemented - Specified resource is not implemented.
+    503.01:
+      value:
+        efxErrorCode: "503.01"
+        description: Service is unavailable.
+    504.01:
+      value:
+        efxErrorCode: "504.01"
+        description: Gateway timeout.
+  securitySchemes:
+   OAuth2.0:
+      type: http
+      scheme: bearer

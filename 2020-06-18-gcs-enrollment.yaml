@@ -1,0 +1,748 @@
+openapi: 3.0.0
+
+info:
+  title: Equifax Enrollment API
+  description: |
+    # Introduction
+    Enrollment is the process by which partner's may sign up new clients, or users, to consume Equifax products.
+    # Getting Started
+    1. Browse the specifications & evaluate against the Sandbox using our Postman collections.
+    2. When you are ready for your own Test/UAT environment, initiate an Onboarding Request as explained in the Consumer Data Suite User Guide.
+    3. Following the Security Standards and Authentication, you will get an Access Token from our OAuth endpoint using the JWT you created.
+    4. Then enroll your consumer in the Consumer Data Suite platform and add product features to the enrollee identifier.
+    5.  Finally, access the product APIs, fulfilling and delivering data to your consumers.
+    
+          Read more in our Consumer Data Suite User Guide under Additional API Docs.
+
+  contact:
+    name: Equifax API Support
+    email: gcs.professionalservices@equifax.com
+  version: v1
+
+servers:
+  - url: https://api.sandbox.equifax.com/personal/consumer-data-suite
+    description: Saas server
+
+paths:
+  /v1/enrollment:
+    post:
+      tags:
+        - Enrollment API
+      summary: >
+       Begins a subject enrollment
+      operationId: beginenrollment
+      requestBody:
+          description: Request object containing consumer personal information.
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentRequest"
+            
+      responses:
+        "200":
+          description: Begins enrollment of a subject
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/EnrollmentOperationResponse"
+        "400":
+          description: Unable to enroll supplied subject. Retry response with all required fields supplied
+        "401":
+          description: Client does not have permission to run this method
+        "404":
+          description: Subject not found
+        "500":
+          description: System Error
+  /v1/enrollment/continue:
+    post:
+      tags:
+        - Enrollment API
+      summary: >
+       Continues a subject enrollment
+      operationId: continueenrollment
+      responses:
+        "200":
+          description: Continues enrollment of a subject
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/EnrollmentOperationResponse"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "409":
+          description: Unable to enroll supplied subject. Subject is already enrolled or can not be serviced for requested feature
+         
+        "500":
+          description: System Error
+
+  /v1/enrollment/crn/{customerReferenceNumber}:
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+        Finds the list of EnrollmentIDs associated with a CustomerReferenceNumber
+      operationId: getenrollment
+      parameters:
+        - in: path
+          name: customerReferenceNumber
+          description: customerReferenceNumber
+          required: true
+          schema:
+            type: string
+            
+      responses:
+        "200":
+          description: Returns the list of enrollments
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/EnrollmentIDResponse"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: consumer details not found
+          
+        "500":
+          description: Unable to process request at this time
+                  
+  /v1/enrollment/enrollMinor:
+    post:
+      tags:
+        - Enrollment API
+      summary: > 
+          Begins a minor subject enrollment
+      operationId: enrollMinor
+      requestBody:
+          description: Request object containing consumer personal information.
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnrollmentMinorRequest"
+      responses:
+        "200":
+          description: Begins minor enrollment of a subject
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/EnrollmentMinorResponse"
+        "400":
+          description: Unable to enroll supplied subject. Retry response with all required fields supplied.
+
+        "401":
+          description: Client does not have permission to run this method
+
+        "403":
+          description: Credentials invalid or expired. Request new token
+        "404":
+          description: Subject not found
+          
+        "409":
+          description: Check customer enrollment status or enrollment eligibility or Minor File exists
+          
+        "500":
+          description: System Error
+
+        "503":
+          description: Service Unavailable.Try again later
+
+
+  /v1/enrollment/feature:
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+              Find the list out the features available to the API client1
+      operationId: getAllFeature
+      responses:
+        "200":
+          description: Returns a list of features.
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/feature"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No features were found
+
+        "500":
+          description: System Error
+
+  /v1/enrollment/products:
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+          Find products that can be enrolled for
+      operationId: getAllProduct
+      responses:
+        "200":
+          description: List of products that can be enrolled
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Product"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No products were found
+
+        "500":
+          description: System Error
+
+  /v1/enrollment/products/{productId}/offers:
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+          Find offers for a product
+      operationId: getProductOffers
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of offers for a product that can be enrolled
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Offer"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No offers can be found
+
+        "500":
+          description: System Error
+        
+  /v1/enrollment/{parentId}/cancel/{minorId}:
+    delete:
+      tags:
+        - Enrollment API
+      summary: > 
+          Cancels a minor subjects enrollment
+      operationId: cancelMinorEnrollment
+      parameters:
+        - in: path
+          name: parentId
+          description: Parent Enrollment Id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: minorId
+          description: Minor's enrollment id.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: cancelReason
+          description: Reason to cancel.Acceptable values EMANCIPATED, EXPIRED, ADULT, CONSUMER_DRIVEN, UNKNOWN
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cancels a minor subject from an enrollment
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/EnrollmentMinorResponse"
+        "400":
+          description: Unable to enroll supplied subject. Retry response with all required fields supplied.
+
+        "401":
+          description: Client does not have permission to run this method
+
+        "403":
+          description: Credentials invalid or expired. Request new token.
+        "404":
+          description: Subject not found
+
+        "500":
+          description: System Error
+
+        "503":
+          description: Service Unavailable.Try again later
+                  
+  /v1/enrollment/{subjectId}:
+    delete:
+      tags:
+        - Enrollment API
+      summary: > 
+          Cancels a  subjects enrollment
+      operationId: cancelEnrollment
+      parameters:
+        - in: path
+          name: subjectId
+          description: Unique identifier returned in the enrollmentBegin call.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cancels a subject from an enrollment
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/EnrollmentResponse"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No enrollment found
+
+        "500":
+          description: System Error
+                  
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+          Gets the consumer details associated with a consumer's enrollment
+      operationId: getEnrollmentDetails
+      parameters:
+        - in: path
+          name: subjectId
+          description: Consumer's enrollment id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns the consumer details for enrollment.
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: consumer details not found
+
+        "500":
+          description: Unable to process request at this time
+                  
+  /v1/enrollment/{subjectId}/features:
+    get:
+      tags:
+        - Enrollment API
+      summary: > 
+          Gets the features associated with a consumer's enrollment
+      operationId: getEnrollmentFeatures
+      parameters:
+        - in: path
+          name: subjectId
+          description: Consumer's enrollment id.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: string
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/EnrollmentFeatureResponse"
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No features found for subject
+
+        "500":
+          description: System Error
+                  
+  /v1/enrollment/{subjectId}/features/{featureCode}:
+    delete:
+      tags:
+        - Enrollment API
+      summary: > 
+          Cancels a feature from a consumer's existing enrollment
+      operationId: cancelEnrollmentFeature
+      parameters:
+        - in: path
+          name: subjectId
+          description: Consumer's enrollment id.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: featureCode
+          description: Feature to cancel. Refer to /v1/enrollment/features for types of features available.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cancels a feature from a consumer's existing enrollment
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Ok'
+
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: No features found to cancel for subject
+
+        "500":
+          description: System Error
+                  
+    post:
+      tags:
+        - Enrollment API
+      summary: > 
+          Adds a feature to a consumer's existing enrollment
+      operationId: addEnrollmentFeature
+      parameters:
+        - in: path
+          name: subjectId
+          description: Consumer's enrollment id.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: featureCode
+          description: Feature to cancel. Refer to /v1/enrollment/features for types of features available.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Adds a feature to the enrollment
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Ok'
+        
+        "401":
+          description: Unauthorized Access is denied due to invalid credentials
+
+        "404":
+          description: Subject not found
+
+        "409":
+          description: Unable to enroll supplied subject. Subject is already enrolled or can not be serviced for requested feature
+
+        "500":
+          description: System Error
+
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+
+  schemas:
+    EnrollmentFeatureResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: _Optional_
+        responseMessage:
+          type: string
+          description: _Optional_
+        status:
+          type: string
+          description: _Optional_
+        enrollmentId:
+          type: string
+          description: _Optional_
+        features:
+          allOf:
+            - $ref: "#/components/schemas/feature"
+            - description: _Optional_
+        responseCode:
+          type: integer
+          description: _Optional_
+    EnrollmentOperationResponse:
+      type: object
+      properties:
+        EnrollmentResponse:
+          $ref: "#/components/schemas/EnrollmentResponse"
+    
+    EnrollmentIDResponse:
+      type: object
+      properties:
+        responseMessage:
+          type: string
+          description: _Optional_
+        status:
+          type: string
+          description: _Optional_
+          enum:
+            - COMPLETE
+            - IN_PROGRESS
+            - ERROR
+        customerReferenceNumber:
+          type: string
+          description: _Optional_
+        enrollments:
+          type: array
+          description: _Optional_
+          items: 
+            type: string
+            description: _Optional_
+        responseCode:
+          type: integer
+          description: _Optional_
+    EnrollmentMinorRequest:
+      type: object
+      properties:
+        referenceId:
+          type: string
+          description: _Optional_
+        subject:
+          $ref: "#/components/schemas/EnrollmentSubject"
+        parentEnrollmentId:
+          type: string
+          description: _Optional_
+    EnrollmentMinorResponse:
+      type: object
+      properties:
+        request: 
+          $ref: "#/components/schemas/EnrollmentMinorRequest"
+        responseCode:
+          type: integer
+          description: _Optional_
+        responseMessage:
+          type: string
+          description: _Optional_
+        status:
+          type: string
+          description: _Optional_
+          enum:
+            - COMPLETE
+            - IN_PROGRESS
+            - ERROR
+        enrollmentId:
+          type: string
+          description: _Optional_
+    feature:
+      type: object
+      properties:
+        code: 
+          type: string
+          description: _Optional_
+          enum:
+             - ONE_B_SCORE
+             - ONE_B_SCORE_ANNUAL_VP
+             - ONE_B_REPORT
+             - ONE_B_CREDIT_MONITORING
+             - ONE_B_ADHOC_REPORT
+             - ONE_B_ADHOC_SCORE
+             - ONE_B_SCORE_RAW
+             - ONE_B_REPORT_RAW
+             - ONE_B_ALERTS_RAW
+             - ONE_B_REAL_TIME_CREDIT_MONITORING
+             - ONE_B_ADHOC_REPORT_OFFLINE
+             - ONE_B_ADHOC_SCORE_OFFLINE
+             - ONE_B_CREDIT_MONITORING_OFFLINE
+             - ONE_B_ADHOC_SCORE_ALT_001
+             - ONE_B_ADHOC_SCORE_ALT_001_OFFLINE
+             - ONE_B_SCORE_HRL
+             - ONE_B_SCORE_DLY
+             - ONE_B_SCORE_WKL
+             - ONE_B_SCORE_MON
+             - ONE_B_SCORE_BWK
+             - ONE_B_SCORE_BMT
+             - ONE_B_SCORE_QRT
+             - ONE_B_SCORE_SYR
+             - ONE_B_SCORE_YRL
+             - ONE_B_SCORE_BYR
+             - ONE_B_REPORT_HRL
+             - ONE_B_REPORT_DLY
+             - ONE_B_REPORT_WKL
+             - ONE_B_REPORT_MON
+             - ONE_B_REPORT_BWK
+             - ONE_B_REPORT_BMT
+             - ONE_B_REPORT_QRT
+             - ONE_B_REPORT_SYR
+             - ONE_B_REPORT_YRL
+             - ONE_B_REPORT_BYR
+             - THREE_B_SCORE
+             - THREE_B_REPORT
+             - THREE_B_CREDIT_MONITORING
+             - THREE_B_ADHOC_SCORE
+             - THREE_B_ADHOC_REPORT
+             - THREE_B_SCORE_RAW
+             - THREE_B_REPORT_RAW
+             - THREE_B_ALERTS_RAW
+             - THREE_B_SCORE_ONE_B_RAW
+             - THREE_B_REPORT_ONE_B_RAW
+             - THREE_B_ADHOC_REPORT_OFFLINE
+             - THREE_B_ADHOC_SCORE_OFFLINE
+             - THREE_B_CREDIT_MONITORING_OFFLINE
+             - THREE_B_ADHOC_REPORT_ALT_001
+             - THREE_B_ADHOC_REPORT_ALT_001_OFFLINE
+             - THREE_B_SCORE_HRL
+             - THREE_B_SCORE_DLY
+             - THREE_B_SCORE_WKL
+             - THREE_B_SCORE_MON
+             - THREE_B_SCORE_BWK
+             - THREE_B_SCORE_BMT
+             - THREE_B_SCORE_QRT
+             - THREE_B_SCORE_SYR
+             - THREE_B_SCORE_YRL
+             - THREE_B_SCORE_BYR
+             - THREE_B_REPORT_HRL
+             - THREE_B_REPORT_DLY
+             - THREE_B_REPORT_WKL
+             - THREE_B_REPORT_MON
+             - THREE_B_REPORT_BWK
+             - THREE_B_REPORT_BMT
+             - THREE_B_REPORT_QRT
+             - THREE_B_REPORT_SYR
+             - THREE_B_REPORT_YRL
+             - THREE_B_REPORT_BYR
+             - CONSUMER_DATA
+             - CREDIT_LOCK
+             - NCTUE_MONITORING
+             - CHILD_LOCK
+             - TRANSUNION_LOCK
+        description:
+          example: The ultimate Equifax Product!
+          type: string
+          description: Description for object. _Optional_
+          
+    Product:   
+      type: object
+      properties:
+        id:
+         type: string
+         description: ID for Object. _Optional_
+         example: '1'
+        name:
+          type: string
+          description: Name for Object. _Optional_
+          example: 'Equifax Complete Advantage'
+        description:
+          type: string
+          description: description for Object. _Optional_
+          example: 'The ultimate Equifax Product!'
+    Offer:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description for object. _Optional_
+          example: 'The ultimate Equifax Product!'
+        disclousure:
+          type: string
+          description: _Optional_
+        id:
+          type: string
+          description: ID for object. _Optional_
+          example: '1'
+        name:
+          type: string
+          description: Name for object. _Optional_
+          example: 'Equifax Complete Advantage'
+        priceTerms:
+          type: array
+          items:
+            $ref: "#/components/schemas/PriceTerm"
+        productid:
+          type: string
+          description: _Optional_
+    PriceTerm:
+      type: object
+      properties:
+        description:
+          type: string
+          description: _Optional_
+        order:
+          type: integer
+          description: _Optional_
+        price:
+          $ref: "#/components/schemas/Price"
+        term:
+          $ref: "#/components/schemas/Term"
+    Price:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: _Optional_
+          enum:
+            - USD
+        discountAmount:
+          type: number
+          description: _Optional_
+        discountPercent:
+          type: number
+          description: _Optional_
+        retailPrice:
+          type: number
+          description: _Optional_
+        salePrice:
+          type: number
+          description: _Optional_
+    Term:
+      type: object
+      properties:
+        duration:
+          type: integer
+          description: _Optional_
+        frequency:
+          type: string
+          description: _Optional_
+          enum:
+            - ANNUALLY
+            - MONTHLY
+            - ONE_TIME
+            - DAILY
+        type:
+          type: string
+          description: _Optional_
+          enum:
+            - DEFAULT
+        
+    EnrollmentResponse:
+      type: object
+      properties:
+        request:
+          $ref: "#/components/schemas/EnrollmentRequest"
+        responseCode:
+          type: integer
+          description: _Optional_
+          example: '0'
+        responseMessage:
+          type: string
+          description: _Optional_
+        status:
+          type: string
+          description: _Optional_
+          enum:
+            - COMPLETE
+            - IN_PROGRESS
+            - ERROR
+        enrollmentId:
+          type: string
+          description: _Optional_
+    EnrollmentRequest:
+      type: object
+      properties:
+        referenceId:
+          type: string
+          description: _Optional_
+        subject:
+          $ref: "#/components/schemas/EnrollmentSubject"
+    EnrollmentSubject:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: _Optional_

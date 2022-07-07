@@ -1,0 +1,766 @@
+openapi: 3.0.1
+info:
+  title: Clarity Standalone
+  version: OpenAPI3.1.0.0
+servers:
+- url: https://sandbox-us-api.experian.com/consumerservices/clarity
+paths:
+  /v1/clarity-data:
+    post:
+      tags:
+      - Consumer Services
+      summary: Clarity Standalone Attributes
+      description: 'Returns various clarity attributes including Clear View Attributes which offers visibility into this expanded set of data 
+                    to help lenders create a more complete assessment of a consumer’s creditworthiness, 
+                    improving decision making and inform strategic planning and Clear Profile which provides Unique collections solution 
+                    that searches Clarity''s alternative financial services database containing over 60 million records 
+                    for the most recent information on difficult-to-locate and thin-file or no-hit consumers.
+                    <br><br> 
+                    We are providing 10 test cases for client testing under "Examples" button below which include first 5 positive test cases and rest 5 negative test cases. Eg: Success_1, Failure_Invalid SSN etc.'
+      operationId: clarity-attributes
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: API client generated reference Id to uniquely identify the API
+          request.
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor and Clarity Information specified
+          here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ClarityAttributesRequest'
+            examples:    # Child of media type
+              Request schema:   #Request schema
+                value:
+                  {
+                    "consumerPii": {
+                      "primaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        },
+                        "currentAddress": {
+                          "line1": "string",
+                          "line2": "string",
+                          "city": "string",
+                          "state": "string",
+                          "zipCode": "string"
+                        },
+                        "previousAddress": [
+                          {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        ]
+                      }
+                    },
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "clarityData": {
+                      "clarityGroupId": "string",
+                      "clarityAccountId": "string",
+                      "clarityLocationId": "string",
+                      "clarityControlFileName": "string",
+                      "clarityControlFileVersion": "string"
+                    }
+                  }
+              Success_1:   # Example 1
+                value:
+                  {
+                    "consumerPii":{
+                        "primaryApplicant":{
+                            "name":{
+                                "lastName":"SKINNER",
+                                "firstName":"NEWTON"
+                            },
+                            "ssn":{
+                                "ssn":"111111111"
+                            },
+                            "currentAddress":{
+                                "line1":"56 COSGROVE",
+                                "city":"WILLINGTON",
+                                "state":"CT",
+                                "zipCode":"62791408"
+                            }
+                        }
+                    },
+                    "requestor":{
+                        "subscriberCode":"2222222"
+                    },
+                    "clarityData":{
+                        "clarityAccountId":"333",
+                        "clarityLocationId":"4444",
+                        "clarityControlFileName":"my_control_file"
+                    }
+                  }
+              Success_2:   # Example 2
+                value:
+                  {
+                    "consumerPii":{
+                        "primaryApplicant":{
+                            "name":{
+                                "lastName":"ATKINS",
+                                "firstName":"HOWARD"
+                            },
+                            "ssn":{
+                                "ssn":"111111111"
+                            },
+                            "currentAddress":{
+                                "line1":"4900 FORESTGLADE",
+                                "city":"STONE MOUNTAIN",
+                                "state":"CT",
+                                "zipCode":"300871313"
+                            }
+                        }
+                    },
+                    "requestor":{
+                        "subscriberCode":"2222222"
+                    },
+                    "clarityData":{
+                        "clarityAccountId":"333",
+                        "clarityLocationId":"4444",
+                        "clarityControlFileName":"my_control_file"
+                    }
+                }
+              Success_3:   # Example 3
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "ALBERT",
+                                "firstName": "BRAIN"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "66 WARD",
+                                "city": "WESTERLY",
+                                "state": "RI",
+                                "zipCode": "28911944"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "my_control_file"
+                    }
+                }
+              Success_4:   # Example 4
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "BROWN",
+                                "firstName": "EMILIANO"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "110 N CHAPEL ST",
+                                "city": "WILLINGTON",
+                                "state": "CT",
+                                "zipCode": "062791408"
+                            },
+                            "phone": [
+                                {
+                                    "number": "123-456-7890",
+                                    "type": "B"
+                                }
+                            ]
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "my_control_file",
+                        "clarityControlFileVersion": "1"
+                    }
+                }
+              Success_5:   # Example 5
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "WHITE",
+                                "firstName": "JACOBS"
+                            },
+                            "dob": {
+                                "dob": "02091965"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "3147 STONEHENGE",
+                                "city": "RIVA",
+                                "state": "MD",
+                                "zipCode": "211401506"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "my_control_file"
+                    }
+                }
+              Failure_Security Freeze:   # Example 6
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "BRITT",
+                                "firstName": "KEVIN"
+                            },
+                            "dob": {
+                                "dob": "05011953"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "25 CARROLL",
+                                "city": "WESTFIELD",
+                                "state": "MA",
+                                "zipCode": "10852126"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "EXP_CCR_AR"
+                    }
+                }
+              Faiure_Invalid Control File:   # Example 7
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "BRITT",
+                                "firstName": "KEVIN"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "110 N CHAPEL ST",
+                                "city": "WILLINGTON",
+                                "state": "CT",
+                                "zipCode": "062791408"
+                            },
+                            "phone": [
+                                {
+                                    "number": "123-456.7890",
+                                    "type": "B"
+                                }
+                            ]
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "wrong_file_name",
+                        "clarityControlFileVersion": "1"
+                    }
+                }                                      
+              Failure_Invalid Clarity Account ID:   # Example 8
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "BRITT",
+                                "firstName": "KEVIN"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "110 N CHAPEL ST",
+                                "city": "WILLINGTON",
+                                "state": "CT",
+                                "zipCode": "062791408"
+                            },
+                            "phone": [
+                                {
+                                    "number": "123-456.7890",
+                                    "type": "B"
+                                }
+                            ]
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "111",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "my_control_file",
+                        "clarityControlFileVersion": "1"
+                    }
+                }                                    
+              Failure_Invalid SSN:   # Example 9
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "ANDERSON",
+                                "firstName": "KIRK"
+                            },
+                            "ssn": {
+                                "ssn": "333333333"
+                            },
+                            "currentAddress": {
+                                "line1": "2306 71 BARRACKS",
+                                "city": "NEW ORLEANS",
+                                "state": "LA",
+                                "zipCode": "701193536"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "4444",
+                        "clarityControlFileName": "my_control_file",
+                        "clarityControlFileVersion": "1"
+                    }
+                }    
+              Failure_Invalid Clarity Location ID:   # Example 10
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "ALBERT",
+                                "firstName": "BRAIN"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "66 WARD",
+                                "city": "WESTERLY",
+                                "state": "RI",
+                                "zipCode": "28911944"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "clarityData": {
+                        "clarityAccountId": "333",
+                        "clarityLocationId": "5555",
+                        "clarityControlFileName": "my_control_file",
+                        "clarityControlFileVersion": "1"
+                    }
+                }                  
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ClarityAttributesResponse'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    ClarityAttributesRequest:
+      type: object
+      properties:
+        consumerPii:
+          $ref: '#/components/schemas/PII-CA'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        clarityData:
+          $ref: '#/components/schemas/clarityData-CA'
+      description: Clarity Attribute Request
+    PII-CA:
+      required:
+      - primaryApplicant
+      type: object
+      properties:
+        primaryApplicant:
+          $ref: '#/components/schemas/PrimaryApplicant'
+      description: Personally Identifiable Information
+    PrimaryApplicant:
+      required:
+      - currentAddress
+      - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PAName'
+        dob:
+          $ref: '#/components/schemas/DOB'
+        ssn:
+          $ref: '#/components/schemas/SSN'
+        driverslicense:
+          $ref: '#/components/schemas/DriverLicense'
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        employment:
+          $ref: '#/components/schemas/Employment'
+        currentAddress:
+          $ref: '#/components/schemas/Address'
+        previousAddress:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+      description: Primary Credit Applicant Information
+    PAName:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: The full applicant's surname is required. If the surname contains
+            two surnames, then split the surnames with a hyphen (e.g., Smith-Jones).
+            The surname can also be input with an apostrophe (e.g., O'Brien), although
+            apostrophe usage is limited to the letters D, L, and O.
+          default: CONSUMER
+        firstName:
+          type: string
+          description: The full first name is required. The minimum entry is the first
+            name initial. Blanks and special characters (except dash) are not allowed.
+            Compound names should contain a dash (e.g., Billy-Bob).
+          default: JOHN
+        middleName:
+          type: string
+          description: The full middle name should be entered when available. A middle
+            initial is acceptable. Blanks and special characters are not allowed.
+            Omit if the middle name is not available.
+          default: Q
+        generationCode:
+          type: string
+          description: 'Generation Code  enum: ["Jr","Sr","II","III","IV","V","VI","VII","VIII","IX"]'
+          default: Sr
+      description: Consumer's Name
+    DOB:
+      type: object
+      properties:
+        dob:
+          type: string
+          description: Year Of Birth or Date of Birth. This describes year of birth
+            of the primary applicant. It must be 4 (YYYY) or 8 (MMDDYYYY) digits.
+          default: "10181955"
+      description: Consumer's Date of Birth
+    SSN:
+      type: object
+      properties:
+        ssn:
+          type: string
+          description: Social Security Number 11 digits, or 9 digits, or last 4 digits
+          default: "123456789"
+      description: Consumer's Social Security Number
+    Phone:
+      type: object
+      properties:
+        number:
+          type: string
+          description: Phone Number
+          default: 818.555.1111
+        type:
+          type: string
+          description: Phone Type
+          default: R
+      description: Consumer's Phone
+    Employment:
+      required:
+      - employerName
+      type: object
+      properties:
+        employerName:
+          type: string
+          description: Employer's Name
+          default: HARDWARE STORE
+        employerAddress:
+          $ref: '#/components/schemas/Address'
+      description: Consumer's Employment Details
+    DriverLicense:
+      required:
+      - number
+      - state
+      type: object
+      properties:
+        number:
+          type: string
+          description: DL Number
+          default: "111111"
+        state:
+          type: string
+          description: State in which DL was issued
+          default: CA
+      description: Consumer's Driver License
+    Address:
+      required:
+      - line1
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address Line 1
+          default: 10655 NORTH BIRCH STREET APT#3
+        line2:
+          type: string
+          description: Address Line 2
+          default: ' '
+        city:
+          type: string
+          description: City
+          default: BURBANK
+        state:
+          type: string
+          description: State
+          default: CA
+        zipCode:
+          type: string
+          description: ZIP Code.
+          default: "91502"
+      description: Consumer's Address
+    Requestor:
+      required:
+      - subscriberCode
+      type: object
+      properties:
+        subscriberCode:
+          type: string
+          description: Subscriber Number assigned by Experian
+          default: "5991764"
+      description: Information on the API requestor
+    clarityData-CA:
+      type: object
+      properties:
+        clarityGroupId:
+          type: string
+          description: Clarity Group ID
+          default: ""
+        clarityAccountId:
+          type: string
+          description: Clarity Account ID
+          default: ""
+        clarityLocationId:
+          type: string
+          description: Clarity Location ID
+          default: ""
+        clarityControlFileName:
+          type: string
+          description: Clarity Control File Name
+          default: ""
+        clarityControlFileVersion:
+          type: string
+          description: Clarity Control File Version
+          default: ""
+    ClarityAttributesResponse:
+      type: object
+      properties:
+        clarityAttributes:
+          type: object
+          properties: {}
+          description: Clarity Attributes from clary server
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Client friendly message explaining the error
+        errorCode:
+          type: string
+          description: Experian generated code for this error
+      description: Error Response
+  securitySchemes:
+    OauthSecurity:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://sandbox-us-api.experian.com/oauth2/v1/token
+          scopes:
+            user: user scope

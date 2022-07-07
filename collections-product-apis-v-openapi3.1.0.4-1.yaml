@@ -1,0 +1,5055 @@
+openapi: 3.0.1
+info:
+  title: Collections
+  version: OpenAPI3.1.0.4
+servers:
+- url: https://sandbox-us-api.experian.com/consumerservices/collections
+paths:
+  /v1/address-search:
+    post:
+      tags:
+      - Consumer Services
+      summary: Address Search
+      description: 'Returns Address Search Report. Retrieves consumers associated
+        with the specified address. Address Search allows clients to submit an address
+        and receives up to 20 consumers associated with a submitted address; up to
+        4 addresses, displayed in "best-ness" order, for each consumer; associated
+        telephone numbers for all consumers and all names, addresses, Date of Birth(DOB),
+        spouse information and aliases.<br><br> We are providing 10 test cases for
+        client testing under "Examples" button below which include first 5 positive
+        test cases and rest 5 negative test cases. Eg: Success_1, Failure_Invalid
+        surname etc.'
+      operationId: address-search
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: API client generated reference Id to uniquely identify the API
+          request.
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor Information, Addons and any custom
+          options to be specified here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/addressSearchRequest'
+            examples:   
+              Request schema:   #Request schema
+                value:
+                  {
+                    "address": {
+                      "line1": "string",
+                      "line2": "string",
+                      "city": "string",
+                      "state": "string",
+                      "zipCode": "string"
+                    },
+                    "phone": [
+                      {
+                        "number": "string",
+                        "type": "string"
+                      }
+                    ],
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "permissiblePurpose": {
+                      "type": "string",
+                      "terms": "string",
+                      "abbreviatedAmount": "string"
+                    },
+                    "resellerInfo": {
+                      "endUserName": "string"
+                    },
+                    "freezeOverride": {
+                      "primaryApplFreezeOverrideCode": "string"
+                    },
+                    "vendorData": {
+                      "vendorNumber": "string",
+                      "vendorVersion": "string"
+                    },
+                    "addOns": {
+                      "demographics": "string",
+                      "fraudShield": "string"
+                    },
+                    "customOptions": {
+                      "optionId": [
+                        "string"
+                      ]
+                    }
+                  }
+                              
+              Success_1:   # Example 1
+                value:
+                  address:
+                    line1: 441 N HELIOTROPE DR
+                    city: LOS ANGELES
+                    state: CA
+                    zipCode: '90004'
+                  phone:
+                    - number: 310.204.1846
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 0B
+                  resellerInfo:
+                    endUserName: FEATURESTC630310
+                  addOns:
+                    fraudShield: 'Y'
+              Success_2:   # Example 2
+                value:
+                  address:
+                    line1: '2022 QUEEN VICTORIA CT # 618'
+                    city: LAWRENCEVILLE
+                    state: GA
+                    zipCode: '30043'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 4F
+                  resellerInfo:
+                    endUserName: NONRESELLER
+                  addOns:
+                    demographics: Only Phone
+              Success_3:   # Example 3
+                value:
+                  address:
+                    line1: PO BOX 17460
+                    city: DENVER
+                    state: CO
+                    zipCode: 80217-0460
+                  phone:
+                    - number: 361.994.4400
+                    - number: 361.994.9400
+                  requestor:
+                    subscriberCode: '2222222'
+              Success_4:   # Example 4
+                value:
+                  address:
+                    line1: 2111 SEALION DR APT 205
+                    city: LAS VEGAS
+                    state: NV
+                    zipCode: 89128-6619
+                  requestor:
+                    subscriberCode: '2222222'
+                  addOns:
+                    fraudShield: 'Y'
+              Success_5:   # Example 5
+                value:
+                  address:
+                    line1: 1057 HAMANA STREET
+                    city: EWA BEACH
+                    state: HI
+                    zipCode: '96706'
+                  requestor:
+                    subscriberCode: '2222222'
+                  addOns:
+                    demographics: Geocode and Phone
+                    fraudShield: 'Y'
+              Failure_Invalid CurrentAddress:   # Example 6
+                value:
+                  address:
+                    line1: 441 N HELIOTROPE DR-
+                    city: LOS ANGELES
+                    state: CA
+                    zipCode: '90004'
+                  phone:
+                    - number: 310.204.1846
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 0B
+                  resellerInfo:
+                    endUserName: FEATURESTC630310
+                  addOns:
+                    fraudShield: 'Y'
+              Faiure_Internal System Error For invalid RM- Keyword:   # Example 7
+                value:
+                  address:
+                    line1: '2022 QUEEN VICTORIA CT # 618'
+                    line2: ''
+                    city: LAWRENCEVILLE
+                    state: GA
+                    zipCode: '30043'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: '18'
+                    terms: '000'
+                    abbreviatedAmount: '010'
+                  resellerInfo:
+                    endUserName: NONRESELLER
+                  addOns: {}
+              Failure_Inquiry not allowed:   # Example 8
+                value:
+                  address:
+                    line1: PO BOX 17460
+                    city: DENVER
+                    state: CO
+                    zipCode: 80217-0460
+                  phone:
+                    - number: 361.994.9900
+                    - number: 361.994.4455
+                  requestor:
+                    subscriberCode: '2222222'
+                  addOns: {}
+                                                     
+              Failure_Internal Error for invalid INQUIRY TYPE keyword:   # Example 9
+                value:
+                  address:
+                    line1: 2111 SEALION DR APT 205
+                    city: LAS VEGAS
+                    state: NV
+                    zipCode: 89128-6619
+                  requestor:
+                    subscriberCode: '2222222'
+                  addOns:
+                    demographics: Geocode and Phone
+                    fraudShield: 'Y'
+                  customOptions:
+                    optionId:
+                      - ''
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/addressSearchResponse'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+  /v1/address-update:
+    post:
+      tags:
+      - Consumer Services
+      summary: Address Update
+      description: 'Retrieves Address Update Report. Address Update helps subscribers
+        keep in touch with their customers by providing current addresses from Experian''s
+        nation-wide, continuously updated database. Address Update provides a simple
+        solution for the "no forwarding address" problem. The report also serves as
+        a collections tool to help track down skipped accounts.<br><br> We are providing
+        10 test cases for client testing under "Examples" button below which include
+        first 5 positive test cases and rest 5 negative test cases. Eg: Success_1,
+        Failure_Invalid surname etc.'
+      operationId: AddressUpdate
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: 'API client generated reference Id to uniquely identify the API
+          request. '
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor Information, Addons and any custom
+          options to be specified here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/addressUpdateRequest'
+            examples:    
+              Request schema:   #Request schema
+                value:
+                  {
+                    "consumerPii": {
+                      "primaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        },
+                        "currentAddress": {
+                          "line1": "string",
+                          "line2": "string",
+                          "city": "string",
+                          "state": "string",
+                          "zipCode": "string"
+                        },
+                        "previousAddress": [
+                          {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        ]
+                      },
+                      "secondaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "permissiblePurpose": {
+                      "type": "string",
+                      "terms": "string",
+                      "abbreviatedAmount": "string"
+                    },
+                    "resellerInfo": {
+                      "endUserName": "string"
+                    },
+                    "freezeOverride": {
+                      "primaryApplFreezeOverrideCode": "string",
+                      "secondaryApplFreezeOverrideCode": "string"
+                    },
+                    "vendorData": {
+                      "vendorNumber": "string",
+                      "vendorVersion": "string"
+                    },
+                    "addOns": {
+                      "directCheck": "string",
+                      "demographics": "string",
+                      "fraudShield": "string",
+                      "ofacmsg": "string",
+                      "consumerIdentCheck": {
+                        "getUniqueConsumerIdentifier": "string",
+                        "verifyPrimaryConsumerIdentifier": "string",
+                        "verifySecondaryConsumerIdentifier": "string"
+                      },
+                      "joint": "string"
+                    }
+                  }
+                  
+              Success_1:   # Example 1
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: WALLS
+                        firstName: LURLINE
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 8237 METCALF
+                        city: KENOCKEE
+                        state: MI
+                        zipCode: '480062720'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 3F
+                  resellerInfo:
+                    endUserName: CRAPIV2TC2
+                  addOns:
+                    directCheck: 'Y'
+                    fraudShield: 'Y'
+              Success_2:   # Example 2
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: STEINERT
+                        firstName: CHARLES
+                        middleName: B
+                      ssn:
+                        ssn: 111-11-1111
+                      currentAddress:
+                        line1: RR 2 BOX 5
+                        city: TAMAQUA
+                        state: PA
+                        zipCode: '18252'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: '48'
+                  resellerInfo:
+                    endUserName: CRAPIV2TC2
+                  addOns:
+                    directCheck: 'Y'
+                    fraudShield: 'Y'
+              Success_3:   # Example 3
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BULL
+                        firstName: TERESA
+                        middleName: M
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - number: '7148589993'
+                      currentAddress:
+                        line1: 421 LAKE
+                        city: LEHIGH ACRES
+                        state: FL
+                        zipCode: '33972'
+                      previousAddress:
+                        - line1: RR 22
+                          state: NY
+                          city: ESSEX
+                          zipCode: '12936'
+                    secondaryApplicant:
+                      name:
+                        lastName: NOTIP-CONSUMER
+                        firstName: IDENT
+                        middleName: O
+                      ssn:
+                        ssn: 333-33-3333
+                      driverslicense:
+                        number: B6631234
+                        state: CA
+                      employment:
+                        employerName: TEST
+                  requestor:
+                    subscriberCode: '2222222'
+                  resellerInfo:
+                    endUserName: CRAPIV2TC2
+                  addOns:
+                    fraudShield: 'Y'
+                    joint: 'Y'
+              Success_4:   # Example 4
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: REYNOLDS
+                        firstName: ROBERTS
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 20 WINTER ST
+                        city: MANCHESTER
+                        state: CT
+                        zipCode: '6040'
+                      previousAddress:
+                        - line1: 15 RACE BROOK ROAD
+                          state: HA
+                          city: W
+                          zipCode: CT
+                  requestor:
+                    subscriberCode: '2222222'
+                  resellerInfo:
+                    endUserName: CRAPIV2TC2
+                  addOns:
+                    demographics: Geocode and Phone
+                    fraudShield: 'Y'
+              Success_5:   # Example 5
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BESSER
+                        firstName: WANG
+                      dob:
+                        dob: '1946'
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3009 BURTON AVE
+                        city: LAS VEGAS
+                        state: NV
+                        zipCode: '891022068'
+                  requestor:
+                    subscriberCode: '2222222'
+                  resellerInfo:
+                    endUserName: CRAPIV2TC2
+                  addOns:
+                    directCheck: 'Y'
+                    fraudShield: 'Y'
+              Failure_Invalid CurrentAddress:   # Example 6
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BOLTON
+                        firstName: PEGGY
+                      dob:
+                        dob: '1948'
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - type: T
+                          number: 555-673-1001
+                      currentAddress:
+                        line1: ' '
+                        city: DECATUR
+                        state: GA
+                        zipCode: '30033'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 3F
+                  resellerInfo:
+                    endUserName: ABC1
+                  
+              Faiure_Internal System Error For invalid RM- Keyword:   # Example 7
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: '18'
+                    terms: '010'
+                    abbreviatedAmount: '010'
+                  resellerInfo:
+                    endUserName: ABC2
+                                                       
+              Failure_Inquiry not allowed:   # Example 8
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: '18'
+                    terms: '10'
+                    abbreviatedAmount: '10'
+                  addOns:
+                    directCheck: 'Y'
+                  resellerInfo:
+                    endUserName: ABC3
+              Failure_Internal Error for invalid INQUIRY TYPE keyword:   # Example 9
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: '18'
+                    terms: '010'
+                    abbreviatedAmount: '010'
+                  addOns:
+                    demographics: Geocode and Phone
+                  resellerInfo:
+                    endUserName: ABC4
+              Failure_Invalid surname:   # Example 10
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: '-'
+                        firstName: PEGGY
+                      dob:
+                        dob: '1948'
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - type: T
+                          number: 555-673-1001
+                      currentAddress:
+                        line1: 2965 ATTERBERRY CT
+                        city: ' '
+                        zipCode: ' '
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 3F
+                  resellerInfo:
+                    endUserName: ABC5
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/addressUpdateResponse'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+  /v1/collection-advantage:
+    post:
+      tags:
+      - Consumer Services
+      summary: Collection Advantage
+      description: |-
+        Collection Advantage is Experian's next generation information resource for the collection industry, one that uniquely combines credit-based scoring, consumer contact information and state-of-the-art analytical services. Designed for maximum flexibility, this all-in-one tool gives users quicker access to critical information for greater productivity and improved profits.
+        Collection Advantage API provides customers with SSN search, deceased info, trade lines,ten addresses search.<br><br> We are providing 10 test cases for client testing under "Examples" button below which include first 5 positive test cases and rest 5 negative test cases. Eg: Success_1, Failure_Invalid surname etc.
+      operationId: CollectionAdvantage
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: 'API client generated reference Id to uniquely identify the API
+          request. '
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor Information, Addons and any custom
+          options to be specified here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/collectionAdvantageRequest'
+            examples:    
+              Request schema:   #Request schema
+                value:
+                  {
+                    "consumerPii": {
+                      "primaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        },
+                        "currentAddress": {
+                          "line1": "string",
+                          "line2": "string",
+                          "city": "string",
+                          "state": "string",
+                          "zipCode": "string"
+                        },
+                        "previousAddress": [
+                          {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        ]
+                      },
+                      "secondaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "vendorId": "string",
+                    "vendorVersionNumber": "string",
+                    "resellerInfo": {
+                      "endUserName": "string"
+                    },
+                    "customOptions": {
+                      "optionId": [
+                        "string"
+                      ]
+                    },
+                    "infoCriteria": {
+                      "experianIdentifier": {
+                        "runDateTime": "string",
+                        "recordId": "string",
+                        "uniquerdxId": "string",
+                        "uniqueBatchId": "string"
+                      },
+                      "clientAccountId": "string",
+                      "permissiblePurpose": "string",
+                      "clientPackage": "string",
+                      "fileOneData": {
+                        "includeEDAPhoneSearch": "string",
+                        "includeUSPSNCOASearch": "string",
+                        "includeFileOneFraudSearch": "string",
+                        "SSN": "string",
+                        "bestNameAddr": "string",
+                        "deceased": "string",
+                        "fileOnePhones": "string",
+                        "employment": "string",
+                        "modelScore1": "string",
+                        "modelScore2": "string",
+                        "modelScore3": "string",
+                        "modelScore4": "string",
+                        "modelScore5": "string",
+                        "creditAttributes": "string",
+                        "bankruptcyInfo": "string",
+                        "addLNames": "string",
+                        "driverLicense": "string",
+                        "premierStaggCollectionAttribute": "string"
+                      },
+                      "metronet": "string",
+                      "optionalClientData": {
+                        "consumerAreaCode": "string",
+                        "consumer7Digit": "string",
+                        "consumerAreaCode1": "string",
+                        "consumer7Digit1": "string",
+                        "consumerAreaCode2": "string",
+                        "consumer7Digit2": "string",
+                        "onfilePhoneCriticalDate": "string",
+                        "clientDefined1": "string",
+                        "clientDefined2": "string",
+                        "balanceAmount": "string",
+                        "accountOpenDate": "string",
+                        "clientDefined3": "string",
+                        "clientDefined4": "string",
+                        "clientDefined5": "string",
+                        "clientDefined6": "string"
+                      }
+                    }
+                  }
+              Success_1:   # Example 1
+                value:
+                  {
+                    "consumerPii": {
+                        "primaryApplicant": {
+                            "name": {
+                                "lastName": "CANN",
+                                "firstName": "JOHN",
+                                "middleName": "N"
+                            },
+                            "dob": {
+                                "dob": "1955"
+                            },
+                            "ssn": {
+                                "ssn": "111111111"
+                            },
+                            "currentAddress": {
+                                "line1": "510 MONDRE ST",
+                                "city": "MICHIGAN CITY",
+                                "state": "IN",
+                                "zipCode": "46360"
+                            }
+                        }
+                    },
+                    "requestor": {
+                        "subscriberCode": "2222222"
+                    },
+                    "infoCriteria": {
+                        "experianIdentifier": {
+                            "runDateTime": "2007103",
+                            "recordId": "2"
+                        },
+                        "clientAccountId": "2",
+                        "permissiblePurpose": "4C",
+                        "clientPackage": "I1",
+                        "fileOneData": {
+                            "includeEDAPhoneSearch": "2",
+                            "includeUSPSNCOASearch": "Y",
+                            "includeFileOneFraudSearch": "Y",
+                            "SSN": "2",
+                            "bestNameAddr": "2",
+                            "deceased": "Y",
+                            "fileOnePhones": "2",
+                            "employment": "1",
+                            "modelScore1": "R",
+                            "modelScore2": "W",
+                            "modelScore3": "RA",
+                            "creditAttributes": "B",
+                            "addLNames": "Y",
+                            "driverLicense": "Y"
+                        },
+                        "metronet": "2",
+                        "optionalClientData": {
+                            "consumerAreaCode": "360",
+                            "consumer7Digit": "8825137",
+                            "consumerAreaCode1": "503",
+                            "consumer7Digit1": "2219597",
+                            "consumerAreaCode2": "503",
+                            "consumer7Digit2": "5049597",
+                            "onfilePhoneCriticalDate": "20070307"
+                        }
+                    }
+                }                  
+              Success_2:   # Example 2
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: ARMSTRONG
+                        firstName: KARL
+                        middleName: E
+                      dob:
+                        dob: '1959'
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 1073 BUCKINGHAM DR
+                        city: CAROL STREAM
+                        state: IL
+                        zipCode: '60188'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '9'
+                    clientAccountId: '9'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '1'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '1'
+                      bestNameAddr: '1'
+                      deceased: 'Y'
+                      fileOnePhones: '1'
+                      employment: '1'
+                      creditAttributes: B
+                      bankruptcyInfo: 'Y'
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '3'
+                    optionalClientData:
+                      consumerAreaCode: '315'
+                      consumer7Digit: '4269835'
+                      consumerAreaCode1: '315'
+                      consumer7Digit1: '4734509'
+                      onfilePhoneCriticalDate: '20070112'
+              Success_3:   # Example 3
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: NATIUIDAD
+                        firstName: KATHLEEN
+                        middleName: K
+                      dob:
+                        dob: '1959'
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3878 DAKLAWN AVE
+                        city: DALLAS
+                        state: TX
+                        zipCode: '75219'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '10'
+                    clientAccountId: '10'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '2'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '2'
+                      bestNameAddr: '2'
+                      deceased: 'Y'
+                      fileOnePhones: '2'
+                      employment: '1'
+                      modelScore1: B
+                      modelScore2: H
+                      modelScore3: K
+                      creditAttributes: B
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '1'
+                    optionalClientData:
+                      consumerAreaCode: '360'
+                      consumer7Digit: '2404505'
+                      consumerAreaCode1: '360'
+                      consumer7Digit1: '4795143'
+                      consumerAreaCode2: '360'
+                      consumer7Digit2: '7495143'
+                      onfilePhoneCriticalDate: '20000220'
+              Success_4:   # Example 4
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: WALLS
+                        firstName: LURLINE
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 8237 METCALF
+                        city: KENOCKEE
+                        state: MI
+                        zipCode: '480062720'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '11'
+                    clientAccountId: '11'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '3'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '3'
+                      bestNameAddr: '1'
+                      deceased: 'Y'
+                      fileOnePhones: '3'
+                      employment: '1'
+                      modelScore1: B
+                      modelScore2: H
+                      modelScore3: K
+                      creditAttributes: B
+                      bankruptcyInfo: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '2'
+                    optionalClientData:
+                      consumerAreaCode: '360'
+                      consumer7Digit: '3521649'
+                      consumerAreaCode1: '619'
+                      consumer7Digit1: '6926964'
+                      onfilePhoneCriticalDate: '20060720'
+                  
+              Success_5:   # Example 5
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: REYNOLDS
+                        firstName: ROBERTS
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 20 WINTER ST
+                        city: MANCHESTER
+                        state: CT
+                        zipCode: '6040'
+                      previousAddress:
+                        - line1: 15 RACE BROOK ROAD
+                          state: HA
+                          city: W
+                          zipCode: CT
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '12'
+                    clientAccountId: '12'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      SSN: '1'
+                      bestNameAddr: '1'
+                      fileOnePhones: '1'
+                      modelScore1: B
+                      modelScore2: H
+                      modelScore3: K
+                      creditAttributes: B
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '3'
+                    optionalClientData:
+                      consumerAreaCode: '508'
+                      consumer7Digit: '6275509'
+                      consumerAreaCode1: '508'
+                      consumer7Digit1: '6451021'
+                      consumerAreaCode2: '508'
+                      consumer7Digit2: '6451680'
+                      onfilePhoneCriticalDate: '20061029'
+              Failure_Invalid CurrentAddress:   # Example 6
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BOLTON
+                        firstName: PEGGY
+                      dob:
+                        dob: '1948'
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - type: T
+                          number: 555-673-1001
+                      currentAddress:
+                        line1: ' '
+                        city: DECATUR
+                        state: GA
+                        zipCode: '30033'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '2'
+                    clientAccountId: '2'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '2'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '2'
+                      bestNameAddr: '2'
+                      deceased: 'Y'
+                      fileOnePhones: '2'
+                      employment: '1'
+                      modelScore1: R
+                      modelScore2: W
+                      modelScore3: RA
+                      creditAttributes: B
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '2'
+                    optionalClientData:
+                      consumerAreaCode: '360'
+                      consumer7Digit: '8825137'
+                      consumerAreaCode1: '503'
+                      consumer7Digit1: '2219597'
+                      consumerAreaCode2: '503'
+                      consumer7Digit2: '5049597'
+                      onfilePhoneCriticalDate: '20070307'
+              Faiure_Internal System Error For invalid RM- Keyword:   # Example 7
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '2'
+                    clientAccountId: '2'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '2'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '2'
+                      bestNameAddr: '2'
+                      deceased: 'Y'
+                      fileOnePhones: '2'
+                      employment: '1'
+                      modelScore1: R
+                      modelScore2: W
+                      modelScore3: RA
+                      creditAttributes: B
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '2'
+                    optionalClientData:
+                      consumerAreaCode: '360'
+                      consumer7Digit: '8825137'
+                      consumerAreaCode1: '503'
+                      consumer7Digit1: '2219597'
+                      consumerAreaCode2: '503'
+                      consumer7Digit2: '5049597'
+                      onfilePhoneCriticalDate: '20070307'
+                                                       
+              Failure_Inquiry not allowed:   # Example 8
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: AVE
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '2'
+                    clientAccountId: '2'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '2'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '2'
+                      bestNameAddr: '2'
+                      deceased: 'Y'
+                      fileOnePhones: '2'
+                      employment: '1'
+                      modelScore1: R
+                      modelScore2: W
+                      modelScore3: RA
+                      creditAttributes: B
+                      addLNames: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '2'
+                    optionalClientData:
+                      consumerAreaCode: '360'
+                      consumer7Digit: '8825137'
+                      consumerAreaCode1: '503'
+                      consumer7Digit1: '2219597'
+                      consumerAreaCode2: '503'
+                      consumer7Digit2: '5049597'
+                      onfilePhoneCriticalDate: '20070307'
+              Failure_Internal Error for invalid INQUIRY TYPE keyword:   # Example 9
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '7'
+                    clientAccountId: '7'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '3'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '3'
+                      bestNameAddr: '1'
+                      deceased: 'Y'
+                      fileOnePhones: '3'
+                      employment: '1'
+                      modelScore1: RA
+                      modelScore2: '5'
+                      modelScore3: F
+                      modelScore4: J
+                      modelScore5: 'N'
+                      creditAttributes: B
+                      bankruptcyInfo: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '1'
+                    optionalClientData:
+                      consumerAreaCode: '707'
+                      consumer7Digit: '2249107'
+                      onfilePhoneCriticalDate: '20060320'
+              Failure_Invalid surname:   # Example 10
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: '-'
+                        firstName: PEGGY
+                      dob:
+                        dob: '1948'
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - type: T
+                          number: 555-673-1001
+                      currentAddress:
+                        line1: 2965 ATTERBERRY CT
+                        city: ' '
+                        zipCode: ' '
+                  requestor:
+                    subscriberCode: '2222222'
+                  infoCriteria:
+                    experianIdentifier:
+                      runDateTime: '2007103'
+                      recordId: '7'
+                    clientAccountId: '7'
+                    permissiblePurpose: 4C
+                    clientPackage: I1
+                    fileOneData:
+                      includeEDAPhoneSearch: '3'
+                      includeUSPSNCOASearch: 'Y'
+                      includeFileOneFraudSearch: 'Y'
+                      SSN: '3'
+                      bestNameAddr: '1'
+                      deceased: 'Y'
+                      fileOnePhones: '3'
+                      employment: '1'
+                      modelScore1: RA
+                      modelScore2: '5'
+                      modelScore3: F
+                      modelScore4: J
+                      modelScore5: 'N'
+                      creditAttributes: B
+                      bankruptcyInfo: 'Y'
+                      driverLicense: 'Y'
+                    metronet: '1'
+                    optionalClientData:
+                      consumerAreaCode: '707'
+                      consumer7Digit: '2249107'
+                      onfilePhoneCriticalDate: '20060320'
+                  
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/collectionAdvIntResponse'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+  /v1/collection-report:
+    post:
+      tags:
+      - Consumer Services
+      summary: Collection Report
+      description: |2-
+
+        Collection Reports are a group of customized versions of the credit report designed specifically for use in collections.  The reports are primarily used for skip tracing (locating the debtor) with a secondary emphasis on actual debt collection and prioritizing which accounts to pursue first.  The reports provide comprehensive data in an easy-to-read format, helping reduce the labor and paper-intensive nature of the collection process. <br><br> We are providing 10 test cases for client testing under "Examples" button below which include first 7 positive test cases and rest 3 negative test cases. Eg: Success_1, Failure_Invalid surname etc.
+      operationId: CollectionReport
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: 'API client generated reference Id to uniquely identify the API
+          request. '
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor Information, Addons and any custom
+          options to be specified here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/collectionReportRequest'
+            examples:    
+              Request schema:   #Request schema
+                value:
+                  {
+                    "consumerPii": {
+                      "primaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        },
+                        "currentAddress": {
+                          "line1": "string",
+                          "line2": "string",
+                          "city": "string",
+                          "state": "string",
+                          "zipCode": "string"
+                        },
+                        "previousAddress": [
+                          {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        ]
+                      },
+                      "secondaryApplicant": {
+                        "name": {
+                          "lastName": "string",
+                          "firstName": "string",
+                          "middleName": "string",
+                          "generationCode": "string"
+                        },
+                        "dob": {
+                          "dob": "string"
+                        },
+                        "ssn": {
+                          "ssn": "string"
+                        },
+                        "driverslicense": {
+                          "number": "string",
+                          "state": "string"
+                        },
+                        "phone": [
+                          {
+                            "number": "string",
+                            "type": "string"
+                          }
+                        ],
+                        "employment": {
+                          "employerName": "string",
+                          "employerAddress": {
+                            "line1": "string",
+                            "line2": "string",
+                            "city": "string",
+                            "state": "string",
+                            "zipCode": "string"
+                          }
+                        }
+                      }
+                    },
+                    "outputType": "string",
+                    "reportType": "string",
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "permissiblePurpose": {
+                      "type": "string",
+                      "terms": "string",
+                      "abbreviatedAmount": "string"
+                    },
+                    "resellerInfo": {
+                      "endUserName": "string"
+                    },
+                    "vendorData": {
+                      "vendorNumber": "string",
+                      "vendorVersion": "string"
+                    },
+                    "addOns": {
+                      "directCheck": "string",
+                      "demographics": "string",
+                      "riskModels": {
+                        "modelIndicator": [
+                          "string"
+                        ],
+                        "scorePercentile": "string"
+                      },
+                      "summaries": {
+                        "summaryType": [
+                          "string"
+                        ]
+                      },
+                      "fraudShield": "string",
+                      "newConsumer": "string",
+                      "facsPlus": "string",
+                      "joint": "string",
+                      "ofacmsg": "string",
+                      "paymentHistory84": "string"
+                    },
+                    "customOptions": {
+                      "optionId": [
+                        "string"
+                      ]
+                    }
+                  }
+              Success_1:   # Example 1
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: CANN
+                        firstName: JOHN
+                      currentAddress:
+                        line1: 510 MONDRE ST
+                        city: MICHIGAN CITY
+                        state: IN
+                        zipCode: '46360'
+                  outputType: TTY
+                  reportType: StandardCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  
+              Success_2:   # Example 2
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: ARMSTRONG
+                        firstName: KARL
+                      currentAddress:
+                        line1: 1073 BUCKINGHAM DR
+                        city: CAROL STREAM
+                        state: IL
+                        zipCode: '60188'
+                  outputType: TTY
+                  reportType: CollectionCreditReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                        - AA
+                    fraudShield: 'Y'
+                    newConsumer: 'N'
+                    facsPlus: 'N'
+                    joint: 'N'
+                    ofacmsg: 'Y'
+                    paymentHistory84: 'Y'
+                  
+              Success_3:   # Example 3
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: ARMSTRONG
+                        firstName: KARL
+                        middleName: E
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 1073 BUCKINGHAM DR
+                        city: CAROL STREAM
+                        state: IL
+                        zipCode: '60188'
+                  outputType: JSON
+                  reportType: StandardCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                    newConsumer: 'Y'
+                    facsPlus: 'Y'
+                    paymentHistory84: 'Y'
+                  customOptions:
+                    optionId:
+                      - COADEX
+                  
+              Success_4:   # Example 4
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: NATIUIDAD
+                        firstName: KATHLEEN
+                        middleName: K
+                      dob:
+                        dob: '1959'
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3878 DAKLAWN AVE
+                        city: DALLAS
+                        state: TX
+                        zipCode: '75219'
+                    secondaryApplicant:
+                      name:
+                        lastName: JAY
+                        firstName: JUDY
+                        generationCode: II
+                      ssn:
+                        ssn: '333333333'
+                  requestor:
+                    subscriberCode: '2222222'
+                  outputType: PARALLELPROFILE
+                  reportType: CollectionCreditReport
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                  
+              Success_5:   # Example 5
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: WALLS
+                        firstName: LURLINE
+                      currentAddress:
+                        line1: 8237 METCALF
+                        city: KENOCKEE
+                        state: MI
+                        zipCode: '480062720'
+                  outputType: TTY
+                  reportType: CustomCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                    newConsumer: 'Y'
+                    facsPlus: 'Y'
+                    paymentHistory84: 'Y'
+                  customOptions:
+                    optionId:
+                      - COADEX
+                  
+              Success_6:   # Example 6
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: CONNER
+                        firstName: MARIO
+                        middleName: D
+                      dob:
+                        dob: '1959'
+                      currentAddress:
+                        line1: 1128 ELLEN DR
+                        city: DEER PARK
+                        state: TX
+                        zipCode: '77536'
+                  outputType: ARF
+                  reportType: StandardCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  
+              Success_7:   # Example 7
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BOWER
+                        firstName: EDDIE
+                      dob:
+                        dob: '1962'
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: '124 ORANGE HILL STR #7'
+                        city: ORANGE
+                        state: CA
+                        zipCode: '92869'
+                  outputType: PARALLELPROFILE
+                  reportType: StandardCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                                                       
+              Failure_Invalid CurrentAddress:   # Example 8
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: BOLTON
+                        firstName: PEGGY
+                      dob:
+                        dob: '1948'
+                      ssn:
+                        ssn: '111111111'
+                      phone:
+                        - type: T
+                          number: 555-673-1001
+                      currentAddress:
+                        line1: ' '
+                        city: DECATUR
+                        state: GA
+                        zipCode: '30033'
+                  outputType: TTY
+                  reportType: CustomCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                    newConsumer: 'Y'
+                    facsPlus: 'Y'
+                    paymentHistory84: 'Y'
+                  customOptions:
+                    optionId:
+                      - COADEX
+                                                     
+              Failure_Inquiry not allowed:   # Example 9
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  outputType: PARALLELPROFILE
+                  reportType: CollectionCreditReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                    newConsumer: 'Y'
+                    facsPlus: 'Y'
+                    paymentHistory84: 'Y'
+                  customOptions:
+                    optionId:
+                      - COADEX
+                     
+              Failure_Internal Error for invalid INQUIRY TYPE keyword:   # Example 10
+                value:
+                  consumerPii:
+                    primaryApplicant:
+                      name:
+                        lastName: COLLINS
+                        firstName: DANIEL
+                      dob:
+                        dob: 04181961
+                      ssn:
+                        ssn: '111111111'
+                      currentAddress:
+                        line1: 3064 WOLFE DR
+                        line2: ''
+                        city: FAIRBORN
+                        state: OH
+                        zipCode: 45324-2140
+                      previousAddress:
+                        - line1: 836 WASHINGTON AVE
+                          line2: ''
+                          city: FAIRBORN
+                          state: OH
+                          zipCode: '453243840'
+                  outputType: JSON
+                  reportType: StandardCollectionReport
+                  requestor:
+                    subscriberCode: '2222222'
+                  permissiblePurpose:
+                    type: 6D
+                  addOns:
+                    riskModels:
+                      modelIndicator:
+                        - F
+                        - AA
+                    fraudShield: 'Y'
+                    newConsumer: 'N'
+                    facsPlus: 'N'
+                    joint: 'N'
+                    ofacmsg: 'Y'
+                    paymentHistory84: 'Y'
+                  
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/collectionReportResponse'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponseWithHeaderTrailer'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    collectionAdvantageRequest:
+      required:
+      - consumerPii
+      - infoCriteria
+      - requestor
+      type: object
+      properties:
+        consumerPii:
+          $ref: '#/components/schemas/PII'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        vendorId:
+          type: string
+          description: Length 3 optional.
+        vendorVersionNumber:
+          type: string
+          description: Length 6 optional.
+        resellerInfo:
+          $ref: '#/components/schemas/Reseller'
+        customOptions:
+          $ref: '#/components/schemas/CustomOptions'
+        infoCriteria:
+          $ref: '#/components/schemas/InfoCriteria'
+      description: Collection Advantage Request Body
+    addressSearchRequest:
+      required:
+      - address
+      - permissiblePurpose
+      - requestor
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        permissiblePurpose:
+          $ref: '#/components/schemas/PermissiblePurpose'
+        resellerInfo:
+          $ref: '#/components/schemas/Reseller'
+        freezeOverride:
+          $ref: '#/components/schemas/freezeoverride'
+        vendorData:
+          $ref: '#/components/schemas/vendorData'
+        addOns:
+          $ref: '#/components/schemas/addons'
+        customOptions:
+          $ref: '#/components/schemas/CustomOptions'
+      description: Request payload to retrieve a MLA Standalone profile
+    addressUpdateRequest:
+      type: object
+      properties:
+        consumerPii:
+          $ref: '#/components/schemas/PII'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        permissiblePurpose:
+          $ref: '#/components/schemas/PermissiblePurpose'
+        resellerInfo:
+          $ref: '#/components/schemas/Reseller'
+        freezeOverride:
+          $ref: '#/components/schemas/FreezeOverride'
+        vendorData:
+          $ref: '#/components/schemas/vendorData'
+        addOns:
+          $ref: '#/components/schemas/AddonsADRUpdate'
+      description: Address Update Request Body
+    collectionReportRequest:
+      type: object
+      properties:
+        consumerPii:
+          $ref: '#/components/schemas/PII'
+        outputType:
+          type: string
+          description: outputType assigned by Experian
+        reportType:
+          type: string
+          description: reportType assigned by Experian
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        permissiblePurpose:
+          $ref: '#/components/schemas/PermissiblePurpose'
+        resellerInfo:
+          $ref: '#/components/schemas/Reseller'
+        vendorData:
+          $ref: '#/components/schemas/vendorData'
+        addOns:
+          $ref: '#/components/schemas/AddonsCollRep'
+        customOptions:
+          $ref: '#/components/schemas/CustomOptions'
+      description: Collection Report Request Body
+    InfoCriteria:
+      required:
+      - experianIdentifier
+      type: object
+      properties:
+        experianIdentifier:
+          $ref: '#/components/schemas/Experianidentifier'
+        clientAccountId:
+          type: string
+          description: Client account number.Length 30
+        permissiblePurpose:
+          type: string
+          description: 2H = Collections use this unless otherwise specified 4C = Credit
+            Valuation & Risk Assessment Length 2.
+        clientPackage:
+          type: string
+          description: 1A - Best Name & Address; File One Phones; Place of Employment;
+            33 Credit Attributes; RecoveryScore-Retail 1B - Best Name & Address; File
+            One Phones; Place of Employment; 33 Credit Attributes; RecoveryScore-Bankcard
+            2A - (Phones Only)File One Phones; MetroNet Phones; EDA; Change of Address,
+            NCOA Optional 3A - Pkg. 1A, plus MetroNet Phones; EDA; Change of Address,
+            NCOA Optional 3B - Pkg. 1B, plus MetroNet Phones; EDA; Change of Address,
+            NCOA Optional EZ - SSN Append, Best Name and Address w/ Demo, Deceased
+            Information, File One Phones, POE, Recovery Score-Retail, Recovery Score-Bankcard,
+            33 Collection Attributes, BK information,  MetroNet Phones, EDA, Change
+            of Address, NCOA Optional WB - Best Name & Address, Place of Employment,
+            33 Attributes, RecoveryScore-Bankcard, Waterfall (MetroNet/EDA/File One
+            Phones) with Change of Address, NCOA Optional WR - Best Name & Address,  Place
+            of Employment, 33 Attributes, RecoveryScore-Retail, Waterfall (MetroNet/EDA/File
+            One Phones) with Change of Address, NCOA Optional For custom pkgs, enter
+            the 2 byte pkg code from above. Length 2.
+        fileOneData:
+          $ref: '#/components/schemas/FileOneData'
+        metronet:
+          type: string
+          description: provides metronet phones and address info Length 1
+        optionalClientData:
+          $ref: '#/components/schemas/Optionalclientdata'
+      description: Collection Advantage Request Body
+    PII:
+      required:
+      - primaryApplicant
+      type: object
+      properties:
+        primaryApplicant:
+          $ref: '#/components/schemas/PrimaryApplicant'
+        secondaryApplicant:
+          $ref: '#/components/schemas/SecondaryApplicant'
+      description: Personally Identifiable Information
+    collectionAdvantageResp:
+      type: object
+      properties:
+        recordFormatIdentifier:
+          type: string
+          description: Four layouts client can requestt. CA1B,CARR,CADD,CAV2.CA1B
+            and CARR have the same layout.Length 4. Begining at position 1.This is
+            the first field in the request. CA1B & CARR -- 5500 bytes output CARR
+            - 6500 bytes output CAV2 - 7700 bytes output
+        recordLength:
+          type: string
+          description: Input value = 0500 Output value = 5500. Length 4
+        experianIdentifier:
+          $ref: '#/components/schemas/Experianidentifier'
+        standardOutput:
+          $ref: '#/components/schemas/StandardOutput'
+        ssnInformation:
+          $ref: '#/components/schemas/SSNInformation'
+        bestNameAndAddressInformation:
+          $ref: '#/components/schemas/BestNameAndAddressInformation'
+        ssnDeceased:
+          $ref: '#/components/schemas/SSNDeceased'
+        fileOnePhones:
+          $ref: '#/components/schemas/FileOnePhones'
+        employment:
+          $ref: '#/components/schemas/EmploymentDis'
+        modelScores:
+          $ref: '#/components/schemas/ModelScores'
+        creditAttributes:
+          $ref: '#/components/schemas/CreditAttributesDis'
+        secondEmployment:
+          $ref: '#/components/schemas/SecondEmployment'
+        bankruptcyInformation:
+          $ref: '#/components/schemas/BankruptcyInformation'
+        additionalNamesPriorAddresses:
+          $ref: '#/components/schemas/AdditionalNamesPriorAddresses'
+        driverLicense:
+          $ref: '#/components/schemas/DriverLicenseDis'
+        fcraAttributes:
+          $ref: '#/components/schemas/FCRAAttributes'
+        addlAttributes:
+          $ref: '#/components/schemas/AddlAttributes'
+        openTrades:
+          $ref: '#/components/schemas/OpenTrades'
+        mostRecentInquiries:
+          $ref: '#/components/schemas/MostRecentInquiries'
+        metroNet:
+          $ref: '#/components/schemas/MetroNet'
+    Optionalclientdata:
+      type: object
+      properties:
+        consumerAreaCode:
+          type: string
+          description: Client-supplied  input phone 1 (area code) optional Length
+            3
+        consumer7Digit:
+          type: string
+          description: Client-supplied  input phone 1 optional Length 7
+        consumerAreaCode1:
+          type: string
+          description: Client-supplied  input phone 1 (area code) optional Length
+            3
+        consumer7Digit1:
+          type: string
+          description: Client-supplied  input phone 1 optional Length 7
+        consumerAreaCode2:
+          type: string
+          description: Client-supplied  input phone 1 (area code) optional Length
+            3
+        consumer7Digit2:
+          type: string
+          description: Client-supplied  input phone 1 optional Length 7
+        onfilePhoneCriticalDate:
+          type: string
+          description: CCYYMMDD  - Client-supplied date - Compare on-file date to
+            this date and append phones if unique & on-file date is more recent) Length
+            3
+        clientDefined1:
+          type: string
+          description: optional
+        clientDefined2:
+          type: string
+          description: optional
+        balanceAmount:
+          type: string
+          description: optional
+        accountOpenDate:
+          type: string
+          description: optional
+        clientDefined3:
+          type: string
+          description: optional
+        clientDefined4:
+          type: string
+          description: optional
+        clientDefined5:
+          type: string
+          description: optional
+        clientDefined6:
+          type: string
+          description: optional
+      description: Optional client input data
+    collectionAdvIntResponse:
+      type: object
+      properties:
+        collectionAdvantageInteractive:
+          $ref: '#/components/schemas/collectionAdvRespData'
+    PrimaryApplicant:
+      required:
+      - currentAddress
+      - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PAName'
+        dob:
+          $ref: '#/components/schemas/DOB'
+        ssn:
+          $ref: '#/components/schemas/SSN'
+        driverslicense:
+          $ref: '#/components/schemas/DriverLicense'
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        employment:
+          $ref: '#/components/schemas/Employment'
+        currentAddress:
+          $ref: '#/components/schemas/Address'
+        previousAddress:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+      description: Primary Applicant Information
+    collectionAdvRespData:
+      type: object
+      properties:
+        headerRecord:
+          $ref: '#/components/schemas/headerRecord'
+        addressInformation:
+          type: array
+          description: Best Consumer Addresses
+          items:
+            $ref: '#/components/schemas/addressInformationResp'
+        consumerAssistanceReferralAddress:
+          $ref: '#/components/schemas/consumerAssistanceReferralAddress'
+        consumerIdentity:
+          $ref: '#/components/schemas/consumerIdentity'
+        directCheck:
+          $ref: '#/components/schemas/directCheck'
+        employmentInformation:
+          $ref: '#/components/schemas/employmentInformation'
+        fraudShield:
+          $ref: '#/components/schemas/fraudShield'
+        informationalMessage:
+          $ref: '#/components/schemas/informationalMessagefordaas'
+        inquiry:
+          $ref: '#/components/schemas/inquiry'
+        mla:
+          $ref: '#/components/schemas/mlaResp'
+        ofac:
+          $ref: '#/components/schemas/ofacResp'
+        summaries:
+          $ref: '#/components/schemas/summaries'
+        publicRecord:
+          $ref: '#/components/schemas/publicRecord'
+        riskModel:
+          $ref: '#/components/schemas/riskModel'
+        ssn:
+          $ref: '#/components/schemas/ssn'
+        statement:
+          $ref: '#/components/schemas/statement'
+        tradeline:
+          $ref: '#/components/schemas/tradeline'
+        uniqueConsumerIdentifier:
+          $ref: '#/components/schemas/uniqueConsumerIdentifier'
+        collectionAdvantage:
+          $ref: '#/components/schemas/collectionAdvantageResp'
+        endTotals:
+          $ref: '#/components/schemas/endTotals'
+    SecondaryApplicant:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/SAName'
+        dob:
+          $ref: '#/components/schemas/DOB'
+        ssn:
+          $ref: '#/components/schemas/SSN'
+        driverslicense:
+          $ref: '#/components/schemas/DriverLicense'
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        employment:
+          $ref: '#/components/schemas/Employment'
+      description: Secondary Applicant Information
+    inquiry:
+      type: array
+      description: Onfile Inquiries for the consumer.
+      items:
+        $ref: '#/components/schemas/inquiryResp'
+    consumerAssistanceReferralAddress:
+      type: object
+      properties:
+        cityStateZip:
+          type: string
+          description: CRS City, State, ZIP.
+        officeName:
+          type: string
+          description: Name of CRS Office
+        phone:
+          type: string
+          description: CRS Phone Number
+        poBox:
+          type: string
+          description: CRS PO Box Address
+        streetName:
+          type: string
+          description: CRS Street
+    informationalMessagefordaas:
+      type: array
+      description: informational messages for request and response scenarios. e.g.
+        if a product option requested is NOT setup for the subcode, response will
+        reflect a warning.  Message Text is a general area which is customized by
+        each client.  The layout can be different from client to client.  Each client
+        should have the layout of their customized Message Text area.
+      items:
+        $ref: '#/components/schemas/informationalMessagefordaasResp'
+    mlaResp:
+      type: object
+      properties:
+        messageNumber:
+          type: string
+          description: Message Number for mla.
+        messageText:
+          type: string
+          description: 'Message Text matching message number is output in this element. '
+      description: Present when "mla" is requested on input or via subcode and is
+        allowed for the subcode.
+    Employment:
+      required:
+      - employerName
+      type: object
+      properties:
+        employerName:
+          type: string
+          description: Employer's Name
+        employerAddress:
+          $ref: '#/components/schemas/Address'
+      description: Consumer's Employment Details
+    SSN:
+      type: object
+      properties:
+        ssn:
+          type: string
+          description: Social Security Number
+      description: Consumer's Social Security Number
+    DriverLicense:
+      required:
+      - number
+      - state
+      type: object
+      properties:
+        number:
+          type: string
+          description: DL Number
+        state:
+          type: string
+          description: State in which DL was issued
+      description: Consumer's Driver License
+    summaries:
+      type: array
+      items:
+        $ref: '#/components/schemas/summary'
+    DOB:
+      type: object
+      properties:
+        dob:
+          type: string
+          description: Year Of Birth or Date of Birth. This describes year of birth
+            of the primary applicant. It must be 4 (YYYY) or 8 (MMDDYYYY) digits.
+      description: Consumer's Date of Birth
+    publicRecord:
+      type: array
+      description: Bankruptcy, Lien and Civil Action public records for Consumer.
+      items:
+        $ref: '#/components/schemas/publicRecordResp'
+    PAName:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: The full applicant's surname is required. If the surname contains
+            two surnames, then split the surnames with a hyphen (e.g., Smith-Jones).
+            The surname can also be input with an apostrophe (e.g., O'Brien), although
+            apostrophe usage is limited to the letters D, L, and O.
+        firstName:
+          type: string
+          description: The full first name is required. The minimum entry is the first
+            name initial. Blanks and special characters (except dash) are not allowed.
+            Compound names should contain a dash (e.g., Billy-Bob).
+        middleName:
+          type: string
+          description: The full middle name should be entered when available. A middle
+            initial is acceptable. Blanks and special characters are not allowed.
+            Omit if the middle name is not available.
+        generationCode:
+          type: string
+          description: Generation Code
+      description: Consumer's Name
+    riskModel:
+      type: array
+      description: Risk Models present when requested via input or subscriber code.
+      items:
+        $ref: '#/components/schemas/riskModelResp'
+    tradeline:
+      type: array
+      description: Consumer tradeline information.
+      items:
+        $ref: '#/components/schemas/tradelineResp'
+    SAName:
+      required:
+      - firstName
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: The full applicant's surname is required. If the surname contains
+            two surnames, then split the surnames with a hyphen (e.g., Smith-Jones).
+            The surname can also be input with an apostrophe (e.g., O'Brien), although
+            apostrophe usage is limited to the letters D, L, and O.
+        firstName:
+          type: string
+          description: The full first name is required. The minimum entry is the first
+            name initial. Blanks and special characters (except dash) are not allowed.
+            Compound names should contain a dash (e.g., Billy-Bob).
+        middleName:
+          type: string
+          description: The full middle name should be entered when available. A middle
+            initial is acceptable. Blanks and special characters are not allowed.
+            Omit if the middle name is not available.
+        generationCode:
+          type: string
+          description: Generation Code
+      description: Consumer's Name
+    Address:
+      required:
+      - line1
+      - zipCode
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address Line 1
+        line2:
+          type: string
+          description: Address Line 2
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State
+        zipCode:
+          type: string
+          description: ZIP Code
+      description: Consumer's Address
+    uniqueConsumerIdentifier:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Present when UniqueConsumerIdentifier is requested on input.
+            This is unique for a company and a consumer.
+        verificationIndicator:
+          type: string
+          description: Verification result When ConsumerIdentifier verification is
+            requested on input.
+    Phone:
+      type: object
+      properties:
+        number:
+          type: string
+          description: Phone Number
+        type:
+          type: string
+          description: Phone Type
+      description: Consumer's Phone
+    Requestor:
+      required:
+      - subscriberCode
+      type: object
+      properties:
+        subscriberCode:
+          type: string
+          description: Subscriber Number assigned by Experian
+      description: Information on the API requestor
+    PermissiblePurpose:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Permissible Purpose Type Code. 2 digits containing the account
+            type code only.
+        terms:
+          type: string
+          description: The Terms must be 3 digits. If unknown, substitute three periods.
+            Mortgage loans will have terms expressed in YEARS. Revolving accounts
+            will haveterms expressed as either "001" to indicate a monthly payment
+            plan or "010" to indicate a revolving account. All other type codes have
+            terms that are expressed in MONTHS.
+        abbreviatedAmount:
+          type: string
+          description: |-
+            Input the amount of the account. Must             be 3 digits. If
+             unknown, substitute three periods. Mortgage loans have amounts
+             expressed in THOUSANDS. For example, a $100,000 VA mortgage  for 30
+             years would be entered as "100". Under 1000; enter 000. All other type
+             accounts are expressed in HUNDREDS. For example, a $15,000 auto loan
+             would be entered as "150". Under 100; input 000.
+      description: Specifies information on why this credit inquiry is being submitted
+        This is used to denote the purpose type, terms, and amount.
+    Reseller:
+      required:
+      - endUserName
+      type: object
+      properties:
+        endUserName:
+          type: string
+          description: End User Identification. Resellers of credit reports must enter
+            the name of the end user upto 30 characters.
+      description: If the API requestor is a reseller submitting a credit inquiry
+        to Experian, additional information should be provided.
+    addons:
+      type: object
+      properties:
+        demographics:
+          type: string
+          description: Indicates the type of demographic data that should be returned
+            back.
+        fraudShield:
+          type: string
+          description: Y - Fraud Shield Product Option will be output
+      description: Add on products that can be requested. Each add on is billable.
+        These are optional parameters and can be omitted if not needed.
+    AddonsADRUpdate:
+      type: object
+      properties:
+        directCheck:
+          type: string
+          description: Send back subscriber information on the report. When set to
+            Y indicates that subscriber and court names, addresses, and phone numbers
+            who have reported data on the consumer's profile will be sent back on
+            the response.
+        demographics:
+          type: string
+          description: Indicates the type of demographic data that should be returned
+            back.
+        fraudShield:
+          type: string
+          description: Y - Fraud Shield Product Option will be output
+        ofacmsg:
+          type: string
+          description: Y- Trigger a screening process of taking the consumer data
+            from an inquiry to match against the OFAC (Office of Foreign Asset Control)
+            and PLC (Palestinian Legislative Council) lists. A message 1202 NAME DOES
+            NOT MATCH OFAC/PLC LIST will be printed on report if the consumer is not
+            found on either OFAC or PLC list. A message 1200 NAME MATCHES OFAC/PLC
+            LIST will be printed on report if the consumer is found on either OFAC
+            or PLC list.
+        consumerIdentCheck:
+          $ref: '#/components/schemas/ConsumerIdentifierCheckOptions'
+        joint:
+          type: string
+          description: If specified as Y it means that the client is requesting a
+            joint report. This is used to request the Dual or Joint Report. Two separate
+            reports are returned one on the primary applicant and one on the secondary
+            applicant. The joint applicant should have the same current address as
+            the primary applicant. Include as much information on the joint applicant
+            as possible, including the surname if it is different from the primary
+            applicant. If NOt specified or N it means that a joint report is NOT being
+            requested.
+      description: Add on products that can be requested. Each add on is billable.
+        These are optional parameters and can be omitted if not needed.
+    AddonsCollRep:
+      type: object
+      properties:
+        directCheck:
+          type: string
+          description: Send back subscriber information on the report. When set to
+            Y indicates that subscriber and court names, addresses, and phone numbers
+            who have reported data on the consumer's profile will be sent back on
+            the response.
+        demographics:
+          type: string
+          description: Indicates the type of demographic data that should be returned
+            back.
+        riskModels:
+          $ref: '#/components/schemas/RiskModel'
+        summaries:
+          type: object
+          properties:
+            summaryType:
+              type: array
+              items:
+                type: string
+                description: Summary type being requested
+          description: Details of what summaries are requested in output like profile
+            summary or auto summary
+        fraudShield:
+          type: string
+          description: Y - Fraud Shield Product Option will be output
+        newConsumer:
+          type: string
+          description: Y - New Consumer Product Option will be output
+        facsPlus:
+          type: string
+          description: Y - facsPlus Product Option will be output
+        joint:
+          type: string
+          description: If specified as Y it means that the client is requesting a
+            joint report. This is used to request the Dual or Joint Report. Two separate
+            reports are returned one on the primary applicant and one on the secondary
+            applicant. The joint applicant should have the same current address as
+            the primary applicant. Include as much information on the joint applicant
+            as possible, including the surname if it is different from the primary
+            applicant. If NOt specified or N it means that a joint report is NOT being
+            requested.
+        ofacmsg:
+          type: string
+          description: Y- Trigger a screening process of taking the consumer data
+            from an inquiry to match against the OFAC (Office of Foreign Asset Control)
+            and PLC (Palestinian Legislative Council) lists. A message 1202 NAME DOES
+            NOT MATCH OFAC/PLC LIST will be printed on report if the consumer is not
+            found on either OFAC or PLC list. A message 1200 NAME MATCHES OFAC/PLC
+            LIST will be printed on report if the consumer is found on either OFAC
+            or PLC list.
+        paymentHistory84:
+          type: string
+          description: Y.  84 month payment history is requested instead of the 25
+            month history. This can be omitted if 84 month history is not needed.
+      description: Add on products that can be requested. Each add on is billable.
+        These are optional parameters and can be omitted if not needed.
+    RiskModel:
+      type: object
+      properties:
+        modelIndicator:
+          type: array
+          items:
+            type: string
+            description: The 2 byte model indicator if the risk score.
+        scorePercentile:
+          type: string
+          description: Y - Percentile data for Risk-based Pricing policies. Must be
+            requested along with a Risk Model.
+      description: Risk Models that are being requested. Upto 29 models can be requested.
+    CustomOptions:
+      type: object
+      properties:
+        optionId:
+          type: array
+          items:
+            type: string
+            description: Custom option id
+      description: Ancillary Credit Reporting Options (Client custom options if any
+        that have been setup) that can be requested by client. Multiple options can
+        be requested here.
+    ConsumerIdentifierCheckOptions:
+      type: object
+      properties:
+        getUniqueConsumerIdentifier:
+          type: string
+          description: Y -17 byte unique consumer identifier on output.
+        verifyPrimaryConsumerIdentifier:
+          type: string
+          description: Y - 17 byte unique consumer identifier output for Primary Applicant.
+        verifySecondaryConsumerIdentifier:
+          type: string
+          description: Y - 17 byte unique consumer identifier output for Secondary
+            Applicant.
+      description: Output a 17 byte unique consumer identifier for requestor and/or
+        verify an input 17 byte unique consumer identifier.
+    freezeoverride:
+      type: object
+      properties:
+        primaryApplFreezeOverrideCode:
+          type: string
+          description: |-
+            This is the freeze override code for the primary applicant
+            Used when a consumer has authorized the client to access his or her frozen file and has provided the client with his or her pass code. This passcode is to be provided to Experian so that Experian can override the freeze and return credit data for the consumer back to the client.
+      description: If a consumer's profile is frozen, then consumer can get a password
+        using which a lender can override the freeze and get credit data. This parameter
+        is provided when consumer has provided the lender with the password to override
+        his profile freeze.
+    FreezeOverride:
+      type: object
+      properties:
+        primaryApplFreezeOverrideCode:
+          type: string
+          description: |-
+            This is the freeze override code for the primary applicant
+            Used when a consumer has authorized the client to access his or her frozen file and has provided the client with his or her pass code. This passcode is to be provided to Experian so that Experian can override the freeze and return data for the consumer back to the client.
+        secondaryApplFreezeOverrideCode:
+          type: string
+          description: |-
+            This is the freeze override code for the secondary applicant
+            Used when a consumer has authorized the client to access his or her frozen file and has provided the client with his or her pass code. This passcode is to be provided to Experian so that Experian can override the freeze and return data for the consumer back to the client.
+      description: If a consumer's profile is frozen, then consumer can get a password
+        using which a lender can override the freeze and get report data. This parameter
+        is provided when consumer has provided the lender with the password to override
+        his profile freeze.
+    addressSearchResponse:
+      type: object
+      properties:
+        consumerInfo:
+          type: array
+          description: Address Search Response
+          items:
+            $ref: '#/components/schemas/addressSearchResp'
+    vendorData:
+      type: object
+      properties:
+        vendorNumber:
+          type: string
+          description: Optional. Alpha-numeric. Must be 3 Character long.
+        vendorVersion:
+          type: string
+          description: Optional. Alpha-numeric with dot(.). Max length is 6.
+      description: Optional field. To understand who's application the client is using
+        to send in the inquiry - Vendor, 3rd Party, Reseller, or client home grown.
+    addressSearchResp:
+      type: object
+      properties:
+        consumerNames:
+          type: array
+          description: Best Consumer Names
+          items:
+            $ref: '#/components/schemas/consumeridentitynameresp'
+        consumerAddresses:
+          type: array
+          description: Best Consumer Addresses
+          items:
+            $ref: '#/components/schemas/addressInformationResp'
+        informationalMessages:
+          $ref: '#/components/schemas/informationalMessage'
+        statements:
+          $ref: '#/components/schemas/statement'
+        fraudShield:
+          $ref: '#/components/schemas/fraudShield'
+    addressInformationResp:
+      type: object
+      properties:
+        censusGeoCode:
+          type: string
+          description: Address range that includes the address and the census geography
+            the address is within
+        city:
+          type: string
+          description: City for the address.
+        countyCode:
+          type: string
+          description: County Code
+        dwellingType:
+          type: string
+          description: Structural Characteristic/Dwelling Configuration
+        firstReportedDate:
+          type: string
+          description: 'Date address first reported. Format = MMDDCCYY '
+        lastReportingSubscriberCode:
+          type: string
+          description: Last Subscriber reporting this address. May be blanks.
+        lastUpdatedDate:
+          type: string
+          description: 'Date address last updated. Format = MMDDCCYY '
+        msaCode:
+          type: string
+          description: Metropolitan Statistical Area Code when DemographicsAll or
+            DemographicsGeoCode is requested.
+        source:
+          type: string
+          description: Source of Address
+        state:
+          type: string
+          description: 'Valid two-letter US state code or Canadian province. '
+        stateCode:
+          type: string
+          description: State Geo Code when demographics = 1 or 2.
+        streetName:
+          type: string
+          description: 'Full street name. '
+        streetPrefix:
+          type: string
+          description: Data that precedes the street name like house number and directional.
+        streetSuffix:
+          type: string
+          description: Street name type like ST, LN.
+        timesReported:
+          type: string
+          description: Number of times the Address was reported to Experian.
+        unitId:
+          type: string
+          description: Unit Identifier for Apartment.
+        unitType:
+          type: string
+          description: 'Words such as apartment, suite, etc. '
+        zipCode:
+          type: string
+          description: ZIP Code.
+      description: Best Consumer Addresses
+    informationalMessagefordaasResp:
+      type: object
+      properties:
+        messageNumber:
+          type: string
+          description: Contains the two digit Message Code.
+        messageText:
+          type: string
+          description: The message customized Message Text area.
+    addressUpdateResponse:
+      type: object
+      properties:
+        addressUpdate:
+          type: array
+          description: Address Update Response
+          items:
+            $ref: '#/components/schemas/addressUpdateResp'
+    collectionReportResponse:
+      type: object
+      properties:
+        collectionReport:
+          type: array
+          description: Address Update Response
+          items:
+            $ref: '#/components/schemas/collectionReportResp'
+        arf:
+          $ref: '#/components/schemas/arf'
+        tty:
+          $ref: '#/components/schemas/ttyResponse'
+    arf:
+      type: object
+      properties:
+        arfResponse:
+          type: string
+          description: Raw arf returns
+    ttyResponse:
+      type: object
+      properties:
+        ttyResponse:
+          type: string
+          description: TTY response returns
+    addressUpdateResp:
+      type: object
+      properties:
+        addressInformation:
+          type: array
+          description: Best Consumer Addresses
+          items:
+            $ref: '#/components/schemas/addressInformationResp'
+        consumerIdentity:
+          $ref: '#/components/schemas/consumerIdentity'
+        directCheck:
+          $ref: '#/components/schemas/directCheck'
+        employmentInformation:
+          $ref: '#/components/schemas/employmentInformation'
+        fraudShield:
+          $ref: '#/components/schemas/fraudshield'
+        informationalMessage:
+          $ref: '#/components/schemas/informationalMessage'
+        ofac:
+          $ref: '#/components/schemas/ofacResp'
+        ssn:
+          $ref: '#/components/schemas/ssn'
+        statement:
+          $ref: '#/components/schemas/statement'
+        uniqueConsumerIdentifier:
+          $ref: '#/components/schemas/uniqueConsumerIdentifier'
+    collectionReportResp:
+      type: object
+      properties:
+        headerRecord:
+          $ref: '#/components/schemas/headerRecord'
+        addressInformation:
+          type: array
+          description: Best Consumer Addresses
+          items:
+            $ref: '#/components/schemas/addressInformationResp'
+        consumerIdentity:
+          $ref: '#/components/schemas/consumerIdentityCollRep'
+        directCheck:
+          $ref: '#/components/schemas/directCheck'
+        employmentInformation:
+          $ref: '#/components/schemas/employmentInformation'
+        fraudShield:
+          $ref: '#/components/schemas/fraudshield'
+        informationalMessage:
+          $ref: '#/components/schemas/informationalMessage'
+        inquiry:
+          $ref: '#/components/schemas/inquiry'
+        summaries:
+          $ref: '#/components/schemas/summaries'
+        publicRecord:
+          $ref: '#/components/schemas/publicRecord'
+        riskModel:
+          $ref: '#/components/schemas/riskModel'
+        ssn:
+          $ref: '#/components/schemas/ssn'
+        statement:
+          $ref: '#/components/schemas/statement'
+        tradeline:
+          $ref: '#/components/schemas/tradeline'
+        endTotals:
+          $ref: '#/components/schemas/endTotals'
+    inquiryResp:
+      type: object
+      properties:
+        amount:
+          type: string
+          description: Full dollar amount.
+        date:
+          type: string
+          description: Date of inquiry. MMDDCCYY
+        kob:
+          type: string
+          description: Kind of Business Codes.
+        subscriberCode:
+          type: string
+          description: Subscriber Code of inquiring creditor.
+        subscriberName:
+          type: string
+          description: Subscriber Name of inquirying creditor.
+        terms:
+          type: string
+          description: Terms Reported.
+        type:
+          type: string
+          description: 'Permissible Purpose Reason for the inquiry. '
+    publicRecordResp:
+      type: object
+      properties:
+        adjustmentPercent:
+          type: string
+          description: For BK Chapter 13 Only.
+        amount:
+          type: string
+          description: Full rounded dollar amount or rounded amount.
+        bankruptcyAssetAmount:
+          type: string
+          description: 'Full dollar amount for Bankruptcies. '
+        bankruptcyVoluntaryIndicator:
+          type: string
+          description: Bankruptcy Voluntary Indicator
+        bookPageSequence:
+          type: string
+          description: Book, page and sequence number.
+        consumerComment:
+          type: string
+          description: Public Record Comment Text (Free Form).
+        courtCode:
+          type: string
+          description: Seven-digit code unique to each court.
+        courtName:
+          type: string
+          description: Court name
+        disputeFlag:
+          type: string
+          description: Indicates a dispute.
+        ecoa:
+          type: string
+          description: ""
+        evaluation:
+          type: string
+          description: N (constant) = negative
+        filingDate:
+          type: string
+          description: Original filing date Format = MMDDCCYY.
+        plaintiffName:
+          type: string
+          description: Plaintiff Name
+        referenceNumber:
+          type: string
+          description: Contains docket number or certificate ID.
+        repaymentPercent:
+          type: string
+          description: For BK Chapter 13 Only
+        status:
+          type: string
+          description: Public Record Status Codes.
+        statusDate:
+          type: string
+          description: 'Date of court action associated with status. Format = MMDDCCYY. '
+    summary:
+      type: object
+      properties:
+        summaryType:
+          type: string
+          description: Summary Type
+        attributes:
+          type: array
+          description: Summary Attributes
+          items:
+            $ref: '#/components/schemas/attributeResp'
+    Experianidentifier:
+      type: object
+      properties:
+        runDateTime:
+          type: string
+          description: Date and time file is processed
+        recordId:
+          type: string
+          description: file record id
+        uniquerdxId:
+          type: string
+          description: unique id assigned to each client
+        uniqueBatchId:
+          type: string
+          description: unique batch id assigned to each batch
+      description: Experian unique identifier filled by the experian
+    StandardOutput:
+      type: object
+      properties:
+        responseCodes:
+          $ref: '#/components/schemas/ResponseCodes'
+      description: 'Standard Output '
+    ResponseCodes:
+      type: object
+      properties:
+        resultCode:
+          $ref: '#/components/schemas/defaultCode'
+        errorCode:
+          $ref: '#/components/schemas/defaultCodeWithError'
+      description: ResponseCodes
+    SSNInformation:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        validationResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        fraudShieldResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        appendResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        bestFileOneSSN:
+          type: string
+          description: Length 9.
+        additionFileOneSSN:
+          type: string
+          description: Length 9.
+        additionFileOneSSN2:
+          type: string
+          description: Length 9.
+      description: 'Output Segment 01 - SSN Information '
+    BestNameAndAddressInformation:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        bestNameAndAddressResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        demographicResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        addressFraudIndicator:
+          $ref: '#/components/schemas/defaultCode'
+        yearOfBirthDemo:
+          type: string
+          description: Length 4.
+        dateOfBirthDemo:
+          type: string
+          description: Length 8.
+        homeOwnershipIndicator:
+          type: string
+          description: Length 1. Not available yet
+        bestSurname:
+          type: string
+          description: Length 32.
+        bestFirstName:
+          type: string
+          description: Length 32.
+        bestMiddleNameOrInitial:
+          type: string
+          description: Length 32.
+        bestSuffix:
+          type: string
+          description: Length 6.
+        bestStreetAddress:
+          type: string
+          description: Length 60
+        bestCity:
+          type: string
+          description: Length 32.
+        bestState:
+          type: string
+          description: Length 2.
+        bestZipCode:
+          type: string
+          description: Length 9.
+        dwellingTypeDemo:
+          $ref: '#/components/schemas/defaultCode'
+        countyCodeDemo:
+          type: string
+          description: Length 3.
+        censusGEOCodeDemo:
+          type: string
+          description: Length 7.
+        dateAddressFirstReported:
+          type: string
+          description: Length 8.
+        dateAddressLastUpdated:
+          type: string
+          description: Length 8.
+        sourceOfTheAddress:
+          $ref: '#/components/schemas/defaultCode'
+        numberOfTimesAddressReported:
+          type: string
+          description: Length 2.
+      description: Output Segment 02 - Best N and A Information
+    SSNDeceased:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        deceasedResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        dateOfBirthOfDeceased:
+          type: string
+          description: Length 8.
+        dateOfDeath:
+          type: string
+          description: Length 8.
+      description: 'Output Segment 03 - SSN Deceased '
+    FileOnePhones:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        phonesMatchResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        appendResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        fileOnePhone:
+          type: array
+          description: Length 2
+          items:
+            $ref: '#/components/schemas/FileOnePhone'
+      description: 'Output Segment 04 - File One Phones  '
+    FileOnePhone:
+      type: object
+      properties:
+        areaCode:
+          type: string
+          description: Length 3
+        number:
+          type: string
+          description: Length 7
+        phoneSource:
+          $ref: '#/components/schemas/defaultCode'
+        phoneType:
+          $ref: '#/components/schemas/defaultCode'
+        toFileDate:
+          type: string
+          description: Length 8
+        dateLastUpdated:
+          type: string
+          description: Length 8
+      description: 'First Experian File One Phone '
+    EmploymentDis:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        resultCode:
+          $ref: '#/components/schemas/defaultCode'
+        name:
+          type: string
+          description: Length 30.
+        addressLine1:
+          type: string
+          description: Length 32.
+        addressLine2:
+          type: string
+          description: Length 32.
+        addressLine3:
+          type: string
+          description: Length 32.
+        zipCode:
+          type: string
+          description: Length 9.
+        toFileDate:
+          type: string
+          description: Length 8
+        dateLastUpdated:
+          type: string
+          description: Length 8
+      description: 'Output Segment 05 - Employment '
+    ModelScores:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        appendResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        modelScore:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelScore'
+      description: Output Segment 06 - Model Scores (up to 5 scores)
+    ModelScore:
+      type: object
+      properties:
+        modelScore:
+          $ref: '#/components/schemas/defaultCode'
+        score:
+          $ref: '#/components/schemas/defaultCode'
+        scoreFactorCode1:
+          type: string
+          description: Length 8
+        scoreFactorCode2:
+          type: string
+          description: Length 8
+        scoreFactorCode3:
+          type: string
+          description: Length 8
+        scoreFactorCode4:
+          type: string
+          description: Length 8
+      description: Model Score
+    CreditAttributesDis:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        appendResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        Q24DEC:
+          type: string
+          description: Length 1.
+        Q24BKC7:
+          $ref: '#/components/schemas/defaultCode'
+        Q24BKC11:
+          $ref: '#/components/schemas/defaultCode'
+        Q24BKC13:
+          $ref: '#/components/schemas/defaultCode'
+        Q24LSAT1:
+          type: string
+          description: Length 1.
+        Q24DG01:
+          type: string
+          description: Length 1.
+        Q24TD01:
+          type: string
+          description: Length 1.
+        Q24TD02:
+          type: string
+          description: Length 2.
+        Q24TD03:
+          type: string
+          description: Length 2.
+        Q24TD04:
+          type: string
+          description: Length 2.
+        Q24TC01:
+          type: string
+          description: Length 2.
+        Q24TC02:
+          type: string
+          description: Length 2.
+        Q24TAL15:
+          type: string
+          description: Length 9.
+        Q24TMT11:
+          type: string
+          description: Length 9.
+        Q24TMT12:
+          type: string
+          description: Length 9.
+        Q24THE11:
+          type: string
+          description: Length 9.
+        Q24THE12:
+          type: string
+          description: Length 9.
+        Q24TIN12:
+          type: string
+          description: Length 9.
+        Q24TRV11:
+          type: string
+          description: Length 9.
+        Q24TRV12:
+          type: string
+          description: Length 9.
+        Q24TRV13:
+          type: string
+          description: Length 9.
+        Q24TBC13:
+          type: string
+          description: Length 9.
+        Q24TBC14:
+          type: string
+          description: Length 9.
+        Q24TAU12:
+          type: string
+          description: Length 9.
+        Q24TAU13:
+          type: string
+          description: Length 9.
+        Q24TAE12:
+          type: string
+          description: Length 9.
+        Q24TAE13:
+          type: string
+          description: Length 9.
+          
+        Q24TAL21:
+          type: string
+          description: Length 9.
+          
+        Q24TRV22:
+          type: string
+          description: Length 9.
+          
+        Q24TIB22:
+          type: string
+          description: Length 9.
+          
+        Q24TFN31:
+          type: string
+          description: Length 9.
+          
+        Q24IAL01:
+          type: string
+          description: Length 9.
+          
+        Q24IAL02:
+          type: string
+          description: Length 9.
+          
+      description: 'Output Segment 07 - 33 Credit Attributes '
+    SecondEmployment:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        employmentResultCode:
+          type: string
+          description: Length 2.
+          
+        employerName:
+          type: string
+          description: Length 30.
+          
+        employerAddrLine1:
+          type: string
+          description: Length 32.
+          
+        employerAddrLine2:
+          type: string
+          description: Length 32.
+          
+        employerAddrLine3:
+          type: string
+          description: Length 32.
+          
+        employerAddrLine4:
+          type: string
+          description: Length 9.
+          
+        toFileDate:
+          type: string
+          description: Length 8
+          
+        dateLastUpdated:
+          type: string
+          description: Length 8
+          
+      description: Output Segment 08 - 2nd Employment
+      
+    BankruptcyInformation:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        screenResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        statusCode:
+          $ref: '#/components/schemas/defaultCode'
+        statusDate:
+          type: string
+          description: Length 8.
+          
+        courtCode:
+          type: string
+          description: Length 7.
+          
+        courtName:
+          type: string
+          description: Length 24.
+          
+        docketNumber:
+          type: string
+          description: Length 24.
+          
+        creditorName:
+          type: string
+          description: Length 32.
+          
+        ecoaCode:
+          $ref: '#/components/schemas/defaultCode'
+        assetAmount:
+          type: string
+          description: Length 8.
+          
+        liabilitiesAmount:
+          type: string
+          description: Length 8.
+          
+        repayment:
+          type: string
+          description: Length 3.
+          
+        adjustment:
+          type: string
+          description: Length 2.
+          
+        bookPage:
+          type: string
+          description: Length 24.
+          
+        bankruptcyIndicator:
+          type: string
+          description: Length 1.
+          
+        originalFilingDate:
+          type: string
+          description: Length 8.
+          
+      description: '    Output Segment 09 - Bankruptcy Information'
+    AdditionalNamesPriorAddresses:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        additionalNamesResultCode:
+          type: string
+          description: Length 2.
+          
+        additionalAddressesResultCodes:
+          type: string
+          description: Length 2.
+          
+        additionalName:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalName'
+        priorAddress:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriorAddress'
+      description: 'Output Segment 11 - Additional Names & Prior Addresses '
+    AdditionalName:
+      type: object
+      properties:
+        surname:
+          type: string
+          description: Length 32.
+          
+        firstName:
+          type: string
+          description: Length 32.
+          
+        middleName:
+          type: string
+          description: Length 32.
+          
+        suffix:
+          type: string
+          description: Length 6.
+          
+        additionalNamesType:
+          $ref: '#/components/schemas/defaultCode'
+      description: 3 additional Names
+    PriorAddress:
+      type: object
+      properties:
+        streetAddress:
+          type: string
+          description: Length 60
+          
+        city:
+          type: string
+          description: Length 32.
+          
+        state:
+          type: string
+          description: Length 2.
+          
+        zipCode:
+          type: string
+          description: Length 9.
+          
+        dateAddressFirstReported:
+          type: string
+          description: Length 8.
+          
+        dateOfLastUpdate:
+          type: string
+          description: Length 8.
+          
+        sourceOfTheAddress:
+          type: string
+          description: Length 1.
+          
+        timesAddressReported:
+          type: string
+          description: Length 2.
+          
+      description: 10 additional addresses
+    DriverLicenseDis:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        resultCode:
+          $ref: '#/components/schemas/defaultCode'
+      description: 'Output Segment 12 - Driver''s License '
+    FCRAAttributes:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        resultCode:
+          $ref: '#/components/schemas/defaultCode'
+        consumerStatementIndicator:
+          $ref: '#/components/schemas/defaultCode'
+        voluntaryBKWithdrawnByConsumer:
+          type: string
+          description: Length 2.
+          
+        chapter7BKReported:
+          type: string
+          description: Length 1.
+          
+        chapter11BKReported:
+          type: string
+          description: Length 1.
+          
+        chapter12BKReported:
+          type: string
+          description: Length 1.
+          
+        chapter13BKReported:
+          type: string
+          description: Length 1.
+          
+        accountsClosedByConsumer:
+          type: string
+          description: Length 2.
+          
+        accountsDisputedByConsumer:
+          type: string
+          description: Length 2.
+          
+        addressMismatchIndicator:
+          $ref: '#/components/schemas/defaultCode'
+        recordSizeIndicator:
+          $ref: '#/components/schemas/defaultCode'
+      description: Experian FCRA Attributes Output Segment
+    AddlAttributes:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        resultCode:
+          $ref: '#/components/schemas/defaultCode'
+        attributesPartA:
+          type: string
+          description: Length 558.
+          
+        attributesPartB:
+          type: string
+          description: Length 690.
+          
+      description: Output Segment 13 - Additional Attributes (Premier Attributes and
+        STAGGs)
+    MostRecentInquiries:
+      type: object
+      properties:
+        mostRecentInquiry:
+          type: array
+          description: Most Recent Inquiry
+          items:
+            $ref: '#/components/schemas/MostRecentInquiry'
+      description: Most Recent Inquiries
+    MostRecentInquiry:
+      type: object
+      properties:
+        subscriberName:
+          type: string
+          description: Length 24.
+          
+        inquiryPurpose:
+          type: string
+          description: Length 30.
+          
+        inquiryDate:
+          type: string
+          description: Length 8.
+          
+        inquiryAmount:
+          type: string
+          description: Length 8.
+          
+        inquiryTerms:
+          type: string
+          description: Length 3.
+          
+      description: 'MostRecentInquiry '
+    OpenTrades:
+      type: object
+      properties:
+        numberOfTradelines:
+          type: string
+          description: Length 2.
+          
+        openTrade:
+          type: array
+          description: Open Trade (multiple)
+          items:
+            $ref: '#/components/schemas/OpenTrade'
+      description: 'Fixed Record Segment  â€“ CA Tradeline and Inquiry Output '
+    OpenTrade:
+      type: object
+      properties:
+        subscriberPurposeType:
+          $ref: '#/components/schemas/defaultCode'
+        subscriberName:
+          type: string
+          description: Length 24.
+          
+        creditAmount:
+          type: string
+          description: Length 8.
+          
+        balanceAmount:
+          type: string
+          description: Length 8.
+          
+        availableCreditAmount:
+          type: string
+          description: Length 8.
+          
+        reportedDate:
+          type: string
+          description: Length 8.
+          
+      description: 'Open trade record '
+    FileOneData:
+      type: object
+      properties:
+        includeEDAPhoneSearch:
+          type: string
+          description: This flag cannot be set without also setting Client Input Option
+            Number 28 (MetroNet Phones & COA) 1= EDA Tight Match Search Logic  (""40"")
+            2 = EDA Medium Match Search Logic (""20"") 3 = EDA Loose Match Search
+            Logic (""00"") Blank = Not requestedLength 1.
+        includeUSPSNCOASearch:
+          type: string
+          description: This flag cannot be set without also setting Client Input Option
+            Number 28 Output Option Number 28 (MetroNet Phones & COA) Minimum of 100
+            NCOA requests per batch required if this option is requested. Y = Include.
+            (100 NCOA records required) Blank = Not Requested. Length 1.
+          
+        includeFileOneFraudSearch:
+          type: string
+          description: Checks both SSN and Best Address for Fraud Y = Include Blank
+            = Not Requested  Length 1.
+          
+        SSN:
+          type: string
+          description: The SSN Issued SSN Fraud Shield Indicator is returned on this
+            output segment when the Fraud Indicator Flag option is selected 1 = Verify
+            SSN (do not append SSNs) 2 = Always Append SSNs  (no verify) 3= Verify
+            input SSN & Append Blank = Not requested Length 1
+          
+        bestNameAddr:
+          type: string
+          description: The High-Risk-Address Fraud Shield Indicator is returned on
+            this output segment when the Fraud Indicator Flag Option is selected.
+            1 = Verify N&A & Append Best N&A with Demos 2 = Verify N&A & Append Best
+            N&A (no Demos) Blank = Not requested Length 1
+          
+        deceased:
+          type: string
+          description: Y= Verify input SSN against SSA SSN & append if match is found
+            Blank = Not requested Length 1
+          
+        fileOnePhones:
+          type: string
+          description: 1 = match on 7 digits & append unique phones 2 = match on 10
+            digits & append unique phones 3  = match on 7, apply criteria date, append
+            uniques 4 = match on 10 digits, append unique phones & all phone type
+            indicators 5 = match on 10 digits, append unique phones & cell phone type
+            indicators only Length 1
+        employment:
+          type: string
+          description: appends employment information Length 1
+          
+        modelScore1:
+          type: string
+          description: choose score model values as provided in the layout Length
+            2
+          
+        modelScore2:
+          type: string
+          description: choose score model values as provided in the layout Length
+            2
+          
+        modelScore3:
+          type: string
+          description: choose score model values as provided in the layout Length
+            2
+          
+        modelScore4:
+          type: string
+          description: choose score model values as provided in the layout Length
+            2
+          
+        modelScore5:
+          type: string
+          description: choose score model values as provided in the layout Length
+            2
+          
+        creditAttributes:
+          type: string
+          description: Y - append the attribute date. Length 1
+          
+        bankruptcyInfo:
+          type: string
+          description: select to get bankruptcy info Length 1
+          
+        addLNames:
+          type: string
+          description: gets additional names and previous address data Length 1
+          
+        driverLicense:
+          type: string
+          description: not available at this time Length 1
+          
+        premierStaggCollectionAttribute:
+          type: string
+          description: not available at this time Length 1
+          
+      description: 'Output Segment 03 - SSN Deceased '
+    MetroNet:
+      type: object
+      properties:
+        segmentID:
+          $ref: '#/components/schemas/defaultCode'
+        metroNetPhoneAndChangeOfAddress:
+          $ref: '#/components/schemas/MetroNetPhoneAndChangeOfAddress'
+        metroNetBestPhoneAndChangeOfAddress:
+          $ref: '#/components/schemas/MetroNetBestPhoneAndChangeOfAddress'
+      description: 'Output Segment 28 MetroNet Phone and Change of Address Information '
+    MetroNetPhoneAndChangeOfAddress:
+      type: object
+      properties:
+        phoneAppendResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        changeOfAddressResultCode:
+          $ref: '#/components/schemas/defaultCode'
+        dapPrimaryResultCode:
+          type: string
+          description: Length 2.
+          
+        dapResultFlag:
+          $ref: '#/components/schemas/defaultCode'
+        edaSearchResultCode:
+          type: string
+          description: Length 2.
+          
+        coaResultCode:
+          type: string
+          description: Length 2.
+          
+        ncoaResultCode:
+          type: string
+          description: Length 3.
+          
+      description: 'MetroNet Phone and Change of Address Information  '
+    MetroNetBestPhoneAndChangeOfAddress:
+      type: object
+      properties:
+        edaListingType:
+          $ref: '#/components/schemas/defaultCode'
+        areaCode:
+          type: string
+          description: Length 2.
+          
+        phoneNumber:
+          type: string
+          description: Length 2.
+          
+        supplierCode:
+          $ref: '#/components/schemas/defaultCode'
+        caPhoneTypeIndicator:
+          type: string
+          description: Length 1.
+          
+        dateLastUpdated:
+          type: string
+          description: Length 8.
+          
+        surname:
+          type: string
+          description: Length 32.
+          
+        firstName:
+          type: string
+          description: Length 32.
+          
+        middleName:
+          type: string
+          description: Length 32.
+          
+        suffix:
+          type: string
+          description: Length 6.
+          
+        houseNumber:
+          type: string
+          description: Length 15.
+          
+        preDirectional:
+          type: string
+          description: Length 10.
+          
+        streetName:
+          type: string
+          description: Length 32.
+          
+        postDirectional:
+          type: string
+          description: Length 10.
+          
+        addressSuffix:
+          type: string
+          description: Length 10.
+          
+        unitDesignator:
+          type: string
+          description: Length 10.
+          
+        unitNumber:
+          type: string
+          description: Length 15.
+          
+        city:
+          type: string
+          description: Length 32.
+          
+        state:
+          type: string
+          description: Length 2.
+          
+        zipCode:
+          type: string
+          description: Length 5.
+          
+        zip4:
+          type: string
+          description: Length 4.
+          
+        ncoaMoveType:
+          type: string
+          description: Length 1.
+          
+        ncoaMoveDate:
+          type: string
+          description: Length 8.
+          
+        dateAddressLastUpdated:
+          type: string
+          description: Length 8.
+          
+        bestEDAPhoneNumber:
+          type: array
+          description: Length 1.
+          items:
+            $ref: '#/components/schemas/BestEDAPhoneNumber'
+      description: 'Best Phone Number and Change of Address Information '
+    BestEDAPhoneNumber:
+      type: object
+      properties:
+        edaBestPickScoreValue:
+          type: string
+          description: Length 2.
+          
+        listingType:
+          $ref: '#/components/schemas/defaultCode'
+        areaCode:
+          type: string
+          description: Length 3.
+          
+        phoneNumber:
+          type: string
+          description: Length 7.
+          
+        name:
+          type: string
+          description: Length 32.
+          
+        streetAddress:
+          type: string
+          description: Length 40.
+          
+        city:
+          type: string
+          description: Length 20.
+          
+        state:
+          type: string
+          description: Length 2.
+          
+        zipCode:
+          type: string
+          description: Length 5.
+          
+        zip4:
+          type: string
+          description: Length 4.
+          
+        caPhoneTypeIndicator:
+          type: string
+          description: Length 1.
+          
+      description: 'Best EDA PhoneNumber(multiple) '
+    defaultCode:
+      type: object
+      properties:
+        code:
+          type: string
+          description: sample code
+          
+      description: 'Generic code for all segments '
+    defaultCodeWithError:
+      type: object
+      properties:
+        code:
+          type: string
+          description: sample code
+          
+        message:
+          type: string
+          description: Client friendly message explaining the error
+      description: 'Generic code for all segments '
+    riskModelResp:
+      type: object
+      properties:
+        evaluation:
+          type: string
+          description: Sign of risk score.
+        modelIndicator:
+          type: string
+          description: Indicates which model is being returned.
+        score:
+          type: string
+          description: Present when RiskModels is requested on input or via subcode.
+            4 character score for the model requested.
+        scoreFactors:
+          type: array
+          description: Score Factor Codes (Upto 5 items can be returned)
+          items:
+            $ref: '#/components/schemas/ScoreFactor'
+        scorePercentile:
+          type: string
+          description: Present when ScorePercentile is requested on input and is available
+            for a score. Nation Score Percentile.
+    informationalMessage:
+      type: array
+      description: informational messages for request and response scenarios. e.g.
+        if a product option requested is NOT setup for the subcode, response will
+        reflect a warning.
+      items:
+        $ref: '#/components/schemas/informationalMessageResp'
+    informationalMessageResp:
+      type: object
+      properties:
+        messageNumber:
+          type: string
+          description: Contains the last two digits for the message.
+        messageText:
+          type: string
+          description: The message text for the corresponding message number.
+    tradelineResp:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          description: Account Number upto 40 characters.
+        accountType:
+          type: string
+          description: Indicates Type of Account.
+        amount1:
+          type: string
+          description: Full dollar amount.
+        amount1Qualifier:
+          type: string
+          description: Amount Type.
+        amount2:
+          type: string
+          description: Full dollar amount.
+        amount2Qualifier:
+          type: string
+          description: Amount Type.
+        amountBalloonPayment:
+          type: string
+          description: Full dollar amount
+        amountPastDue:
+          type: string
+          description: Full dollar amount
+        balanceAmount:
+          type: string
+          description: Full dollar amount
+        balanceDate:
+          type: string
+          description: Date account was last updated. Format = MMDDCCYY.
+        bankruptcyChapterNumber:
+          type: string
+          description: Bankruptcy Chapter Number.
+        consumerComment:
+          type: string
+          description: Free Form Text from consumer.
+        consumerDisputeFlag:
+          type: string
+          description: Indicates if trade is disputed by consumer.
+        datePaymentDue:
+          type: string
+          description: Date balloon payment due. Format = MMDDCCYY.
+        delinquencies30Days:
+          type: string
+          description: 30 to 59 day delinquencies
+        delinquencies60Days:
+          type: string
+          description: 60 to 89 day delinquencies
+        delinquencies90to180Days:
+          type: string
+          description: 90 to 180 day delinquencies
+        derogCounter:
+          type: string
+          description: Indicates the number of months the account has been reported
+            as seriously derogatory.
+        ecoa:
+          type: string
+          description: Attribute code.
+        enhancedPaymentData:
+          $ref: '#/components/schemas/enhancedPaymentData'
+        evaluation:
+          type: string
+          description: Indicates if additional review is required.
+        kob:
+          type: string
+          description: Kind of business code of subscriber
+        lastPaymentDate:
+          type: string
+          description: Date of last payment. Format = MMDDCCYY.
+        maxDelinquencyDate:
+          type: string
+          description: Date of worst payment code beyond the monthly payment profile.
+            Format = (MMDDCCYY)
+        monthlyPaymentAmount:
+          type: string
+          description: Full dollar amount.
+        monthlyPaymentType:
+          type: string
+          description: ""
+        monthsHistory:
+          type: string
+          description: Number of Months Reviewed
+        openDate:
+          type: string
+          description: 'Date account opened. Format = MMDDCCYY. '
+        openOrClosed:
+          type: string
+          description: Indicates if trade is Open or Closed
+        originalCreditorName:
+          type: string
+          description: Name of original creditor if a collection account.
+        paymentHistory:
+          type: string
+          description: 84 Month payment history when requested on input. Otherwise
+            25 month payment history.
+        revolvingOrInstallment:
+          type: string
+          description: ""
+        soldToName:
+          type: string
+          description: Name of the creditor to whom the account was sold.
+        specialComment:
+          type: string
+          description: Special Comments.
+        status:
+          type: string
+          description: Account Condition/Payment Status Codes.
+        statusDate:
+          type: string
+          description: Account Status Date. Format = MMDDCCYY.
+        subscriberCode:
+          type: string
+          description: Subscriber number that reported tradeline.
+        subscriberName:
+          type: string
+          description: Name of Subscriber
+        terms:
+          type: string
+          description: Payment terms for the Account.
+    fraudShield:
+      type: array
+      description: Fraud Shield information when requested on input or via subcode.
+      items:
+        $ref: '#/components/schemas/fraudShieldResp'
+    fraudShieldResp:
+      type: object
+      properties:
+        sic:
+          type: string
+          description: Group Identifiers if applicable.
+        text:
+          type: string
+          description: Shield message.
+        type:
+          type: string
+          description: Fraud Shield Record Type
+    fraudshield:
+      type: array
+      description: Fraud Shield information when requested on input or via subcode.
+      items:
+        $ref: '#/components/schemas/fraudshieldResp'
+    fraudshieldResp:
+      type: object
+      properties:
+        addressCount:
+          type: string
+          description: Number of times the address was used in the last 90-120 days
+        addressDate:
+          type: string
+          description: 'Format = MMDDCCYY. Date when address counter accumulation
+            started. '
+        addressErrorCode:
+          type: string
+          description: Address Error Code if applicable.
+        dateOfBirth:
+          type: string
+          description: Format = MMDDCCYY
+        dateOfDeath:
+          type: string
+          description: Format = MMDDCCYY
+        fraudShieldIndicators:
+          $ref: '#/components/schemas/fraudshieldindicators'
+        sic:
+          type: string
+          description: Group Identifiers if applicable.
+        socialCount:
+          type: string
+          description: Number of times the social was used in the last 90-120 days.
+        socialDate:
+          type: string
+          description: 'Date posted when social counter accumulation started. Format
+            = MMDDCCYY.  '
+        socialErrorCode:
+          type: string
+          description: Social error code if applicable.
+        ssnFirstPossibleIssuanceYear:
+          type: string
+          description: First year possible for SSN issuance (YYYY).
+        ssnLastPossibleIssuanceYear:
+          type: string
+          description: Last year possible for SSN issuance (YYYY).
+        text:
+          type: string
+          description: Shield message.
+        type:
+          type: string
+          description: Fraud Shield Record Type
+    fraudshieldindicators:
+      type: object
+      properties:
+        indicator:
+          type: array
+          description: Fraud Shield Information for the input request.
+          items:
+            type: string
+      description: Fraud Shield Information for the input request.
+    attributeResp:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Attribute id
+        value:
+          type: string
+          description: Attribute Value
+    consumerIdentity:
+      type: object
+      properties:
+        dob:
+          $ref: '#/components/schemas/dob'
+        name:
+          $ref: '#/components/schemas/consumerIdentityName'
+        phone:
+          $ref: '#/components/schemas/consumerIdentityPhone'
+        spouseName:
+          type: string
+          description: When available it will be output.
+    consumerIdentityCollRep:
+      type: object
+      properties:
+        dob:
+          $ref: '#/components/schemas/dob'
+        name:
+          $ref: '#/components/schemas/consumerIdentityNameCollRep'
+        phone:
+          $ref: '#/components/schemas/consumerIdentityPhone'
+    statement:
+      type: array
+      description: Consumer Statements present onfile.
+      items:
+        $ref: '#/components/schemas/statementResp'
+    statementResp:
+      type: object
+      properties:
+        dateReported:
+          type: string
+          description: Date reported. Format = MMDDCCYY
+        statementText:
+          type: string
+          description: 'Consumer Statement Text. '
+        type:
+          type: string
+          description: '2 character statement type. '
+    directCheck:
+      type: array
+      description: Subscriber Information of subscriber codes shown on report. Present
+        when direct check is requested on input or via subcode option.
+      items:
+        $ref: '#/components/schemas/directCheckResp'
+    directCheckResp:
+      type: object
+      properties:
+        subscriberAddress:
+          type: string
+          description: Subscriber's Address
+        subscriberCity:
+          type: string
+          description: Subscriber's City
+        subscriberCode:
+          type: string
+          description: Experian assigned number.
+        subscriberName:
+          type: string
+          description: Name of subscriber
+        subscriberPhone:
+          type: string
+          description: Telephone number of subscriber or "BYMAILONLY"
+        subscriberState:
+          type: string
+          description: Two-digit state code.
+        subscriberZipCode:
+          type: string
+          description: Subscriber's Zip Code.
+    ScoreFactor:
+      type: object
+      properties:
+        importance:
+          type: string
+          description: The importance of this score factor code
+        code:
+          type: string
+          description: Score Factor Code
+      description: Score Factor
+    employmentInformation:
+      type: array
+      description: Best Consumer Employments.
+      items:
+        $ref: '#/components/schemas/employmentInformationResp'
+    employmentInformationResp:
+      type: object
+      properties:
+        addressExtraLine:
+          type: string
+          description: Extra line of employer's address
+        addressFirstLine:
+          type: string
+          description: 1st line of employer's address
+        addressSecondLine:
+          type: string
+          description: 2nd line of employer's address
+        firstReportedDate:
+          type: string
+          description: 'Date employment first reported. Format = MMDDCCYY '
+        lastUpdatedDate:
+          type: string
+          description: Date employment last updated. Format = MMDDCCYY.
+        name:
+          type: string
+          description: Employer's Name.
+        source:
+          type: string
+          description: Source of Employment
+        zipCode:
+          type: string
+          description: 'ZIP code of employer. '
+    enhancedPaymentData:
+      type: object
+      properties:
+        actualPaymentAmount:
+          type: string
+          description: Full dollar amount.
+        chargeoffAmount:
+          type: string
+          description: Full dollar amount.
+        ciiCode:
+          type: string
+          description: Consumer Information Indicator.
+        complianceCondition:
+          type: string
+          description: Compliance Conditon Code.
+        creditLimitAmount:
+          type: string
+          description: Full dollar amount.
+        enhancedAccountCondition:
+          type: string
+          description: 'Account Condition Code. Codes. '
+        enhancedAccountType:
+          type: string
+          description: Indicates Type of Account.
+        enhancedPaymentHistory84:
+          type: string
+          description: '84 Month enhanced payment history. '
+        enhancedPaymentStatus:
+          type: string
+          description: Payment Status Codes.
+        enhancedSpecialComment:
+          type: string
+          description: Special Comments.
+        enhancedTerms:
+          type: string
+          description: Payment Terms.
+        enhancedTermsFrequency:
+          type: string
+          description: Frequency for Payments Due.
+        firstDelinquencyDate:
+          type: string
+          description: Most Recent Delinquency Date (MMDDCCYY)
+        highBalanceAmount:
+          type: string
+          description: Full dollar amount.
+        maxDelinquencyCode:
+          type: string
+          description: Highest payment code for maximum delinquency date
+        mortgageId:
+          type: string
+          description: Mortgage ID.
+        originalCreditorClassificationCode:
+          type: string
+          description: 'General type of business of the Original Creditor. '
+        originalLoanAmount:
+          type: string
+          description: Full dollar amount.
+        paymentLevelDate:
+          type: string
+          description: Date the account first reached present status level. Format
+            = MMDDCCYY.
+        purchasedPortfolioFromName:
+          type: string
+          description: Purchased Portfolio Name.
+        secondDelinquencyDate:
+          type: string
+          description: Second Most Recent Delinquency Date(MMDDCCYY)
+        secondaryAgencyCode:
+          type: string
+          description: Secondary Agency Code.
+        secondaryAgencyId:
+          type: string
+          description: Secondary Agency Id
+        specialPaymentAmount:
+          type: string
+          description: Full dollar amount
+        specialPaymentCode:
+          type: string
+          description: Additional Information about the Payment Amount.
+        specialPaymentDate:
+          type: string
+          description: Special Payment Date Format = MMDDCCYY.
+    ofacResp:
+      type: object
+      properties:
+        messageNumber:
+          type: string
+          description: Message Number for ofac.
+        messageText:
+          type: string
+          description: Message Text for corresponding message number.
+      description: Present when "ofacmsg" is requested on input or via subcode and
+        is allowed for the subcode.
+    headerRecord:
+      type: array
+      description: Header Record.
+      items:
+        $ref: '#/components/schemas/headerRecordResp'
+    ssn:
+      type: array
+      description: Consumer's profile SSN.
+      items:
+        $ref: '#/components/schemas/ssnResp'
+    ssnResp:
+      type: object
+      properties:
+        number:
+          type: string
+          description: 'SSN(s) present for the consumer. '
+        ssnIndicators:
+          type: string
+          description: Indicates how the SSN in the response matched to the inquiry
+            SSN, digit by digit.
+        variationIndicator:
+          type: string
+          description: 'Indicates if SSN is different than input. '
+    endTotals:
+      type: array
+      description: Trailer Record
+      items:
+        $ref: '#/components/schemas/endTotalsResp'
+    headerRecordResp:
+      type: object
+      properties:
+        reportDate:
+          type: string
+          description: Date inquiry reported to Experian. Format = MMDDYY
+        reportTime:
+          type: string
+          description: Time inquiry reported to Experian. Format = HHMMSS
+        preamble:
+          type: string
+          description: Consumer Assistance Preamble for area accessed.
+        versionNo:
+          type: string
+          description: Experian online ARF version
+        mKeywordLength:
+          type: string
+          description: Indicates length of text.
+        mKeywordText:
+          type: string
+          description: Information obtained from the M-keyword used on Inquiry. The
+            data is returned in the same format as input.  It is used as a control
+            number for subscribers to link this response to their inquiry.
+        y2kReportedDate:
+          type: string
+          description: Date of report. Format = MMDDCCYY
+        inquiringSubcode:
+          type: string
+          description: Subcode from Inquiry
+        reportCode:
+          type: string
+          description: Type of report. C = Credit Profile K = Checkpoint Report
+        applicationCode:
+          type: string
+          description: Reserved for future use
+    dob:
+      type: object
+      properties:
+        day:
+          type: string
+          description: When available it will be output in DD format.
+        month:
+          type: string
+          description: When available it will be output in MM format.
+        year:
+          type: string
+          description: When available it will be output in CCYY format.
+    endTotalsResp:
+      type: object
+      properties:
+        totalSegments:
+          type: string
+          description: Total number of segments in report.
+        totalLength:
+          type: string
+          description: Length of report in bytes.
+    consumerIdentityName:
+      type: array
+      description: Best Consumer Name for Request
+      items:
+        $ref: '#/components/schemas/consumerIdentityNameResp'
+    consumerIdentityNameCollRep:
+      type: array
+      description: Best Consumer Name for Request
+      items:
+        $ref: '#/components/schemas/consumerIdentityNameRespCollRep'
+    consumerIdentityNameResp:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Consumer's Full First Name.
+        generationCode:
+          type: string
+          description: Generation Code if applicable.
+        middleName:
+          type: string
+          description: Consumer's Full Middle Name or Middle Initial
+        secondSurname:
+          type: string
+          description: Second half of the surname for dual surnames.
+        surname:
+          type: string
+          description: 'Consumer''s last name. '
+        type:
+          type: string
+          description: Name Type
+        confirmedVerifiedSsn:
+          $ref: '#/components/schemas/confirmedVerifiedSsn'
+    consumerIdentityNameRespCollRep:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Consumer's Full First Name.
+        generationCode:
+          type: string
+          description: Generation Code if applicable.
+        middleName:
+          type: string
+          description: Consumer's Full Middle Name or Middle Initial
+        secondSurname:
+          type: string
+          description: Second half of the surname for dual surnames.
+        surname:
+          type: string
+          description: 'Consumer''s last name. '
+        type:
+          type: string
+          description: Name Type
+    endTotalsErrorResp:
+      type: object
+      properties:
+        totalReportSegments:
+          type: string
+          description: Number of report segments.
+        positiveTradeItems:
+          type: string
+          description: Number of positive trade segments.
+        nonEvaluatedTradeItems:
+          type: string
+          description: Number of non-evaluated trade items.
+        negativeTradeItems:
+          type: string
+          description: Number of negative trade items.
+        nonEvaluatedLegalItems:
+          type: string
+          description: Number of non-evaluated legal items.
+        negativeLegalItems:
+          type: string
+          description: Number of negative legal items.
+    consumeridentitynameresp:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Consumer's Full First Name.
+        generationCode:
+          type: string
+          description: Generation Code if applicable.
+        middleName:
+          type: string
+          description: Consumer's Full Middle Name or Middle Initial
+        secondSurname:
+          type: string
+          description: Second half of the surname for dual surnames.
+        surname:
+          type: string
+          description: 'Consumer''s last name. '
+        type:
+          type: string
+          description: Name Type
+    consumerIdentityPhone:
+      type: array
+      description: Present when DemographicsAll or DemographicsPhone is requested
+        on input or via subcode option.
+      items:
+        $ref: '#/components/schemas/consumerIdentityPhoneResp'
+    consumerIdentityPhoneResp:
+      type: object
+      properties:
+        number:
+          type: string
+          description: 'Consumer Phone Number. '
+        source:
+          type: string
+          description: Phone Source.
+        type:
+          type: string
+          description: Phone number type
+    confirmedVerifiedSsn:
+      type: array
+      description: Consumer's confirmed Verified SSN.
+      items:
+        $ref: '#/components/schemas/confirmedVerifiedSsnResp'
+    confirmedVerifiedSsnResp:
+      type: object
+      properties:
+        timesReportedForSameName:
+          type: string
+          description: Indicates the number of times this SSN was reported for the
+            name
+        ssn:
+          type: string
+          description: Indicates SSN value in response matched to this Name.
+    endTotalsError:
+      type: array
+      description: Trailer Record - Error Messages.
+      items:
+        $ref: '#/components/schemas/endTotalsErrorResp'
+    headerRecordError:
+      type: array
+      description: Header Record - Error Messages.
+      items:
+        $ref: '#/components/schemas/headerRecordErrorResp'
+    headerRecordErrorResp:
+      type: object
+      properties:
+        hostid:
+          type: string
+          description: Denotes which Experian host responded to inquiry.
+        applicationId:
+          type: string
+          description: C = Credit Reporting D = Detect N = NFD
+        reportDate:
+          type: string
+          description: Date inquiry reported to Experian. Format = MMDDYY
+        reportTime:
+          type: string
+          description: Time inquiry reported to Experian. Format = HHMMSS
+        reportType:
+          type: string
+          description: â€˜Xâ€™ = ARF Format
+        preamble:
+          type: string
+          description: Consumer Assistance Preamble for area accessed.
+        regionCode:
+          type: string
+          description: Constant 'W'
+        versionNo:
+          type: string
+          description: Experian online ARF version
+        surName:
+          type: string
+          description: Left justified. Unused spaces are blank or nullfilled.
+        firstName:
+          type: string
+          description: Left justified. First three characters only.
+        mKeywordLength:
+          type: string
+          description: Indicates length of text.
+        mKeywordText:
+          type: string
+          description: Information obtained from the M-keyword used on Inquiry. The
+            data is returned in the same format as input.  It is used as a control
+            number for subscribers to link this response to their inquiry.
+        y2kReportedDate:
+          type: string
+          description: Date of report. Format = MMDDCCYY
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    ErrorResponseWithHeaderTrailer:
+      type: object
+      properties:
+        headerRecordError:
+          $ref: '#/components/schemas/headerRecordError'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+        endTotalsError:
+          $ref: '#/components/schemas/endTotalsError'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Client friendly message explaining the error
+        errorCode:
+          type: string
+          description: Experian generated code for this error
+      description: Error Response
+  securitySchemes:
+    OauthSecurity:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://sandbox-us-api.experian.com/oauth2/v1/token
+          scopes:
+            user: user scope

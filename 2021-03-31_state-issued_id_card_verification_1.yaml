@@ -1,0 +1,605 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    
+    State Issued ID Trust  API  provides real-time validation of  personal information submitted against what’s on file at various states’ DMV. This API verifies Driver's License, Driver's Permit and any temporary State Issued Photo ID.
+
+    Please note that this API is intended to be used against supported U.S states only. 
+ 
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    3. Get **[State Issued ID Trust](#tag/State-Issued-ID-Trust)**.
+ 
+ 
+  version: 'v1'
+  title: State Issued ID Trust
+  x-apigee-id: "efx-mobileconnect-driver-license-verification"
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+    
+paths:
+  /states/{state}/id-cards/verify:
+    post:
+      tags:
+        - State Issued ID Trust
+      description: The API  provides real-time validation of  personal information submitted against what’s on file. This API will verify below cards
+          
+          1. Driver's License
+          
+          2. Driver's Permit
+          
+          3. State Issued Photo Id
+          
+          
+      operationId: Verify consumer's id card
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/states-id-cards-verify"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, All requests must include the correlationId.
+          schema:
+            type: string
+        - name: state
+          in: path
+          required: true
+          x-example: GA
+          description: State code (2 letters)
+          schema:
+            type: string    
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/stateIDRequest"
+            examples:
+              Driver License Verification Request:
+                $ref: "#/components/examples/stateIdCardReq"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stateIDResponse"
+              examples:
+                Driver License Verification Response:
+                  $ref: "#/components/examples/stateIdCardRes"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+servers:
+  - url: https://api.sandbox.equifax.com/business/state-id-verification/v1
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+  schemas:
+    stateIDRequest:
+      type: object
+      required:
+        - identity
+        - merchantId
+        - includeReasonCodes
+      properties:
+        merchantId:
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          maxLength: 16
+          example: merchant
+        includeReasonCodes:
+          type: string
+          description: Flag attribute to control the output of match status for each request attribute.
+          maxLength: 1
+          example: Y
+          enum:
+          - Y
+          - N
+        identity:
+          $ref: "#/components/schemas/Identity"
+    ErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally when additional error details are available.
+    Identity:
+      required:
+        - identification
+        - name
+      type: object
+      properties:
+        name:
+          required:
+            - firstName
+            - lastName
+          type: object
+          properties:
+            firstName:
+              type: string
+              maxLength: 40
+              description: The consumer first name
+              example: Steven
+            lastName:
+              type: string
+              maxLength: 40
+              description: The consumer last name
+              example: Brown
+            middleName:
+              type: string
+              maxLength: 40
+              description: The consumer middle name. The field is optional.
+              example: Daniel
+            namesuffix:
+              type: string
+              maxLength: 5
+              description: A term appended after the family name that qulifies the name. The field is optional.
+              example: JR
+        address:
+          type: object
+          properties:
+            addressLine1:
+              type: string
+              maxLength: 255
+              description: The address line 1 of the consumer.
+              example: 4301 Wilson Blvd
+            addressLine2:
+              type: string
+              maxLength: 255
+              description: The address line 2 of the consumer. The field is optional
+              example: 1234
+            city:
+              type: string
+              maxLength: 255
+              description: The city of the consumer address
+              example: Arlington
+            state:
+              type: string
+              maxLength: 2
+              description: The state of the consumer address
+              example: VA
+            zipCode:
+              type: number
+              maxLength: 5
+              example: 22203
+        identification:
+          required:
+            - identificationId
+            - idType
+          type: object
+          properties:
+            identificationId:
+              type: string
+              maxLength: 25
+              description:  State Issued ID Number. When a state number uses letters, they are uppercase.  State Issued ID matching is not case sensitive, so a number will match if it is entered as "A123" or "a123". Omit separators such as "-" and "/"
+
+              example: DLDVSTRUCTUREDTEST12
+            issueDate:
+              type: string
+              maxLength: 10
+              description: A date the state issued credential was issued. This field is optional. The format would be in MM/DD/YYYY.
+              example: 10/10/2011
+            expirationDate:
+              type: string
+              maxLength: 10
+              description: The date the state issued credential expires. This field is optional.The format would be in MM/DD/YYYY.
+              example: 10/10/2023
+            idType:
+              type: number
+              maxLength: 1
+              description: A coded categorization of a state document issued by a jurisdiction to an individual (i.e. License, Permit, ID Card)
+              example: '1'
+              enum:
+              - 1 (Drivers License)
+              - 2 (Drivers Permit)
+              - 3 (ID Card)
+            issuingState:
+              type: string
+              maxLength: 2
+              description: The two alphacharacter state code in which the ID was issued
+              example: AL
+            dob:
+              type: string
+              maxLength: 10
+              description: Date of birth. This field is optional. The format would be in MM/DD/YYYY.
+              example: 01/01/1980
+        additionalAttributes:
+          type: object
+          properties:
+            gender:
+              type: string
+              maxLength: 1
+              description: A code identifying the sex of the consumer. This field is optional.
+              example: M
+              enum:
+              - M (Male)
+              - F (Female)
+            eyeColor:
+              type: string
+              maxLength: 3
+              description: A code identifying the eye color of a person. This field is optional.
+              example: BRO
+              enum:
+              - BLK = Black
+              - BLU = Blue
+              - BRO = Brown
+              - DIC = Dichromatic
+              - GRY = Gray
+              - GRN = Green
+              - HAZ = Hazel
+              - MAR = Marron
+              - PNK = Pink
+            height:
+              type: number
+              maxLength: 3
+              description: A measurement of a person's height.The field is optional
+              example: 510
+            weight:
+              type: number
+              maxLength: 3
+              description: A measurement of a person's weight in pounds. The field is optional.
+              example: 195
+    stateIDResponse:
+      type: object
+      required:
+        - transactionId
+        - trust
+      properties:
+        transactionId:
+          type: string
+          description: Unique Identifier for the specific transaction.
+          example: fdkjs543-asdf23wdfs-asdf23
+          maxLength: 80
+        trust:
+          type: string
+          maxLength: 1
+          description: Yes (Y) or No (N) indicator representing if the results of the validation meet trust rules for credential verification.
+          enum:
+          - Y
+          - N
+        reasonCodes:
+          $ref: "#/components/schemas/reasonCodes"
+    reasonCodes:
+      type: object
+      properties:
+        name:
+          type: object
+          properties:
+            firstName:
+              description: First Name match indicator.
+              type: string
+              example: EX
+              maxLength: 2
+              enum:
+              - EX (Exact Match)
+              - FP (Not an exact primary match indicator)
+              - FA (Not an exact alternate match indicator)
+              - N (No match)
+              - NA (Not available)
+            lastName:
+              description: Last Name match indicator 
+              type: string
+              example: EX
+              maxLength: 2
+              enum:
+              - EX (Exact Match)
+              - FP (Not an exact primary match indicator)
+              - FA (Not an exact alternate match indicator)
+              - N (No match)
+              - NA (Not available)
+            middleName:
+              description: Middle Name match indicator.
+              type: string
+              example: EX
+              maxLength: 2
+              enum:
+              - EX (Exact Match)
+              - FP (Not an exact primary match indicator)
+              - FA (Not an exact alternate match indicator)
+              - N (No match)
+              - NA (Not available)
+            namesuffix:
+              description: Suffix Match Indicator.
+              type: string
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+        address:
+          type: object
+          properties:
+            streetAddress:
+              type: string
+              description: Street address match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            city:
+              type: string
+              description: City field of Address match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            zipCode:
+              type: string
+              description: State field of Address match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+        identification:
+          type: object
+          properties:
+            identificationId:
+              type: string
+              description: ID Number match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            issueDate:
+              type: string
+              description: Issue Date match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            expirationDate:
+              type: string
+              description: Expiration Date match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            dob:
+              type: string
+              description: Date of Birth match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+        additionalAttributes:
+          type: object
+          properties:
+            height:
+              type: string
+              description: Height match indicator.
+              maxLength: 1
+              example: Y
+              enum:
+              - Y
+              - N
+            weight:
+              type: string
+              description: Weight match indicator.
+              example: Y
+              maxLength: 1
+              enum:
+              - Y
+              - N
+            eyeColor:
+              type: string
+              description: Eye Color Match indicator.
+              example: Y
+              maxLength: 1
+              enum:
+              - Y
+              - N
+            gender:
+              type: string
+              description: Gener Match indicator.
+              example: Y
+              maxLength: 1
+              enum:
+              - Y
+              - N
+    
+  examples:
+    '400.01':
+      value:   
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+    '401.03':
+      value:   
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+    '403.01':
+      value:   
+        efxErrorCode: '403.01'
+        description: Access Denied.
+    '404.01':
+      value:   
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+    '415.01':
+      value:   
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+    '422.01':
+      value:   
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails:
+            errorCode: ID.V1001
+            developerMessage: Required field merchantId is missing
+            detailMessage: Field merchantId is missing from  request payload
+    '429.01':
+      value:   
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+    '500.01':
+      value:   
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+    '501.01':
+      value:   
+        efxErrorCode: '500.01'
+        description: Not implemented - Specified resource is not implemented.
+    '503.01':
+      value:   
+        efxErrorCode: '503.01'
+        description: Service is unavailable.  
+    '504.01':
+      value:   
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+    stateIdCardReq:
+      value:
+        merchantId: "merchant"
+        includeReasonCodes: "Y"
+        identity:
+          name:
+            firstName: "Steven"
+            lastName: "Brown"
+          address:
+            addressline1: "4301 Wilson Blvd"
+            city: "Arlington"
+            state: "VA"
+            zipCode: "22203"
+          identification:
+            idType: "1"
+            identificationId: "DLDVSTRUCTUREDTEST12"
+            issueDate: "10/10/2011"
+            expirationDate: "10/10/2023"
+            dob: "01/01/1980"
+          additionalAttributes:
+            height: "510"
+            weight: "195"
+            eyeColor: "BRO"
+            gender: "M"
+    stateIdCardRes:
+      value:
+        transactionId: 'fdkjs543-asdf23wdfs-asdf23'
+        trust: 'Y'
+        reasonCodes:
+          name:
+            firstName: 'EX'
+            lastName: 'EX'
+          address:
+            addressLine1: 'Y'
+            city: 'Y'
+            state: 'Y'
+            zipCode: 'Y'
+          identification:
+            identificationId: 'Y'
+            issueDate: 'Y'
+            expirationDate: 'Y'
+            dob: 'Y'
+          additionalAttribute:
+            height: 'Y'
+            weight: 'Y'
+            eyeColor: 'Y'
+            gender: 'Y'

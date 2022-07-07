@@ -1,0 +1,1584 @@
+openapi: 3.0.0
+info:
+  title: InstaTouch Identity API using last 4 SSN digits
+  description: |
+    # Introduction
+    The Identity API using last 4 SSN digits will identify, verify and return verified PII for prefill.
+    
+    The handshake call uses the ‘deviceIP’ to determine if the consumer's mobile is on a WiFi or mobile network. If the consumer is on the mobile network, the Header Enrichment and Update MDN calls are initiated. 
+    
+    Consumers on WiFi or when the Update MDN call returns "Error", the consumer should be prompted to input their mobile number to trigger the OTP to the mobile device. The OTP is entered into the User Interface (UI) to link the person to the mobile. Upon a successful response to the Validate OTP call and entry of the consumer's ZIP and last 4 SSN, the Consent call can be invoked. 
+
+
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    3. Make the **[Handshake call](#tag/Handshake-call)** to start a new API session including the "deviceIP" (‘deviceIP’ determines if the mobile is on the mobile network or WiFi).
+    4. Mobile Flow: 
+         - Make the "Header Enrichment" call from the mobile device.
+         - Make the **[Update MDN](#tag/Update-MDN)** call; if the update MDN call fails, then the consumer should be routed to the OTP process.
+    5. WiFi flow (OTP process) or "Error" Update MDN:
+        - **[Send OTP](#tag/sendOTP)**.
+        - **[Validate OTP](#tag/validateOTP)**.
+    6. Submit consumer's **[Consent](#tag/Consent)** to obtain their data.
+    7. Obtain consumer's **[Identity](#tag/Consumer-identity)**.
+    
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: v2
+servers:
+- url: https://api.sandbox.equifax.com/business/instatouch-identity/v2
+paths:
+  /user-sessions:
+    post:
+      tags:
+      - Handshake call
+      description: Initiate a new session with InstaTouch including the "deviceIP" which determines if the mobile is on the mobile network or WiFi. The Session ID generated in this call is used in subsequent calls. Next, invoke the mobile or WiFi flow.
+      operationId: Start initial handshake
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandshakeRequest'
+            examples:
+              User Sessions Request:
+                $ref: '#/components/examples/User_sessions_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HandshakeResponse'
+              examples:
+                User Sessions Response:
+                  $ref: '#/components/examples/User_sessions_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400HSErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/422ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+  /user-sessions/network-identifications:
+    post:
+      tags:
+      - Update MDN
+      description: |2
+
+        After the merchant mobile application initiates the Header Enrichment call, the merchant mobile application will invoke the Update MDN call to obtain the network status of the mobile device. 
+        
+        The Update MDN Call is used to check the “status” of the Header Enrichment call, returning a “status” value of ‘success’ or ‘error’. If 'success', proceed to the consent API; if 'error', invoke the OTP process.
+
+      operationId: Get network details
+      parameters:
+        - name: efx-sessionId
+          in: header
+          description: In addition to authentication headers, all requests must include the session ID.
+          required: true
+          schema:
+            type: string
+        
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMDNRequest'
+            examples:
+              Update MDN Request:
+                $ref: '#/components/examples/Update_mdn_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateMDNResponse'
+              examples:
+                Update MDN Response:
+                  $ref: '#/components/examples/Update_mdn_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+  /wifi-sessions/identity-verifications/one-time-passcodes/send:
+    post:
+      tags:
+      - sendOTP
+      description: |2
+
+        When the Update MDN call response returns a status "Error", an additional consumer verification step using a One Time Passcode (OTP) and mobile number entry is needed to retrieve an Identity.  The merchant application should redirect to this OTP/WiFi flow. The SendOTP API sends the OTP to the mobile device.
+      operationId: Send otp
+      parameters:
+        - name: efx-sessionId
+          in: header
+          description: In addition to authentication headers, all requests must include the session ID.
+          required: true
+       
+          schema:
+            type: string
+        
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+            examples:
+              Send OTP Request:
+                $ref: '#/components/examples/Send_otp_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpResponse'
+              examples:
+                Send OTP Response:
+                  $ref: '#/components/examples/Send_otp_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+  /wifi-sessions/identity-verifications/one-time-passcodes/validate:
+    post:
+      tags:
+      - validateOTP
+      description: |
+        The consumer receives the One Time Passcode (OTP) sent to their mobile device and enters it in the respective UI (User Interface) screen. The mobile client passes the OTP value using the Validate OTP Call.
+      operationId: Validate otp
+      parameters:
+        - name: efx-sessionId
+          in: header
+          description: In addition to authentication headers, all requests must include the session ID.
+          required: true
+       
+          schema:
+            type: string
+        
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateOtpRequest'
+            examples:
+              Validate OTP Request:
+                $ref: '#/components/examples/Validate_otp_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateOtpResponse'
+              examples:
+                Validate OTP Response:
+                  $ref: '#/components/examples/Validate_otp_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+  /user-sessions/user-consents:
+    post:
+      tags:
+      - Consent
+      description: |
+        Consumer consent is required to obtain PII data. The purpose of this API is to record the consumer’s choice to opt-in or opt-out for a specific API. The consent for each individual API (opt-in) is valid for one time use only.
+
+      operationId: Manage consent
+      parameters:
+        - name: efx-sessionId
+          in: header
+          description: In addition to authentication headers, all requests must include the session ID.
+          required: true
+       
+          schema:
+            type: string
+       
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRequest'
+            examples:
+              User consent Request:
+                $ref: '#/components/examples/User_consent_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+              examples:
+                User consent Response:
+                  $ref: '#/components/examples/User_consent_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+  /user-sessions/user-attributes:
+    post:
+      tags:
+      - Consumer identity
+      description: This method retrieves the identity of a consumer using their last 4 of SSN and ZIP code.
+      operationId: Retrieve consumer identity
+      parameters:
+        - name: efx-sessionId
+          in: header
+          description: In addition to authentication headers, all requests must include the session ID.
+          required: true
+          
+          schema:
+            type: string
+        
+      requestBody:
+        description: request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerIdentityRequest'
+            examples:
+              User Attributes Request:
+                $ref: '#/components/examples/User_att_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerIdentityResponse'
+              examples:
+                User Attributes Response:
+                  $ref: '#/components/examples/User_att_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                415.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/422ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity"]
+components:
+  schemas:
+    ConsumerIdentityResponse:
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        identity:
+          $ref: '#/components/schemas/Identity'
+    Address:
+      type: object
+      properties:
+        type:
+          maxLength: 50
+          type: string
+          description: Address type.
+          example: CURRENT
+        streetAddress:
+          maxLength: 100
+          type: string
+          description: Street address.
+          example: 5418 Villa Downs Ave
+        city:
+          maxLength: 100
+          type: string
+          description: City.
+          example: Decatur
+        state:
+          maxLength: 2
+          type: string
+          description: State.
+          example: GA
+        zipCode:
+          maxLength: 5
+          type: string
+          description: ZIP code.
+          example: "30030"
+    Authentication:
+      title: Unique identifying attributes of the consumer.
+      required:
+      - zipCode
+      type: object
+      properties:
+        zipCode:
+          maxLength: 5
+          type: string
+          description: The consumer’s 5-digit ZIP code. Mandatory parameter, this value will be used as additional identity verification. The mobile client should prompt the user for this value in the user interface.
+          example: "30030"
+        SSN:
+          maxLength: 4
+          type: string
+          description: Social Security Number. Mandatory parameter, the mobile client should prompt the user for this value in the user interface.
+          example: "0000"
+    ConsumerIdentityRequest:
+      required:
+      - authentication
+      - merchantId
+      - outputCode
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        outputCode:
+          maxLength: 2
+          type: string
+          description: |
+            Determines the elements that will be returned in identity response. The field value must be either EN or EN-PF.
+            EN returns the identification section (SSN & DOB) in the response message when available, while EN-PF will not return the identification section.
+          enum:
+          - EN
+          - EN-PF
+        authentication:
+          $ref: '#/components/schemas/Authentication'
+    Name:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        firstName:
+          maxLength: 50
+          type: string
+          description: First name.
+          example: Deanna
+        lastName:
+          maxLength: 50
+          type: string
+          description: Last name.
+          example: Reeder
+    OtpResponse:
+      required:
+      - instaTouch
+      - otpLifecycle
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          $ref: '#/components/schemas/OtpLifecycle'
+        instaTouch:
+          maxLength: 200
+          type: string
+          description: Next URL to call.
+          example: https://api.uat.equifax.com/business/instatouch-identity/v2/wifi-ssions/identity-verifications/one-time-passcodes/validate
+    ValidateOtpResponse:
+      required:
+      - instaTouch
+      - otpLifecycle
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          $ref: '#/components/schemas/OtpLifecycle'
+        instaTouch:
+          maxLength: 200
+          type: string
+          description: Next URL to call.
+          example: https://api.uat.equifax.com/business/instatouch-identity/v2/user-sessions/user-attributes
+    SendOtpRequest:
+      required:
+      - consumerIdentifier
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifier'
+    ConsumerAuthentication:
+      required:
+      - passcode
+      type: object
+      properties:
+        passcode:
+          maxLength: 20
+          type: string
+          description: Passcode.
+          example: 246864
+    ValidateOtpRequest:
+      required:
+      - consumerAuthentication
+      - consumerIdentifier
+      - merchantId
+      - otpLifecycle
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifier'
+        consumerAuthentication:
+          $ref: '#/components/schemas/ConsumerAuthentication'
+        otpLifecycle:
+          $ref: '#/components/schemas/OtpLifecycleValidate'
+    ConsumerIdentifier:
+      required:
+      - subjectIdentifier
+      - subjectType
+      type: object
+      properties:
+        subjectIdentifier:
+          maxLength: 50
+          type: string
+          description: Subject identifying value
+          example: "4041234567"
+        subjectType:
+          maxLength: 50
+          type: string
+          description: Subject type that indicates what the subjectIdentifier field represents.
+          example: MDN
+    ConsumerIdentifierConsent:
+      required:
+      - subjectIdentifier
+      - subjectType
+      type: object
+      properties:
+        subjectIdentifier:
+          maxLength: 50
+          type: string
+          description: Subject identifying value.
+          example: 81fef9abca404f1cb85546e1877415d5
+        subjectType:
+          maxLength: 50
+          type: string
+          description: Subject type that indicates what the subjectIdentifier field represents.
+          example: sessionId
+    OtpLifecycle:
+      required:
+      - transactionKey
+      type: object
+      properties:
+        status:
+          maxLength: 50
+          type: string
+          description: Status of request to send OTP to the device.
+          example: SUCCESS
+        transactionKey:
+          maxLength: 36
+          type: string
+          description: Unique transaction key of OTP send.
+          example: 2338EFA8-759C-4130-8882-B6E10D0862A2
+    OtpLifecycleValidate:
+      required:
+      - transactionKey
+      type: object
+      properties:
+        transactionKey:
+          maxLength: 36
+          type: string
+          description: Unique transaction key of OTP send.
+          example: 2338EFA8-759C-4130-8882-B6E10D0862A2
+    HandshakeResponse:
+      required:
+      - instaTouch
+      - sessionID
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        dateTime:
+          type: string
+          description: Date and time stamp of the response.
+          example: 2018-09-24T15:29:57.073+0000
+        sessionID:
+          maxLength: 32
+          type: string
+          description: A unique identifier, this must be passed in subsequent API calls. It has a Time To Live (TTL) value of 20 to 24 minutes.
+          example: 81fef9abca404f1cb85546e1877415d5
+        instaTouch:
+          maxLength: 200
+          type: string
+          description: Next URL to call
+          example: https://api.sandbox.equifax.com/business/instatouch-identity/v2
+        carrier:
+          maxLength: 50
+          type: string
+          description: Call back URL to authenticate and identify the mobile device with the carrier. This call has to be made from the application before you proceed with mobile identification steps mentioned below. If the user is on WiFi, the response won’t have this attribute coming back. In that case proceed with the OTP process.
+          example: https://<CARRIER URL>/zumhybrid/MDN_identification.jsp?OptInMethod=TCO&OptInTimestamp=1537366329338&OptInId=f260df9f832346f48b4ecdb383e7db33&sessionid=06a231af-802f-4380-a48b-cd358eee4fc6Z1020
+    HandshakeRequest:
+      required:
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        deviceIp:
+          type: string
+          description: The IP address of consumer's device. Use of the ‘deviceIP’ allows the call flow to omit the Header Enrichment Call and the Update MDN Call since the consumer is on WiFi.
+          example: '1.1.1.1'
+          maxLength: 16
+    ConsumerIdentity:
+      required:
+      - addresses
+      - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Consumer'
+        addresses:
+          type: array
+          description: List of addresses.
+          items:
+            $ref: '#/components/schemas/ConsumerAddress'
+    Consumer:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        firstName:
+          maxLength: 50
+          type: string
+          description: First Name.
+          example: Deanna
+        lastName:
+          maxLength: 50
+          type: string
+          description: Last Name.
+          example: Reeder
+    ConsumerAddress:
+      required:
+      - type
+      - streetAddress
+      - city
+      - state
+      - zipCode
+      type: object
+      properties:
+        type:
+          maxLength: 50
+          type: string
+          description: Address.
+          example: Current
+        streetAddress:
+          maxLength: 100
+          type: string
+          description: Street Address.
+          example: 5418 Villa Downs Ave
+        city:
+          maxLength: 100
+          type: string
+          description: City. 
+          example: Decatur
+        state:
+          maxLength: 2
+          type: string
+          description: State.
+          example: GA
+        zipCode:
+          maxLength: 5
+          type: string
+          description: ZIP Code.
+          example: 30030
+    UpdateMDNRequest:
+      required:
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+    UpdateMDNResponse:
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        status:
+          maxLength: 50
+          type: string
+          description: Status of the header enrichment call; Success or Error.
+          example: SUCCESS
+          enum:
+          - SUCCESS
+          - ERROR
+    ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This field is used when additional error details are available.
+    422ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+          example: 422.00
+        description:
+          type: string
+          example: Error From Target. Please refer additionalStatus for detailed description
+        additionalErrorDetails:
+          $ref: '#/components/schemas/422ErrorResponse_additionalErrorDetails'
+    400HSErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: HTTP Status Code to indicate more specific cause of the error.
+          example: 400
+        description:
+          type: string
+          example: Error From Target. Please refer additionalStatus for detailed description
+        additionalErrorDetails:
+          $ref: '#/components/schemas/400HSErrorResponse_additionalErrorDetails'
+    ConsumerConsent:
+      required:
+      - consentEvent
+      - consentEventDate
+      - consentForServices
+      - consentMethod
+      - consentType
+      type: object
+      properties:
+        consentEventDate:
+          type: string
+          description: The date and time the consent was acquired from the consumer. In ISO 8601 format, UTC-based.
+          format: date-time
+        consentEvent:
+          type: string
+          description: Type of consent event to distinguish if opt-in or opt-out.
+          example: opt-in
+          enum:
+          - opt-in
+          - opt-out
+        consentType:
+          type: string
+          description: The field should be populated with whitelist when a consumer views their consent language in a mobile app, online, or via a web service. Can be “whitelist” or “SMS”.
+          example: whitelist
+          enum:
+          - whitelist
+          - SMS
+        consentMethod:
+          type: string
+          description: |
+            The method used for opt-in and opt-out; required only if consentType is Whitelist.
+            
+            Valid values are: 
+            - TCO: Where the consumer gave consent by accepting terms and conditions online.
+            - TCP: Consent was given via terms and conditions on paper.
+            - MA: Consent was given via a mobile app. 
+            - Other: Another method that has been agreed with Equifax for acquiring consent from the consumer.
+            
+            Valid values for SMS are:
+            - Other: Another method that has been agreed with Equifax for acquiring consent from the consumer.
+          example: other
+        consentForServices:
+          type: array
+          description: Determines which services have received consent based on the API product.
+          items:
+            type: string
+            example: identity
+    ConsentResponse:
+      required:
+      - consumerIdentifier
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Transaction id.
+          example: b5e477bed68344edba18679598969ed1
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifierConsent'
+    ConsentRequest:
+      required:
+      - consumerConsent
+      - consumerIdentifier
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        consumerConsent:
+          $ref: '#/components/schemas/ConsumerConsent'
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifierConsent'
+    identity:
+          $ref: '#/components/schemas/Identity'
+    Identification:
+      type: object
+      properties:
+        ssn:
+          maxLength: 9
+          type: string
+          description: Social security number.
+          example: "666500000"
+        dob:
+          maxLength: 10
+          type: string
+          description: Date Of Birth. DOB year is returned when available.
+          example: 02/07
+      description: Unique identifying attributes of the consumer. This tag will be returned only when the output code is EN or AO.
+    Identity:
+      required:
+      - addresses
+      - name
+      type: object
+      properties:
+        id:
+          maxLength: 20
+          type: string
+          description: The unique ID assigned to the consumer as the identifier. Use this value as the unique ID for this consumer’s identity in all InstaTouch methods. 
+          example: "35086561084"
+        name:
+          $ref: '#/components/schemas/Name'
+        addresses:
+          type: array
+          description: Address
+          items:
+            $ref: '#/components/schemas/Address'
+        identification:
+          $ref: '#/components/schemas/Identification'
+        contact:
+          $ref: '#/components/schemas/Contact'
+    Contact:
+      type: object
+      properties:
+        emailAddress:
+          maxLength: 50
+          type: string
+          description: Email address, returned when available.
+          example: Dreeder@gmail.com
+        homePhone:
+          maxLength: 11
+          type: string
+          description: Home phone number, returned when available.
+          example: "4044190007"
+        mobile:
+          maxLength: 11
+          type: string
+          description: Mobile phone number.
+          example: "4041234567"
+    ConexsusId:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          maxLength: 19
+          type: number
+          description: Identity parameter previously obtained in identity call.
+          example: 391257280485
+    ConsumerIdentityMDNRequest:
+      required:
+      - authentication
+      - merchantId
+      - outputCode
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        outputCode:
+          maxLength: 2
+          type: string
+          description: Determines the elements that will be returned in identity response. Consumer’s input must be either EN or EN-PF. EN returns the identification section (SSN & DOB) in the response message when available, while EN-PF will not return the identification section.
+          enum:
+          - EN
+          - EN-PF
+        authentication:
+          $ref: '#/components/schemas/MDNAuthentication'
+    MDNAuthentication:
+      required:
+      - zipCode
+      type: object
+      properties:
+        zipCode:
+          maxLength: 5
+          type: string
+          description: The consumer’s 5-digit ZIP code. Mandatory parameter, this value will be used as additional identity verification. The mobile client should prompt the user for this value in the user interface.
+          example: "30030"
+        ssn:
+          type: string
+          description: Last 4 Social Security Number. Mandatory parameter, the mobile client should prompt the user for this value in the user interface.
+          example: "0000"
+        mdn:
+          type: string
+          description: MDN Base64 encoded.
+          example: NDY5NTEwNjI3MQ==
+    422ErrorResponse_additionalErrorDetails:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: IM.B2002
+        errorType:
+          type: string
+          example: identity_could_not_be_rendered
+        developerMessage:
+          type: string
+          example: Identity could not be completed. Please try again later.
+      description: This property is conditional when additional error details are available.
+    400HSErrorResponse_additionalErrorDetails:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: HS.V1001
+        developerMessage:
+          type: string
+          example: The field merchantId is invalid
+        errorType:
+          type: string
+          example: validation_error
+      description: This property is conditional when additional error details are available.
+  examples:
+    User_sessions_req:
+      value:
+        merchantId: efxtest
+        deviceIp: "1.1.1.1"
+    User_sessions_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        dateTime: 2018-09-24T15:29:57.073+0000
+        sessionID: 81fef9abca404f1cb85546e1877415d5
+        instaTouch: https://api.sandbox.equifax.com/business/instatouch-identity/v2
+        carrier: https://<CARRIER URL>/zumhybrid/MDN_identification.jsp?OptInMethod=TCO&OptInTimestamp=1537366329338&OptInId=f260df9f832346f48b4ecdb383e7db33&sessionid=06a231af-802f-4380-a48b-cd358eee4fc6Z1020
+    Update_mdn_req:
+      value:
+        merchantId: efxtest
+    Update_mdn_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        status: SUCCESS
+    User_consent_req:
+      value:
+        merchantId: efxtest
+        consumerConsent:
+          consentEventDate: 2018-09-11T14:00:19.195Z
+          consentEvent: opt-in
+          consentType: whitelist
+          consentMethod: TCO
+          consentForServices:
+          - identity
+        consumerIdentifier:
+          subjectIdentifier: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          subjectType: sessionId
+    User_consent_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        consumerIdentifier:
+          subjectType: SESSIONID
+          subjectIdentifier: ff55119ceb2e47c6bdf5e7f21a47d1c7
+    Send_otp_req:
+      value:
+        merchantId: efxtest
+        consumerIdentifier:
+          subjectIdentifier: "4041234567"
+          subjectType: MDN
+    Send_otp_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          status: Success
+          transactionKey: B1CBC6A0-A980-407B-9CEA-E50E46371B0F
+        instaTouch: https://api.uat.equifax.com/business/instatouch-identity/v2/wifi-ssions/identity-verifications/one-time-passcodes/validate
+    Validate_otp_req:
+      value:
+        merchantId: efxtest
+        consumerIdentifier:
+          subjectIdentifier: "4041234567"
+          subjectType: MDN
+        consumerAuthentication:
+          passcode: 246864
+        otpLifecycle:
+          transactionKey: B1CBC6A0-A980-407B-9CEA-E50E46371B0F
+    Validate_otp_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        otpLifecycle:
+          transactionKey: B1CBC6A0-A980-407B-9CEA-E50E46371B0F
+        instaTouch: abc.com
+    User_att_req:
+      value:
+        merchantId: efxtest
+        outputCode: EN
+        authentication:
+          zipCode: "30030"
+          ssn: "0000"
+    User_att_mdn_req:
+      value:
+        merchantId: efxtest
+        outputCode: EN
+        authentication:
+          zipCode: "30030"
+          ssn: "0000"
+          mdn: GTFsQAS32DEyNTl-
+    User_att_res:
+      value:
+        transactionId: b5e477bed68344edba18679598969ed1
+        identity:
+          id: "35086561084"
+          name:
+            firstName: Deanna
+            lastName: Reeder
+          addresses:
+          - type: CURRENT
+            streetAddress: 5418 Villa Downs Ave
+            city: Decatur
+            state: GA
+            zipCode: "30030"
+          identification:
+            ssn: "666500000"
+            dob: 02/07
+          contact:
+            emailAddress: Dreeder@gmail.com
+            homePhone: "4044790007"
+            mobile: "4041234567"
+    User_att_val_req:
+      value:
+        merchantId: efxtest
+        serviceType: ID
+        identity:
+          id: "35086561084"
+          name:
+            firstName: Deanna
+            lastName: Reeder
+          addresses:
+          - type: CURRENT
+            streetAddress: 5418 Villa Downs Ave
+            city: Decatur
+            state: GA
+            zipCode: "30030"
+          identification:
+            ssn: "666500000"
+            dob: 02/07
+          contact:
+            emailAddress: Dreeder@gmail.com
+            homePhone: "4044790007"
+            mobile: "4041234567"
+    400.01:
+      value:
+        efxErrorCode: "400.01"
+        description: Invalid JSON payload.
+    401.03:
+      value:
+        efxErrorCode: "401.03"
+        description: Invalid mandatory parameters.
+    403.01:
+      value:
+        efxErrorCode: "403.01"
+        description: Access Denied.
+    404.01:
+      value:
+        efxErrorCode: "404.01"
+        description: The specified resource does not exist.
+    415.01:
+      value:
+        efxErrorCode: "415.01"
+        description: Payload Format is in an Unsupported Format.
+    422.01:
+      value:
+        efxErrorCode: "422.01"
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    429.01:
+      value:
+        efxErrorCode: "429.01"
+        description: Exceeded the maximum number of requests within a specified time frame.
+    500.01:
+      value:
+        efxErrorCode: "500.01"
+        description: An internal error has occurred.
+    501.01:
+      value:
+        efxErrorCode: "501.01"
+        description: Not implemented - Specified resource is not implemented.
+    503.01:
+      value:
+        efxErrorCode: "503.01"
+        description: Service is unavailable.
+    504.01:
+      value:
+        efxErrorCode: "504.01"
+        description: Gateway timeout.
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer

@@ -1,0 +1,793 @@
+---
+openapi: "3.0.0"
+info:
+  description: "# Introduction\n  An innovative, anti-money laundering compliance\
+    \ service combining software, data and services into one comprehensive solution\
+    \ with a lower total cost of ownership. AML Connect provides an end-to-end cloud\
+    \ hosted compliance solution which combines differentiated data assets with market\
+    \ leading technology.\n  # Getting started\n\n\n1. **<a href=\"/user/user-apps\"\
+    \ target=\"_blank\">Subscribe</a>** to get API\ncredentials.\n\n2. **<a href=\"\
+    /oauth\" target=\"_blank\">Get an\naccess token</a>** using the credentials.\n\
+    \n3. **[AMLConnect Entity-Screenings](#tag/AMLConnect-entity-screenings)** \n\ \n"
+
+  contact:
+    name: "Equifax Developer Center Support"
+    url: "https://developer.equifax.com/contact"
+  version: "1.1"
+  title: "AML Connect"
+  x-apigee-id: "efx-usis-amlc-screenEntity"
+  termsOfService: ""
+servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: http://10.122.106.159/virts/efxus-nonprod/AML_Connect/1.1
+- description: "URL"
+  url: " https://api.sandbox.equifax.com/amlc/v1"
+paths:
+  /entity-screenings:
+    post:
+      tags:
+      - "AMLConnect-entity-screenings"
+      description: "Request to screen Person/Business/Vessel or Airplane against configured\
+        \ data sources"
+      operationId: "Amlconnect Realtime Service"
+      security:
+      - OAuth2.0:
+        - "scopes: https://api.equifax.com/business/amlc/v1/entity-screenings"
+      parameters:
+      - in: "header"
+        name: "efx-client-correlation-id"
+        description: "ID provided by client to uniquely track service request."
+        schema:
+          type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request"
+            examples:
+              request:
+                $ref: "#/components/examples/request"
+      responses:
+        "200":
+          description: "OK"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+              examples:
+                response:
+                  $ref: "#/components/examples/response"
+        "401":
+          description: "Authentication Error"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "401.01":
+                  $ref: "#/components/examples/401.01"
+        "405":
+          description: "Method Not Allowed"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "405.01":
+                  $ref: "#/components/examples/405.01"
+        "415":
+          description: "Unsupported Media Type"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "415.01":
+                  $ref: "#/components/examples/415.01"
+        "500":
+          description: "Internal Error"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "500.01":
+                  $ref: "#/components/examples/500.01"
+        "501":
+          description: "Internal Error"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "501.01":
+                  $ref: "#/components/examples/501.01"
+        "504":
+          description: "Unable to get a response"
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: "string"
+              description: "ID provided by client to uniquely track service request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIErrorResponse"
+              examples:
+                "504.01":
+                  $ref: "#/components/examples/504.01"
+components:
+  securitySchemes:
+    OAuth2.0:
+      type: "http"
+      scheme: "bearer"
+  schemas:
+    Request:
+      type: "object"
+      properties:
+        entity:
+          type: "object"
+          required:
+          - "entityId"
+          - "lastName"
+          properties:
+            entityId:
+              type: "string"
+              description: "Customer assigned unique ID for this entity.Shall uniquely\
+                \ identify each entity in customer's portfolio."
+              maxLength: 16
+              example: "8978390"
+            branch:
+              type: "string"
+              description: "Field for customer use. Customer branch name"
+              maxLength: 32
+              example: "Alpharetta"
+            accountNumber:
+              type: "string"
+              description: "Field for customer use. Consumer account number"
+              maxLength: 12
+              example: 158963258785
+            firstName:
+              type: "string"
+              description: "Required for Person record."
+              maxLength: 150
+              example: "Rodrigo Jose Ramon Francisco"
+            lastName:
+              type: "string"
+              description: "For a person record, field shall have the last name, for\
+                \ Business, Vessel or Airplane record field shall contain the full\
+                \ entity name."
+              maxLength: 288
+              example: "Carlos"
+            gender:
+              type: "string"
+              enum:
+              - "M"
+              - "F"
+              - " "
+              description: "consumer's gender"
+              maxLength: 1
+              example: "M"
+            birthCity:
+              type: "string"
+              description: "Birth city of the consumer"
+              maxLength: 32
+              example: "Atlanta"
+            birthCountry:
+              type: "string"
+              description: "Birth country of consumer, valid 2 byte ISO2 country code."
+              minLength: 2
+              maxLength: 2
+              example: "US"
+            birthDate:
+              type: "string"
+              description: "For Entity Type =P, Date of Birth in YYYYMMDD format.\
+                \ If only year is knowm, - YYYY0101, If yearand month are known -\
+                \ YYYYMM01."
+              minLength: 8
+              maxLength: 8
+              example: "19000101"
+            address:
+              type: "string"
+              description: "Address including House Number, Street Name, Street Type,\
+                \ Apt/Suite,  append space and add City."
+              maxLength: 156
+              example: "101 Main Street,Suite 100 Atlanta"
+            stateOrProvince:
+              type: "string"
+              description: "Entity's us state code or foreign provinces."
+              maxLength: 28
+              example: "GA"
+            addressCountryCode:
+              type: "string"
+              description: "Valid 2 byte ISO2 country code"
+              minLength: 2
+              maxLength: 2
+              example: "US"
+            postalCode:
+              type: "string"
+              description: "Entity's Valid 5 or 9 digit US Zip Code or Foreign postal\
+                \ code"
+              maxLength: 71
+              example: 30338
+            federalId:
+              type: "string"
+              description: "US Specific field, shall have US SSN or Tax ID number."
+              maxLength: 17
+              example: 123456789
+            federalIdCountryCode:
+              type: "string"
+              title: "US Specific field, shall have valid 2 byte ISO2 country code\
+                \ - US"
+              minLength: 2
+              maxLength: 2
+              example: "US"
+            riskClass:
+              type: "string"
+              description: "Customer provided risk classification."
+              maxLength: 10
+              example: "high risk"
+            customFields:
+              type: "array"
+              description: "The Customfields Schema. The following keys are expected"
+              items:
+                type: "object"
+                required:
+                - "key"
+                - "value"
+                properties:
+                  key:
+                    type: "string"
+                    enum:
+                    - "entityType"
+                    - "customerId"
+                    - "accountOpenDate"
+                    - "prefix"
+                    - "suffix"
+                    - "birthCountryName"
+                    - "city"
+                    - "stateOrProvince1"
+                    - "stateOrProvince2"
+                    - "addressCountryName"
+                    - "federalIdType"
+                    - "federalIdCountryName"
+                    - "nationalIdNumber"
+                    - "nationalIdtype"
+                    - "nationalIdCountryName"
+                    - "driverLicense"
+                    - "driverLicenseCountryName"
+                    - "passportNumber"
+                    - "passportCountryName"
+                    - "otherVerificationNumber"
+                    - "otherVerificationType"
+                    - "otherVerificationCountryName"
+                    - "profession"
+                    - "comment1"
+                    - "comment2"
+                    - "email"
+                    - "phoneNumber"
+                    - "channel"
+                    - "channelSource"
+                    description: "The values of key element are listed below ,the\
+                      \ value element should contain corresponding data. \n * entityType*\
+                      \ - Entity type that needs to be screened. Valid Values-  Business\
+                      \ - E,Person - P,Vessel - V,Airplane - A.\n * customerId --\
+                      \ Field for customer use to track their consumers. Maps to EDD\
+                      \ ID for legacy customrs.\n * accountOpenDate -- Field for customer\
+                      \ use. Customer account opening Date in YYYYMMDD format.\n *\
+                      \ prefix --Prefix for the Person record if any. \n * suffix\
+                      \ --suffix for the Person record if any. \n * birthCountryName\
+                      \ -- Birth country name for the code provided in the field birthCountry.\n\
+                      \ * stateOrProvince1 -- Extension field to stateorProvince in\
+                      \ entity tag. To be used if more than 28 char are required.\
+                      \ Shall have  US state or foreign province\n * stateOrProvince2\
+                      \ -- Extension field to stateorProvince1 in entity tag. To be\
+                      \ used if more than 72 char are required.US state or foreign\
+                      \ province\n * addressCountryName --Entity address country name\
+                      \ .\n * federalIdType -- US Specific field, Federal ID type\
+                      \ associated with the Federal ID number provided.Valid Values\
+                      \ S- SSN, T - Tax ID\n * federalIdCountryName -- US Specific\
+                      \ field, valid value - United States of America\n * nationalIdNumber--\
+                      \  National ID number for a country other than US. Format should\
+                      \ be  (2 byte iso countrycode + space + nationalId number)\n\
+                      \ * nationalIdtype --  National id type\n * nationalIdCountryName\
+                      \ -- National Id issuing country \n * driverLicense --driver's\
+                      \ license number,format should be  (2 byte iso countrycode +\
+                      \ space + driverLicense number)\n * driverLicenseCountryName\
+                      \ --driver's license issuing  country name \n * passportNumber\
+                      \ --  passport number, format should be  (2 byte iso countrycode\
+                      \ + space + passport number)\n * passportCountryName -- Passport\
+                      \ issuing country name\n * otherVerificationNumber --  entity's\
+                      \ ID Number for ID type other than DL or Passport, format should\
+                      \ be  (2 byte iso countrycode + space + other verification Id)\n\
+                      \ * otherVerificationType -- entity's other verification type\n\
+                      \ * otherVerificationCountryName -- entity's ID issuing country\n\
+                      \ * profession -- consumer profession \n * comment1 -- Customer\
+                      \ comments\n * comment2 -- Customer comments\n * email -- entity\
+                      \ email id \n * phoneNumber-- entity phoneNumber\n * channelSource\
+                      \ -- Source of the request . External customer must send as\
+                      \ \"CUSTOMER\".\n"
+                    maxLength: 64
+                  value:
+                    type: "string"
+                    description: "The Value Schema"
+                    maxLength: 64
+                    example: "V"
+    Response:
+      type: "object"
+      properties:
+        return:
+          type: "object"
+          properties:
+            returnCode:
+              type: "integer"
+              description: "return code is always 0 for success response"
+            asyncInfo:
+              type: "boolean"
+              description: "its populating as true."
+            personResult:
+              $ref: "#/components/schemas/PersonResult"
+    PersonResult:
+      type: "object"
+      description: "person results against datastore"
+      properties:
+        entityId:
+          type: "string"
+          description: "Customer assigned unique ID for this entity.Shall be repeated\
+            \ from the request."
+          example: 123456
+        status:
+          type: "string"
+          description: "Status of person with these values.  \n * check -- Hits in\
+            \ check process. Person has to be checked in Case Management. \n * inconspic\
+            \ -- No hit found in any watchlist. \n * release -- A potential match\
+            \ marked as false positive in Case Management. \n * lock -- Person classified\
+            \ in Case Management as a hit. \n * dcrelease -- Person was classified\
+            \ by first 4-AP-auditor in Case Management as no hit. \n * dcblock --\
+            \ Person was classified by first 4-AP auditor in Case Management as a\
+            \ hit. \n * pending -- Person in Case Management postponed. \n * no status\
+            \ -- Person ID not found. \n"
+          example: "Check"
+        comment:
+          type: "string"
+          description: "Text of edit comment from Case Management"
+          example: "Match found on sanctions list"
+        hitValueEmb:
+          type: "integer"
+          description: "The hit value for sanctions and other watchlist"
+          example: 100
+        hitValuePep:
+          type: "integer"
+          description: "The hit value for pep and rca list"
+          example: 100
+        pstatusDet:
+          type: "string"
+          description: "Hit classification. \n1. E- Embargo Hit. \n2. P - PEP Hit.\
+            \ \n"
+          example: "P"
+        reasons:
+          type: "array"
+          items:
+            description: "field is defined for future use"
+        personDetailResult:
+          $ref: "#/components/schemas/PersonDetailResult"
+        intermediateScoreResult:
+          $ref: "#/components/schemas/IntermediateScoreResult"
+    PersonDetailResult:
+      type: "object"
+      description: "Object with detailed information, that is filled out, when a scoring\
+        \ method is executed"
+      properties:
+        listMatches:
+          type: "array"
+          description: "WatchList hit. Array contains an entry for each Truelist."
+          items:
+            type: "object"
+            description: "WatchList hit. Array contains an entry for each true list."
+            properties:
+              score:
+                type: "string"
+                description: "Score of the WatchList entry"
+                example: 100
+              SlInstitutsId:
+                type: "string"
+              SlListName:
+                type: "string"
+                description: "Partial ID to identify the entry in the WatchList. WatchList\
+                  \ name"
+                example: "Rodrigo Jose Carlos"
+              SlId:
+                type: "string"
+                description: "Source reference id"
+                example: "OFACSDN1234"
+              hits:
+                $ref: "#/components/schemas/HitWord"
+              watchListData:
+                $ref: "#/components/schemas/watchListData"
+        brMatches:
+          $ref: "#/components/schemas/BusinessRuleMatch"
+    watchListData:
+      type: "object"
+      properties:
+        slAddresses:
+          type: "object"
+          properties:
+            country:
+              type: "string"
+              example: "US"
+        slBirths:
+          type: "object"
+          properties:
+            birthDate:
+              type: "string"
+              example: 19000101
+            country:
+              type: "string"
+              example: "US"
+            place:
+              type: "string"
+              example: "Atlanta"
+        slCitizs:
+          type: "object"
+          properties:
+            country:
+              type: "string"
+              example: "US"
+        slCustom:
+          type: "object"
+          properties:
+            key:
+              type: "string"
+              enum:
+              - "Jurisdiction"
+              - "Occupation"
+              - "Description1"
+              - "Description2"
+              - "Deceased"
+              - "Images"
+              - "Active Status"
+              - "Roles"
+              - "Sources"
+              - "Notes"
+              - "References"
+              - "InactiveAsPEP"
+              - "DirectID"
+              - "EntryCategory"
+              - "EntrySubCategory"
+              - "TouchDate"
+              - "Remarks"
+              - "EntLevel"
+              - "Positions"
+              - "SourceWebLink"
+              - "NameSource"
+              description: "* Jurisdiction -- Jurisdiction country of the politically\
+                \ exposed person\n* Occupation -- Occupation category of the politically\
+                \ exposed person\n* Description1\n* Description2\n* Deceased -- Deceased\
+                \ indicator for the PEP\n* Images\n* Active Status --  Identifies\
+                \ if the profile is active\n* Roles\n* Sources\n* Notes\n* References\n\
+                * InactiveAsPEP --  Identifies if the profile is active\n* DirectID\n\
+                * EntryCategory -- Entry category for the data as classified by the\
+                \ provider\n* EntrySubCategory -- Entry sub category for the data\
+                \ as classified by the provider\n* TouchDate\n* Remarks\n* EntLevel\
+                \ -- Level of exposure for the politically exposed person\n* Positions\
+                \ -- Position or Title of the entity\n* SourceWebLink\n* NameSource\
+                \ -- Value assigned by data provider   \n"
+            value:
+              type: "string"
+              example: null
+        slNames:
+          type: "object"
+          properties:
+            firstName:
+              type: "string"
+              example: "Rodrigo Juan"
+            lastName:
+              type: "string"
+              example: "Carlos"
+            middleName:
+              type: "string"
+              example: null
+        slPassNos:
+          type: "object"
+          properties:
+            passNo:
+              type: "string"
+              example: "V12345"
+        slRelations:
+          type: "object"
+          properties:
+            expired:
+              type: "string"
+              example: "N"
+            relatedId:
+              type: "string"
+              example: "DJ12345"
+            fullname:
+              type: "string"
+              example: "Rodrigo Carlos"
+            relation:
+              type: "string"
+              example: "Son"
+        disclaimer:
+          type: "string"
+          example: "The alerts or reports delivered from use of the AMLConnect Services\
+            \ (\\\"Alerts\\\") are indicators that the person or entity (or country\
+            \ associated with such person or entity) may be listed on one or more\
+            \ government maintained lists of persons subject to economic sanctions,\
+            \ that may hold U.S. or foreign prominent public functions, or based on\
+            \ a search of publicly available data, and are based on information that\
+            \ was not collected, in whole or in part, for the purpose of serving as\
+            \ a factor in establishing a consumer's eligibility for credit or insurance\
+            \ to be used primarily for personal, family or household purposes, employment,\
+            \ or any other purpose authorized under the FCRA. The Alerts may not apply\
+            \ to the person or entity that is being considered by Client. Before taking\
+            \ any action based on the Alerts, Client shall implement and follow its\
+            \ own procedures to resolve whether the person or entity being considered\
+            \ by Client matches the subject of the Alert and is subject to the applicable\
+            \ regulation, sanction or information, including contacting the appropriate\
+            \ government agency for confirmation and instructions. The Alerts may\
+            \ not be used to determine an individual's eligibility for credit, insurance\
+            \ or any other purpose authorized under the FCRA"
+    HitWord:
+      type: "object"
+      description: "True words."
+      properties:
+        fieldId:
+          type: "string"
+          description: "Field on which the match was found"
+          example: "First Name"
+        matchedWord:
+          type: "string"
+          description: "Found word"
+          example: "Rodrigo"
+        searchedWord:
+          type: "string"
+          description: "Searched word."
+          example: "Rodrigo"
+        score:
+          type: "integer"
+          description: "Match score of the watchlist entry"
+          example: 100
+    BusinessRuleMatch:
+      type: "object"
+      description: "brmatch is under persondetailed result section of the response.\
+        \ In the document, its marked under hits section"
+      properties:
+        brId:
+          type: "string"
+          description: "ID of the business rule that triggered the hit."
+          example: 1234
+        brDescription:
+          type: "string"
+          description: "Description of the business rule."
+          example: "firstname"
+        brPrePost:
+          type: "string"
+          description: "Specifies whether the business rule is run before matching\
+            \ with the WatchLists(value = PRE) or after (value = POST)."
+          example: "POST"
+        brAction:
+          type: "string"
+          description: "Performed action\n1. B = lock \n2. F = release \n3. L = skip\
+            \ pattern check (WatchList check \n4. P = skip post-business rule \n5.\
+            \ 4 = enable dual control \n6. 2 = disable dual control \n"
+          example: "B"
+    IntermediateScoreResult:
+      type: "object"
+      description: "Saved scenario variables."
+      properties:
+        internalName:
+          type: "string"
+          description: "Name of the stored index variable"
+          example: "Roles"
+        value:
+          type: "string"
+          description: "Value of the stored index variable"
+          example: "primary occupation"
+    APIErrorResponse:
+      type: "object"
+      required:
+      - "efxErrorCode"
+      - "description"
+      properties:
+        efxErrorCode:
+          type: "number"
+          description: "Code to indicate more specific cause of the error."
+          example: 0
+        description:
+          type: "string"
+          example: "string"
+        additionalErrorDetails:
+          type: "object"
+          description: "This property is conditionally added when additional error\
+            \ details are available."
+          properties:
+            timeStamp:
+              type: "string"
+              example: 1566987677
+            correlation_id:
+              type: "string"
+              example: 9897809
+            transaction_id:
+              type: "string"
+              example: 8976578
+            messages:
+              type: "object"
+              properties:
+                error_code:
+                  type: "string"
+                  description: "error code"
+                  example: 600
+                error_message:
+                  type: "string"
+                  description: "Error description"
+                  example: "please contact"
+  examples:
+    request:
+      value:
+        entity:
+          entityId: "7894PP15912"
+          branch: "Alpharetta"
+          accountNumber: "158963258785"
+          firstName: "Rodrigo Jose Ramon Francisco"
+          lastName: "Carazo Odio"
+          gender: "M"
+          birthCity: "Atlanta"
+          birthCountry: "US"
+          birthDate: "19000101"
+          address: "1505 Windward Concourse Alpharetta"
+          addressCountryCode: "US"
+          stateOrProvince: "GA"
+          postalCode: "30005"
+          federalId: "123456789"
+          federalIdCountryCode: "US"
+          riskClass: "high risk"
+          customFields:
+          - key: "entityType"
+            value: "P"
+          - key: "customerId"
+            value: "12345"
+    response:
+      value:
+        return:
+          returnCode: 0
+          asyncInfo: true
+          personResult:
+            entityId: "Test001test11147"
+            status: "Check"
+            comment: "Match found on sanctions list"
+            reasons: []
+            hitValueEmb: 100
+            hitValuePep: 100
+            pstatusDet: "P"
+            personDetailResult:
+              listMatches:
+                score: 100
+                SlInstitutsId: -1
+                SlListName: "DJPEP"
+                SlId: "OFACSDN1234"
+                hits:
+                  fieldId: "First Name"
+                  matchedWord: "Rodrigo"
+                  searchedWord: "Rodrigo"
+                  score: 100
+                watchListData:
+                  slAddresses:
+                    country: "US"
+                  slBirths:
+                    birthDate: 19000101
+                    country: "US"
+                    place: "Atlanta"
+                  slCitizs:
+                    country: "US"
+                  slCustom:
+                    key: "Jurisdiction"
+                    value: null
+                  slNames:
+                    firstName: "Rodrigo Juan"
+                    lastName: "Carlos"
+                    middleName: null
+                  slPassNos:
+                    passNo: "V12345"
+                  slRelations:
+                    expired: "N"
+                    relatedId: "DJ12345"
+                    fullname: "Rodrigo Carlos"
+                    relation: "Son"
+                disclaimer: "The alerts or reports delivered from use of the AMLConnect\
+                  \ Services (\\\"Alerts\\\") are indicators that the person or entity\
+                  \ (or country associated with such person or entity) may be listed\
+                  \ on one or more government maintained lists of persons subject\
+                  \ to economic sanctions, that may hold U.S. or foreign prominent\
+                  \ public functions, or based on a search of publicly available data,\
+                  \ and are based on information that was not collected, in whole\
+                  \ or in part, for the purpose of serving as a factor in establishing\
+                  \ a consumer's eligibility for credit or insurance to be used primarily\
+                  \ for personal, family or household purposes, employment, or any\
+                  \ other purpose authorized under the FCRA. The Alerts may not apply\
+                  \ to the person or entity that is being considered by Client. Before\
+                  \ taking any action based on the Alerts, Client shall implement\
+                  \ and follow its own procedures to resolve whether the person or\
+                  \ entity being considered by Client matches the subject of the Alert\
+                  \ and is subject to the applicable regulation, sanction or information,\
+                  \ including contacting the appropriate government agency for confirmation\
+                  \ and instructions. The Alerts may not be used to determine an individual's\
+                  \ eligibility for credit, insurance or any other purpose authorized\
+                  \ under the FCRA"
+              brMatches:
+                brId: 1234
+                brDescription: "firstname"
+                brPrePost: "POST"
+                brAction: "B"
+            intermediateScoreResult:
+              internalName: "Roles"
+              value: "primary occupation"
+    "400.00":
+      value:
+        efxErrorCode: "400.00"
+        description: "Bad Request."
+        additionalErrorDetails:
+          timeStamp: 1569858242565
+          messages:
+            error_code: null
+            error_message: null
+    "401.01":
+      value:
+        efxErrorCode: "401.01"
+        description: "Unauthorized."
+    "405.01":
+      value:
+        efxErrorCode: "405.01"
+        description: "Method Not Allowed."
+    "415.01":
+      value:
+        efxErrorCode: "415.01"
+        description: "Payload Format is in an Unsupported Format."
+    "500.01":
+      value:
+        efxErrorCode: "500.01"
+        description: "An internal error has occurred."
+    "501.01":
+      value:
+        efxErrorCode: "501.01"
+        description: "Not-implemented - Specified resource is not implemented."
+    "503.01":
+      value:
+        efxErrorCode: "503.01"
+        description: "Service is un-available."
+    "504.01":
+      value:
+        efxErrorCode: "504.01"
+        description: "Gateway timeout."

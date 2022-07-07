@@ -1,0 +1,535 @@
+{
+ "openapi": "3.0.1",
+ "info": {
+  "title": "AlternateData",
+  "version": "v1",
+  "description": "# Introduction\n The purpose of this API is to register a consumer, by intaking all the consumer details & creating a TID(Transaction ID) & returning TID in response as acknowledgement.\n"
+ },
+ "servers": [
+  {
+   "url": "https://api.sandbox.equifax.com/business/bankingandlending/v1"
+  }
+ ],
+ "tags": [
+  {
+   "name": "BTDAPI",
+   "description": "Use this API to register consumer and process asset verification"
+  }
+ ],
+ "paths": {
+  "/user-registrations": {
+   "post": {
+    "tags": [
+     "BTDAPI"
+    ],
+    "summary": "User Registration API with Equifax",
+    "operationId": "verifyAssetRegistration_1",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AssetVerificationOrderRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successfully registered Asset",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/BTDBaseResponse"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "Bad Request",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        },
+        "examples": {
+         "400.01": {
+          "$ref": "#/components/examples/400.01"
+         }
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "Accessing the resource you were trying to reach is forbidden",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        },
+        "examples": {
+         "404.01": {
+          "$ref": "#/components/examples/403.01"
+         }
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "Not Found",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        },
+        "examples": {
+         "404.01": {
+          "$ref": "#/components/examples/404.01"
+         }
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "Internal Server Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        },
+        "examples": {
+         "500.01": {
+          "$ref": "#/components/examples/500.01"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "BTDBaseResponse": {
+    "type": "object",
+    "properties": {
+     "status": {
+      "type": "string",
+      "description": "Given first name"
+     },
+     "message": {
+      "type": "string",
+      "description": "Given first name"
+     },
+     "statusCode": {
+      "type": "string",
+      "description": "Given first name"
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "required": [
+     "efxErrorCode",
+     "description"
+    ],
+    "properties": {
+     "efxErrorCode": {
+      "type": "number",
+      "description": "Code to indicate more specific cause of the error."
+     },
+     "description": {
+      "type": "string"
+     },
+     "additionalErrorDetails": {
+      "$ref": "#/components/schemas/additionalErrorDetails"
+     }
+    }
+   },
+   "additionalErrorDetails": {
+    "type": "object",
+    "description": "This property is conditionally added when additional error details are available.",
+    "properties": {
+     "statusCode": {
+      "type": "number",
+      "description": "Product Error code."
+     },
+     "statusMsg": {
+      "type": "string",
+      "description": "Product Error Code Description."
+     }
+    }
+   },
+   "Destination": {
+    "type": "object",
+    "properties": {
+     "to": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cc": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "bcc": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "EmailParameters": {
+    "type": "object",
+    "properties": {
+     "tid": {
+      "type": "string"
+     },
+     "reportId": {
+      "type": "string"
+     },
+     "destination": {
+      "$ref": "#/components/schemas/Destination"
+     },
+     "emailType": {
+      "type": "string"
+     }
+    }
+   },
+   "Address": {
+    "type": "object",
+    "description": "Borrower Address",
+    "properties": {
+     "apartmentNumber": {
+      "type": "string",
+      "description": "Apartment Number",
+      "example": "234"
+     },
+     "streetName": {
+      "type": "string",
+      "description": "StreetName",
+      "example": "EliteLane"
+     },
+     "addressLine1": {
+      "type": "string",
+      "description": "AddressLine",
+      "example": "123"
+     },
+     "addressLine2": {
+      "type": "string",
+      "description": "AddressLine",
+      "example": "Exit 10"
+     },
+     "city": {
+      "type": "string",
+      "description": "City",
+      "example": "Alpharetta"
+     },
+     "state": {
+      "type": "string",
+      "description": "State",
+      "example": "Georgia"
+     },
+     "zip": {
+      "type": "string",
+      "description": "Zip",
+      "example": "300005"
+     },
+     "country": {
+      "type": "string",
+      "description": "Country",
+      "example": "United States"
+     }
+    }
+   },
+   "AssetVerificationOrderRequest": {
+    "type": "object",
+    "properties": {
+     "lender": {
+      "$ref": "#/components/schemas/Lender"
+     },
+     "product": {
+      "$ref": "#/components/schemas/Product"
+     },
+     "borrower": {
+      "$ref": "#/components/schemas/Borrower"
+     },
+     "autoRegister": {
+      "type": "string",
+      "description": "Autoregister 'yes'(embedded flow), Autoregister 'no'(Email flow)",
+      "example": "yes"
+     },
+     "applicationType": {
+      "type": "string",
+      "description": "what kind of loan/mortgage",
+      "example": "mortgage"
+     },
+     "applicationSubType": {
+      "type": "string",
+      "description": "Type of loan/mortgage",
+      "example": "housing"
+     }
+    }
+   },
+   "Borrower": {
+    "type": "object",
+    "properties": {
+     "firstName": {
+      "type": "string",
+      "description": "Borrower First Name",
+      "example": "Tom"
+     },
+     "middleName": {
+      "type": "string",
+      "description": "Borrower Middle Name",
+      "example": "Mag"
+     },
+     "lastName": {
+      "type": "string",
+      "description": "Borrower Last Name",
+      "example": "Matthew"
+     },
+     "ssn": {
+      "type": "string",
+      "description": "Borrower SSN Number",
+      "example": "123456"
+     },
+     "suffix": {
+      "type": "string",
+      "description": "Borrower Suffix",
+      "example": "Jr"
+     },
+     "emailAddress": {
+      "type": "string",
+      "description": "Borrower Email Address",
+      "example": "test1@gmail.com"
+     },
+     "dateOfBirth": {
+      "type": "string",
+      "description": "Borrower Date Of Birth",
+      "example": "July-29-2001"
+     },
+     "address": {
+      "$ref": "#/components/schemas/Address"
+     },
+     "contactDetail": {
+      "type": "array",
+      "description": "Borrower Contact Details",
+      "items": {
+       "$ref": "#/components/schemas/ContactDetail"
+      }
+     }
+    }
+   },
+   "ContactDetail": {
+    "type": "object",
+    "properties": {
+     "type": {
+      "type": "string",
+      "description": "Home/Work/Fax",
+      "example": "Home"
+     },
+     "value": {
+      "type": "string",
+      "description": "Number/Value",
+      "example": "670-383-2345"
+     }
+    },
+    "description": "Borrower Contact Details"
+   },
+   "Lender": {
+    "required": [
+     "loginAccountIdentifier",
+     "requestingPartyName"
+    ],
+    "type": "object",
+    "properties": {
+     "submittingPartyname": {
+      "type": "string",
+      "description": "who is submitting request on behalf of requesting party",
+      "example": "Core Logic"
+     },
+     "requestingPartyName": {
+      "type": "string",
+      "description": "who is requesting for VOA",
+      "example": "Bank Of America"
+     },
+     "lenderType": {
+      "type": "string",
+      "description": "Direct/Third Party",
+      "example": "Direct"
+     },
+     "loginAccountIdentifier": {
+      "type": "string",
+      "description": "Ops view Account number",
+      "example": "999ATALX"
+     },
+     "refreshPeriod": {
+      "type": "string",
+      "description": "Duration of period to request the same request within this time",
+      "example": "90"
+     },
+     "triggerEmail": {
+      "type": "string",
+      "description": "Yes(Conversations go through emails)/No",
+      "example": "Y"
+     },
+     "referenceNumber": {
+      "type": "string",
+      "example": "MRTG55643"
+     },
+     "endUserName": {
+      "type": "string",
+      "description": "Who's submitting this request",
+      "example": "Tom"
+     },
+     "lenderEmails": {
+      "type": "array",
+      "description": "Lender Email",
+      "example": "Test123@gmail.com",
+      "items": {
+       "type": "string",
+       "description": "Lender Email",
+       "example": "Test123@gmail.com"
+      }
+     }
+    }
+   },
+   "Product": {
+    "required": [
+     "actionType",
+     "productName"
+    ],
+    "type": "object",
+    "properties": {
+     "productName": {
+      "type": "string",
+      "description": "VOA(Validation of Asset)",
+      "example": "VOA"
+     },
+     "reportType": {
+      "type": "string",
+      "description": "PDF"
+     },
+     "actionType": {
+      "type": "string",
+      "description": "refresh(TransactionId should be mandatory), cancel(TransactionId should be mandatory) and submit(TransactionId is not mandatory)",
+      "example": "Submit"
+     },
+     "numberOfDays": {
+      "type": "string",
+      "description": "For how many days the report should be",
+      "example": "30"
+     },
+     "transactionId": {
+      "type": "string",
+      "description": "the Id which we provide after registring the Borrower"
+     },
+     "callbackURL": {
+      "type": "string",
+      "description": "The URL is used to send the client report"
+     }
+    }
+   },
+   "RegistrationRequest": {
+    "type": "object",
+    "properties": {
+     "firstName": {
+      "type": "string"
+     },
+     "lastName": {
+      "type": "string"
+     },
+     "middleName": {
+      "type": "string"
+     },
+     "suffix": {
+      "type": "string"
+     },
+     "email": {
+      "type": "string"
+     },
+     "mtid": {
+      "type": "string"
+     },
+     "tid": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "examples": {
+   "400.01": {
+    "value": {
+     "efxErrorCode": "400.01",
+     "description": "Invalid JSON payload."
+    }
+   },
+   "401.03": {
+    "value": {
+     "efxErrorCode": "401.03",
+     "description": "Invalid mandatory parameters."
+    }
+   },
+   "403.01": {
+    "value": {
+     "efxErrorCode": "403.01",
+     "description": "Access Denied."
+    }
+   },
+   "404.01": {
+    "value": {
+     "efxErrorCode": "404.01",
+     "description": "The specified resource does not exist."
+    }
+   },
+   "415.01": {
+    "value": {
+     "efxErrorCode": "415.01",
+     "description": "Payload Format is in an Unsupported Format."
+    }
+   },
+   "422.01": {
+    "value": {
+     "efxErrorCode": "422.01",
+     "description": "Unprocessable Entity.",
+     "additionalErrorDetails": {}
+    }
+   },
+   "429.01": {
+    "value": {
+     "efxErrorCode": "429.01",
+     "description": "Exceeded the maximum number of requests within a specified time frame."
+    }
+   },
+   "500.01": {
+    "value": {
+     "efxErrorCode": "500.01",
+     "description": "An internal error has occurred."
+    }
+   },
+   "501.01": {
+    "value": {
+     "efxErrorCode": "501.01",
+     "description": "Not-implemented - Specified resource is not implemented."
+    }
+   },
+   "503.01": {
+    "value": {
+     "efxErrorCode": "503.01",
+     "description": "Service is un-available."
+    }
+   },
+   "504.01": {
+    "value": {
+     "efxErrorCode": "504.01",
+     "description": "Gateway timeout."
+    }
+   }
+  }
+ }
+}

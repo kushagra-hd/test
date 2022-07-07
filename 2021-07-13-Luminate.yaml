@@ -1,0 +1,4566 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+      Luminate is a real-time fraud management platform that combines machine learning, advanced analytics and intelligent orchestration to mitigate fraud. With Luminate, our customers are able to better assess risk, while substantially increasing acceptance, reduce fraud losses and gain operational efficiencies.
+      # Getting started
+
+
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API
+    credentials.
+
+    2. **<a href="/oauth" target="_blank">Get an
+    access token</a>** using the credentials.
+
+    3. **[LuminateFraudRiskForCommercial](#tag/LuminateFraudRiskForCommercial)**
+    4. **[LuminateFraudRiskForConsumer](#tag/LuminateFraudRiskForConsumer)**
+    5. **[LuminateFraudRiskCommercialUpdate](#tag/LuminateFraudRiskCommercialUpdate)**
+    6. **[LuminateFraudRiskConsumerUpdate](#tag/LuminateFraudRiskConsumerUpdate)**
+    7. **[LuminateFraudRiskFeedback](#tag/LuminateFraudRiskFeedback)**
+    8. **[LuminateFraudRiskBlocklist](#tag/LuminateFraudRiskBlocklist)**
+
+
+  contact:
+    name: Equifax Developer Center Support
+    url: 'https://developer.equifax.com/contact'
+  version: "1.0.0"
+  title: Luminate
+  termsOfService: ''
+servers:
+# Added by API Auto Mocking Plugin
+  - description: URL
+    url: ' https://api.sandbox.equifax.com/luminate/v1'
+paths:
+  /fraud-decisions/consumer-account-opening:
+    post:
+      tags:
+        - LuminateFraudRiskForConsumer
+
+      operationId: Luminate Consumer Realtime Service
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/luminate/v1/'
+      parameters:
+        - in: header
+          name: efx-client-correlation-id
+          description: ID provided by client to uniquely track service request.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerRecord'
+            examples:
+              request:
+                $ref: '#/components/examples/consumerRequest'
+      responses:
+        '200':
+          description: OK
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              examples:
+                response:
+                  $ref: '#/components/examples/response'
+        '401':
+          description: Authentication Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '401.01':
+                  $ref: '#/components/examples/401.01'
+        '405':
+          description: Method Not Allowed
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '405.01':
+                  $ref: '#/components/examples/405.01'
+        '415':
+          description: Unsupported Media Type
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        '500':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        '501':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        '504':
+          description: Unable to get a response
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /consumer-data:
+    put:
+      tags:
+        - LuminateFraudRiskConsumerUpdate
+
+      operationId: Luminate Consumer Update
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/luminate/v1/'
+      parameters:
+        - in: header
+          name: efx-client-correlation-id
+          description: ID provided by client to uniquely track service request.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerRecord'
+            examples:
+              request:
+                $ref: '#/components/examples/consumerRequest'
+      responses:
+        '200':
+          description: OK
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: ''
+              examples:
+                response:
+                  $ref: ''
+        '401':
+          description: Authentication Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '401.01':
+                  $ref: '#/components/examples/401.01'
+        '405':
+          description: Method Not Allowed
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '405.01':
+                  $ref: '#/components/examples/405.01'
+        '415':
+          description: Unsupported Media Type
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        '500':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        '501':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        '504':
+          description: Unable to get a response
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /fraud-decisions/feedback:
+    put:
+      tags:
+        - LuminateFraudRiskFeedback
+
+      operationId: Luminate Feedback Update
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/luminate/v1/'
+      parameters:
+        - in: header
+          name: efx-client-correlation-id
+          description: ID provided by client to uniquely track service request.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedBackRecord'
+            examples:
+              request:
+                $ref: '#/components/examples/feedBackRequest'
+      responses:
+        '200':
+          description: OK
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: ''
+              examples:
+                response:
+                  $ref: ''
+        '401':
+          description: Authentication Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '401.01':
+                  $ref: '#/components/examples/401.01'
+        '405':
+          description: Method Not Allowed
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '405.01':
+                  $ref: '#/components/examples/405.01'
+        '415':
+          description: Unsupported Media Type
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        '500':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        '501':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        '504':
+          description: Unable to get a response
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /fraud-decisions/fraudBlocklist:
+    post:
+      tags:
+        - LuminateFraudRiskBlocklist
+      operationId: Luminate Fraud Blocklist
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/luminate/v1/'
+      parameters:
+        - in: header
+          name: efx-client-correlation-id
+          description: ID provided by client to uniquely track service request.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FraudBlocklist'
+            examples:
+              request:
+                $ref: '#/components/examples/FraudBlocklistRequest'
+      responses:
+        '200':
+          description: OK
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FraudBlocklistResponse'
+              examples:
+                response:
+                  $ref: '#/components/examples/FraudBlocklistResponse'
+        '401':
+          description: Authentication Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '401.01':
+                  $ref: '#/components/examples/401.01'
+        '405':
+          description: Method Not Allowed
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '405.01':
+                  $ref: '#/components/examples/405.01'
+        '415':
+          description: Unsupported Media Type
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        '500':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        '501':
+          description: Internal Error
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        '504':
+          description: Unable to get a response
+          headers:
+            efx-client-correlation-id:
+              schema:
+                type: string
+              description: ID provided by client to uniquely track service request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'                  
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    FeedBackRecord:
+      title: Record
+      type: object
+      properties:
+        id:
+          title: id
+          description: Customer application number or unique identifier to locate the application
+          type: string
+        application:
+          $ref: '#/components/schemas/FeedBackApplication'
+    FeedBackApplication:
+      title: Application
+      type: object
+      properties:
+        decision:
+          title: decision
+          type: string
+          description: decision feedback
+    ConsumerScreeningMetadata:
+      title: ScreeningMetadata
+      type: object
+      properties:
+        customerBatchFileName:
+          title: customerBatchFileName
+          description: Customer batch file name
+          type: string
+        ghostMode:
+          title: ghostMode
+          type: boolean
+
+    ConsumerRecurringCurrency:
+      title: RecurringCurrency
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        period:
+          $ref: '#/components/schemas/ConsumerPeriod'
+        valuePerDay:
+          title: valuePerDay
+          type: string
+          pattern: ^-?\d*(\.\d*)?$
+    ConsumerCompany:
+      title: Company
+      type: object
+      properties:
+        revenuePerYear:
+          title: revenuePerYear
+          description: Current or Expected Annual Revenue
+          type: integer
+        businessEstablishedDate:
+          title: businessEstablishedDate
+          description: Established date
+
+          type: string
+        companyNameClean:
+          title: companyNameClean
+          description: Clean/normalized company applicant full name
+          type: string
+        companyName:
+          title: companyName
+          description: Business name of company
+          type: string
+        companyAssets:
+          title: companyAssets
+          description: Company Assets
+          type: integer
+        natureOfBusiness:
+          title: natureOfBusiness
+          description: Company Nature of Business
+          type: string
+        numberOfEmployees:
+          title: numberOfEmployees
+          description: Company Number of Employees
+          type: integer
+        isExistingCustomer:
+          title: isExistingCustomer
+          description: 'Flag indicating whether the company applicant is an existing customer: Y (yes) or N (no)'
+          type: boolean
+        tradeName:
+          title: tradeName
+          description: Doing Business As name
+          type: string
+        sicCode:
+          title: sicCode
+          description: Standard Industry Code - denoting type of business
+          type: string
+        registrationNumber:
+          title: registrationNumber
+          description: Company registration number
+          type: string
+        numberOfDirectors:
+          title: numberOfDirectors
+          description: Company Number of Employees
+          type: integer
+        numberOfVehicles:
+          title: numberOfVehicles
+          description: Company Number of Vehicles
+          type: integer
+        payrollPerYear:
+          title: payrollPerYear
+          description: Company Annual Payroll
+          type: integer
+    ConsumerEmail:
+      title: Email
+      type: object
+      properties:
+        emailAddress:
+          title: emailAddress
+          description: Email Address of the applicant
+          type: string
+
+    ConsumerAddress:
+      title: Address
+      type: object
+      properties:
+
+        streetNumber:
+          title: streetNumber
+          description: Address street number
+          type: string
+        city:
+          title: city
+          description: Address City
+          type: string
+
+        postalCode:
+          title: postalCode
+          description: Address Postal Code
+          type: string
+
+        unitNumber:
+          title: unitNumber
+          description: "\t\nUsed by US"
+          type: string
+        streetName:
+          title: streetName
+          description: Address street name
+          type: string
+        stateOrProvince:
+          title: stateOrProvince
+          description: Address State
+          type: string
+        accommodationType:
+          title: accommodationType
+          type: string
+        startDateAtResidence:
+          title: startDateAtResidence
+          type: string
+
+    ConsumerCustomer:
+      title: Customer
+      type: object
+      properties:
+        customerMemberNumber:
+          title: customerMemberNumber
+          description: 4 digit code assigned by EFX to the KFE contributor (Member numbers are issued to organizations that get data from Equifax)
+          type: string
+        customerId:
+          title: customerId
+          description: Code provided by EFX to uniquely identify the contributor of the data
+          type: string
+        customerName:
+          title: customerName
+          description: Name provided by EFX to identify the contributor
+          type: string
+        industryCode:
+          title: industryCode
+          description: |-
+            Code that identifies the industry group (consortium) the contributor belongs to
+
+            EX: FINTECH, FINANCE,TELCO, UTILITIES, HOMEINSURANCE,CARINSURANCE, ECOMMERCE, HEALTHCARE and Others (TBD)
+          type: string
+
+
+    ConsumerProduct:
+      title: Product
+      type: object
+      properties:
+        insurance:
+          $ref: '#/components/schemas/ConsumerInsurance'
+        auto:
+          $ref: '#/components/schemas/ConsumerAutomotive'
+        productId:
+          title: productId
+          description: |-
+            Customer may differentiate products based on a multitude of factors
+
+            Ex: CAR PLATE, ID SUPPLY POINT
+          type: string
+        financial:
+          $ref: '#/components/schemas/ConsumerFinancial'
+        preApprovedLoanAmount:
+          title: preApprovedLoanAmount
+          description: Pre-approved loan amount - eg. for credit cards, mortgage, etc.
+          type: integer
+        invoiceDate:
+          title: invoiceDate
+          description: 'Date invoiced - useful for ecommerce, commercial, telco, etc'
+
+          type: string
+        termInMonths:
+          title: termInMonths
+          type: integer
+        productName:
+          title: productName
+          description: 'The generic product name (ex: Microloan)'
+          type: string
+        reasonForApplication:
+          title: reasonForApplication
+          description: |-
+            Funds destination
+
+            Possible values:
+
+            TRAVEL
+
+            HOUSE
+
+            CAR
+
+            REFORMS
+          type: string
+        customerSince:
+          title: customerSince
+
+          type: string
+        ecommerce:
+          $ref: '#/components/schemas/ConsumerECommerce'
+        applicationStatus:
+          title: applicationStatus
+          description: |-
+            Company decision
+
+            Possible values:
+
+            REJECTED- Customer didn't approve the application
+
+            APPROVED- Customer approved the application
+
+            UNDER REVIEW- Customer is waiting for approval
+
+            DELINQUENT- Customer can send an update (or ingestion) of an application which payment is late
+          type: string
+        mortgage:
+          $ref: '#/components/schemas/ConsumerMortgage'
+        originalAmount:
+          title: originalAmount
+          description: Original amount of the loan
+          type: integer
+        dealerIncentives:
+          title: dealerIncentives
+          description: Value of Dealer Incentives
+          type: integer
+        telco:
+          $ref: '#/components/schemas/ConsumerTelco'
+        accountTypeFreeFormat:
+          title: accountTypeFreeFormat
+          description: 'Account type  free-format - Could apply to telco and other verticals; eg, consumer/SMB/Corp'
+          type: string
+        accountOpenedDate:
+          title: accountOpenedDate
+          description: YYYYMMDD
+
+          type: string
+        requestedAmount:
+          title: requestedAmount
+          type: number
+        productType:
+          title: productType
+          description: Specific type of product
+          type: string
+    ConsumerFraud:
+      title: Fraud
+      type: object
+      properties:
+        statusNotes:
+          title: statusNotes
+          description: Status Notes are required when:Account status = H (Highly Suspect) or S (Suspect)
+          type: string
+        lossAmount:
+          title: lossAmount
+          description: |-
+            Any loss amount value associated with the fraud instance
+
+            ex: 10000,000
+          type: integer
+        fraudDetectionTimezone:
+          title: fraudDetectionTimezone
+          description: Timezone (this is an offset - number of hours) for the above field
+          type: string
+        fraudAssessment:
+          title: fraudAssessment
+          description: |-
+            Assessment of the detected fraud
+
+            POSSIBLE
+
+            SUSPICIOUS
+
+            HIGHLY SUSPICIOUS
+
+            REPORTED
+          type: string
+
+        savingValue:
+          title: savingValue
+          description: Placeholder for case manager manual entry for saving of the fraudulent application prevention.
+          type: integer
+        fraudType:
+          title: fraudType
+          description: 'Suspicious Activity Type is required when:Account Status = H (Highly Suspect) or S (Suspect)'
+          type: string
+        victim:
+          title: victim
+          description: 'Victim flag to identify when the applicant was a fraud victim, false as a default value'
+          type: boolean
+        fraudDetectionTimestampUTC:
+          title: fraudDetectionTimestampUTC
+          description: |-
+            YYYY-MM-DDThh:mm:ss.SSSZ
+
+            Date and time the fraud was detected
+
+          type: string
+        fraudReasonCode:
+          title: fraudReasonCode
+          description: 'list of reason codes** see https://confluence.equifax.com/display/EIMA/Fraud+Block'
+          type: string
+      required:
+        - fraudAssessment
+    ConsumerDocument:
+      title: Document
+      type: object
+      properties:
+        country:
+          title: country
+          type: string
+        cityOrRegion:
+          title: cityOrRegion
+          type: string
+        stateOrProvince:
+          title: stateOrProvince
+          type: string
+        area1:
+          title: area1
+          type: string
+        area2:
+          title: area2
+          type: string
+        documentId:
+          title: documentId
+          description: 'The actual document Id (DNI number, Passport number etc.) for the given document type.'
+          type: string
+        type:
+          title: type
+          type: string
+
+    ConsumerAutomotive:
+      title: Automotive
+      type: object
+      properties:
+        ownershipType:
+          title: ownershipType
+          description: 'Payment type for vehicle loan: Lease or Finance'
+          type: string
+        purchasedVehicle:
+          $ref: '#/components/schemas/ConsumerVehicle'
+        dealerCode:
+          title: dealerCode
+          description: 'Dealer code - currently populated in Transit # as no Auto specific field was available'
+          type: string
+        preownedFlag:
+          title: preownedFlag
+          description: Is vehicle used? Y/N
+          type: boolean
+        financeManager:
+          $ref: '#/components/schemas/ConsumerParty'
+        dealer:
+          $ref: '#/components/schemas/ConsumerParty'
+        tradeInVehicle:
+          $ref: '#/components/schemas/ConsumerVehicle'
+        salesPerson:
+          $ref: '#/components/schemas/ConsumerParty'
+
+
+
+    ApplicationFraudScore:
+      title: FraudScore
+      description: Fraud scores and reason codes
+      type: object
+      properties:
+        score:
+          title: score
+          description: Could be an Equifax calculate score or Custom Customer score
+          type: integer
+        reasonCodes:
+          title: reasonCodes
+          description: 5 reason codes, 2 bytes each.
+          type: string
+      required:
+        - score
+    ConsumerVehicle:
+      title: Vehicle
+      type: object
+      properties:
+        trimPackage:
+          title: trimPackage
+          description: 'Trim Package of vehicle (eg. SES, GX, etc.) '
+          type: string
+
+        year:
+          title: year
+          description: Year of vehicle purchased
+          type: integer
+          minimum: 1900
+        model:
+          title: model
+          description: 'Model of vehicle (eg. Civic, Accord, etc.)'
+          type: string
+        vin:
+          title: vin
+          description: Vehicle Identification Number of vehicle
+          type: string
+        odometerInKM:
+          title: odometerInKM
+          description: Odometer reading of purchased vehicle in km
+          type: string
+        make:
+          title: make
+          description: 'Make of vehicle (eg. Honda, VW, Ford, etc.)'
+          type: string
+        value:
+          title: value
+          description: Value of vehicle
+          type: integer
+        vehicleType:
+          title: vehicleType
+          description: 'Type of vehicle (eg. auto, motorcycle, boat, trailer, RV, mower)'
+          type: string
+    ConsumerGeoPoint:
+      title: GeoPoint
+      type: object
+      properties:
+        lon:
+          title: lon
+          description : longitude location
+          type: string
+        lat:
+          title: lat
+          description: latitude location
+          type: string
+
+    ConsumerFlexFields:
+      title: FlexFields
+      type: object
+      properties:
+        strings:
+          title: strings
+          description: Custom Key/Value pair for Alpha-numeric values
+          type: object
+          properties:
+            value6:
+              title: value6
+              type: string
+            value5:
+              title: value5
+              type: string
+            value8:
+              title: value8
+              type: string
+            value7:
+              title: value7
+              type: string
+            value2:
+              title: value2
+              type: string
+            value1:
+              title: value1
+              type: string
+            value4:
+              title: value4
+              type: string
+            value3:
+              title: value3
+              type: string
+            value9:
+              title: value9
+              type: string
+            name17:
+              title: name17
+              type: string
+            name16:
+              title: name16
+              type: string
+            name15:
+              title: name15
+              type: string
+            name14:
+              title: name14
+              type: string
+            name13:
+              title: name13
+              type: string
+            name12:
+              title: name12
+              type: string
+            name11:
+              title: name11
+              type: string
+            name10:
+              title: name10
+              type: string
+            value15:
+              title: value15
+              type: string
+            value14:
+              title: value14
+              type: string
+            value17:
+              title: value17
+              type: string
+            value16:
+              title: value16
+              type: string
+            value11:
+              title: value11
+              type: string
+            value10:
+              title: value10
+              type: string
+            value13:
+              title: value13
+              type: string
+            value12:
+              title: value12
+              type: string
+            name6:
+              title: name6
+              type: string
+            name5:
+              title: name5
+              type: string
+            name4:
+              title: name4
+              type: string
+            name3:
+              title: name3
+              type: string
+            name9:
+              title: name9
+              type: string
+            name8:
+              title: name8
+              type: string
+            name7:
+              title: name7
+              type: string
+            name2:
+              title: name2
+              type: string
+            name1:
+              title: name1
+              type: string
+        numbers:
+          title: numbers
+          description: Custom Key/Value pair for Alpha-numeric values
+          type: object
+          properties:
+            value6:
+              title: value6
+              type: integer
+            value5:
+              title: value5
+              type: integer
+            value8:
+              title: value8
+              type: integer
+            value7:
+              title: value7
+              type: integer
+            value2:
+              title: value2
+              type: integer
+            value1:
+              title: value1
+              type: integer
+            value4:
+              title: value4
+              type: integer
+            value3:
+              title: value3
+              type: integer
+            value9:
+              title: value9
+              type: integer
+            name17:
+              title: name17
+              type: string
+            name16:
+              title: name16
+              type: string
+            name15:
+              title: name15
+              type: string
+            name14:
+              title: name14
+              type: string
+            name13:
+              title: name13
+              type: string
+            name12:
+              title: name12
+              type: string
+            name11:
+              title: name11
+              type: string
+            name10:
+              title: name10
+              type: string
+            value15:
+              title: value15
+              type: integer
+            value14:
+              title: value14
+              type: integer
+            value17:
+              title: value17
+              type: integer
+            value16:
+              title: value16
+              type: integer
+            value11:
+              title: value11
+              type: integer
+            value10:
+              title: value10
+              type: integer
+            value13:
+              title: value13
+              type: integer
+            value12:
+              title: value12
+              type: integer
+            name6:
+              title: name6
+              type: string
+            name5:
+              title: name5
+              type: string
+            name4:
+              title: name4
+              type: string
+            name3:
+              title: name3
+              type: string
+            name9:
+              title: name9
+              type: string
+            name8:
+              title: name8
+              type: string
+            name7:
+              title: name7
+              type: string
+            name2:
+              title: name2
+              type: string
+            name1:
+              title: name1
+              type: string
+        dates:
+          title: dates
+          description: Custom Key/Value pair for Alpha-numeric values
+          type: object
+          properties:
+            value6:
+              title: value6
+
+              type: string
+            value5:
+              title: value5
+
+              type: string
+            value8:
+              title: value8
+
+              type: string
+            value7:
+              title: value7
+
+              type: string
+            value2:
+              title: value2
+
+              type: string
+            value1:
+              title: value1
+
+              type: string
+            value4:
+              title: value4
+
+              type: string
+            value3:
+              title: value3
+
+              type: string
+            value9:
+              title: value9
+
+              type: string
+            name17:
+              title: name17
+              type: string
+            name16:
+              title: name16
+              type: string
+            name15:
+              title: name15
+              type: string
+            name14:
+              title: name14
+              type: string
+            name13:
+              title: name13
+              type: string
+            name12:
+              title: name12
+              type: string
+            name11:
+              title: name11
+              type: string
+            name10:
+              title: name10
+              type: string
+            value15:
+              title: value15
+
+              type: string
+            value14:
+              title: value14
+
+              type: string
+            value17:
+              title: value17
+
+              type: string
+            value16:
+              title: value16
+
+              type: string
+            value11:
+              title: value11
+
+              type: string
+            value10:
+              title: value10
+
+              type: string
+            value13:
+              title: value13
+
+              type: string
+            value12:
+              title: value12
+
+              type: string
+            name6:
+              title: name6
+              type: string
+            name5:
+              title: name5
+              type: string
+            name4:
+              title: name4
+              type: string
+            name3:
+              title: name3
+              type: string
+            name9:
+              title: name9
+              type: string
+            name8:
+              title: name8
+              type: string
+            name7:
+              title: name7
+              type: string
+            name2:
+              title: name2
+              type: string
+            name1:
+              title: name1
+              type: string
+    ConsumerParty:
+      title: Party
+      type: object
+      properties:
+        additionalIncomePerYear:
+          title: additionalIncomePerYear
+          description: Additional income per year
+          type: integer
+        businessOrProfessionalLicense:
+          $ref: '#/components/schemas/ConsumerDocument'
+        partyType:
+          title: partyType
+          type: string
+
+
+        personalEmail:
+          $ref: '#/components/schemas/ConsumerEmail'
+        formerBusinessPhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        applicantSubtype:
+          title: applicantSubtype
+          description: Applicant role in the application
+          type: string
+        residentialPhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        company:
+          $ref: '#/components/schemas/ConsumerCompany'
+        formerAddress2:
+          $ref: '#/components/schemas/ConsumerAddress'
+        formerAddress1:
+          $ref: '#/components/schemas/ConsumerAddress'
+        verifiedIncomePerYear:
+          title: verifiedIncomePerYear
+          description : Verified Income
+          type: integer
+        businessEmail:
+          $ref: '#/components/schemas/ConsumerEmail'
+        formerResidentialPhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        additionalIncomeSource:
+          title: additionalIncomeSource
+          description: Additional Income Source
+          type: string
+        employeeId:
+          $ref: '#/components/schemas/ConsumerDocument'
+        verifiedIncome:
+          $ref: '#/components/schemas/ConsumerRecurringCurrency'
+        currentAddress:
+          $ref: '#/components/schemas/ConsumerAddress'
+        identificationDoc4:
+          $ref: '#/components/schemas/ConsumerDocument'
+        identificationDoc5:
+          $ref: '#/components/schemas/ConsumerDocument'
+        socialSecurityNumber:
+          $ref: '#/components/schemas/ConsumerDocument'
+        identificationDoc2:
+          $ref: '#/components/schemas/ConsumerDocument'
+        identificationDoc3:
+          $ref: '#/components/schemas/ConsumerDocument'
+        mobilePhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        identificationDoc8:
+          $ref: '#/components/schemas/ConsumerDocument'
+        person:
+          $ref: '#/components/schemas/ConsumerPerson'
+        identificationDoc6:
+          $ref: '#/components/schemas/ConsumerDocument'
+        identificationDoc7:
+          $ref: '#/components/schemas/ConsumerDocument'
+        parentCompanyAddress:
+          $ref: '#/components/schemas/ConsumerAddress'
+        businessPhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        contactPhone:
+          $ref: '#/components/schemas/ConsumerPhone'
+        identificationDoc1:
+          $ref: '#/components/schemas/ConsumerDocument'
+    ConsumerMortgage:
+      title: Mortgage
+      type: object
+      properties:
+        mortgageDownPaymentAmount:
+          title: mortgageDownPaymentAmount
+          description: 'Downpayment amount (eg. (dollarsign)500,000)'
+          type: integer
+        brokerage:
+          $ref: '#/components/schemas/ConsumerParty'
+        tds:
+          title: tds
+          description: Total Debt Service (TDS) ratio is the percentage of income needed to cover all debts
+          type: number
+          minimum: 0
+          maximum: 100
+        costCenter:
+          title: costCenter
+          description: 'Cost Center, eg. 4424'
+          type: string
+        broker:
+          $ref: '#/components/schemas/ConsumerParty'
+        ltv:
+          title: ltv
+          description: Loan to Value ratio is the size of the loan relative to the value of the property as a percentage
+          type: number
+          minimum: 0
+          maximum: 100
+        realtor:
+          $ref: '#/components/schemas/ConsumerParty'
+        securityAddress:
+          $ref: '#/components/schemas/ConsumerAddress'
+        sourceOfMortgageDownPayment:
+          title: sourceOfMortgageDownPayment
+          description: 'Where is the downpayment coming from (eg. Savings account, Parents, etc.)'
+          type: string
+        sourceNameOfGift:
+          $ref: '#/components/schemas/ConsumerParty'
+        lender:
+          $ref: '#/components/schemas/ConsumerParty'
+        gds:
+          title: gds
+          description: Gross Debt Service (GDS) ratio is the percentage of income needed to pay the debt plus interest
+          type: number
+          minimum: 0
+          maximum: 100
+        downPaymentAmountInGiftedFunds:
+          title: downPaymentAmountInGiftedFunds
+          description: 'Down payment amount (eg. (dollarsign)500,000)'
+          type: integer
+        property:
+          $ref: '#/components/schemas/ConsumerProperty'
+        builder:
+          $ref: '#/components/schemas/ConsumerParty'
+        appraiser:
+          $ref: '#/components/schemas/ConsumerParty'
+        subBroker:
+          $ref: '#/components/schemas/ConsumerParty'
+        mortgageCloseDate:
+          title: mortgageCloseDate
+          description: Current Mortgage Close Date.
+
+          type: string
+        lawyer:
+          $ref: '#/components/schemas/ConsumerParty'
+        underwriter:
+          $ref: '#/components/schemas/ConsumerParty'
+    ConsumerPhone:
+      title: Phone
+      type: object
+      properties:
+        extension:
+          title: extension
+          description: 'Phone Extention, for example 123-456-7890 x 9999 (where 9999 is the extention)'
+          type: string
+        phoneNumber:
+          title: phoneNumber
+          description: |-
+            Phone Number of the applicant
+
+            Format:
+
+            999888777
+          type: string
+        countryCode:
+          title: countryCode
+          description: Phone country code
+          type: string
+    ConsumerCurrency:
+      title: Currency
+      type: object
+      properties:
+        code:
+          title: code
+          type: string
+        formatted:
+          title: formatted
+          type: string
+        value:
+          title: value
+          type: string
+          pattern: ^-?\d*(\.\d*)?$
+
+    ConsumerRecord:
+      title: Record
+      type: object
+      properties:
+
+        id:
+          title: id
+          description: Customer application number or unique identifier to locate the application
+          type: string
+        application:
+          $ref: '#/components/schemas/ConsumerApplication'
+        fraud:
+          $ref: '#/components/schemas/ConsumerFraud'
+        screeningMetadata:
+          $ref: '#/components/schemas/ConsumerScreeningMetadata'
+
+    ConsumerCreditFile:
+      title: CreditFile
+      description: Equifax credit file (Acro) data related to an application
+      type: object
+      properties:
+        sixMonthEnquiryCount:
+          title: sixMonthEnquiryCount
+          type: integer
+        thinFileIndicator:
+          title: thinFileIndicator
+          type: string
+        uniqueNumber:
+          title: uniqueNumber
+          type: integer
+    ConsumerProperty:
+      title: Property
+      description: Mortgage property
+      type: object
+      properties:
+        primaryAddressSinceDate:
+          title: primaryAddressSinceDate
+          description: Since what date does the applicant have this as their primary address. YYYYMMDD
+
+          type: string
+        rentalFlag:
+          title: rentalFlag
+          description: Is property a rental?
+          type: boolean
+        propertyArea:
+          title: propertyArea
+          description: 'Region description - eg. York, Downtown, the Plateau, T1, E1, TN, TE, DC1, M, HS, etc. Not validated'
+          type: string
+        propertyAddress:
+          $ref: '#/components/schemas/ConsumerAddress'
+        propertyAppraisalAmount:
+          title: propertyAppraisalAmount
+          description: 'Appraised value of mortgage property (eg. (dollarsign)1,100,000,000), including commercial properties'
+          type: integer
+        propertyType:
+          title: propertyType
+          description: 'Type of property - coded with specific values but not validated in CAF inform customers which values they should use for standarization. D-Detached, S-Semi-detached, T-Townhouse, C-Condo, L-Link, M-Multiplex, V-Vacant Land, B-Commercial, R-Rural, O-Other'
+          type: string
+          additionalProperties: false
+
+        propertyAreaSize:
+          title: propertyAreaSize
+          description: Lot Size
+          type: string
+        purchasePrice:
+          title: purchasePrice
+          description: 'Appraised value of mortgage property (eg. (dollarsign)1,100,000,000), including commercial properties'
+          type: integer
+        propertyNeighbourhood:
+          title: propertyNeighbourhood
+          description: 'Region description - eg. York, Downtown, the Plateau, T1, E1, TN, TE, DC1, M, HS, etc. Not validated'
+          type: string
+
+    ConsumerPersonName:
+      title: PersonName
+      type: object
+      properties:
+        lastName:
+          title: lastName
+          description: |-
+            First surname of the applicant
+
+            If lastName is not sent bythe customer then fullName needs to be required
+          type: string
+
+        aliasLastName:
+          title: aliasLastName
+          description: Alias Last Name (i.e. nickname)
+          type: string
+
+        aliasGivenName:
+          title: aliasGivenName
+          description: 'Alias First Name (i.e. nickname) '
+          type: string
+        aliasSuffix:
+          title: aliasSuffix
+          description: 'Alias Suffix '
+          type: string
+        aliasTitle:
+          title: aliasTitle
+          description: 'Alias Title '
+          type: string
+        title:
+          title: title
+          type: string
+        suffix:
+          title: suffix
+          type: string
+        firstName:
+          title: firstName
+          description: |-
+            First Name of the applicant
+
+            If firtName is not sent bythe customer then fullName needs to be required
+          type: string
+
+        middleName:
+          title: middleName
+          description: Middle Name of the applicant.
+          type: string
+        aliasMiddleName:
+          title: aliasMiddleName
+          description: 'Alias Middle Name (i.e. nickname) '
+          type: string
+
+    ConsumerECommerce:
+      title: ECommerce
+      type: object
+      properties:
+        cvv2:
+          title: cvv2
+          description: 'Credit card Verification Value code. Possible values: M, N, P, S, U, X, Y, NULL'
+          type: string
+
+        shippingMethod:
+          title: shippingMethod
+          description: Shipping Method (e.g. courier, same day, future etc.)
+          type: string
+        paymentMethod:
+          title: paymentMethod
+          description: Payment Method (CC, GC - Gift certificate, etc.)
+          type: string
+        vbv:
+          title: vbv
+          description: 'Verified by Visa. Possible values: 0-9, A-D, I, U, Y, 99, NULL'
+          type: string
+        avs:
+          title: avs
+          description: 'Address Verification Service. Possible values: X, Y, A, W, Z, N, U, R, E, S, D, M, B, P, I, C, G, NULL'
+          type: string
+    ConsumerInsuranceClaim:
+      title: InsuranceClaim
+      type: object
+      properties:
+        claimSettledDate:
+          title: claimSettledDate
+          description : The date the claim was settled with the claimant.
+
+          type: string
+        claimIncidentTimestamp:
+          title: claimIncidentTimestamp
+          description: 'Timestamp when the incident (being claimed for) occurred. YYYY-MM-DDThh:mm:ssZ format.  For example, 2019-05-29T13:46:19-0500'
+
+          type: string
+        incidentCode:
+          title: incidentCode
+          description: Code indicating the cause or grade of the incident.
+          type: string
+        recoveryValuePaid:
+          title: recoveryValuePaid
+          description: Total value recovered (paid back) to the insurer.
+          type: integer
+        claimTotalValuePaid:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        totalValuePaid:
+          title: totalValuePaid
+          description : Total value paid out for the claim. Could be updated as separate payments are made.
+          type: integer
+        claimTotalValueEstimate:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        claimRecoveryValuePaid:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        recoveryValueEstimate:
+          title: recoveryValueEstimate
+          description: 'Estimate value of costs to be recovered, possibly money paid out  for a non-cover item or the claimant may be dual insured.'
+          type: integer
+        claimStartTimestamp:
+          title: claimStartTimestamp
+          description: 'Timestamp when the claim was submitted to the insurance provider. YYYY-MM-DDThh:mm:ssZ format.  For example, 2019-05-29T13:46:19-0500'
+
+          type: string
+        statusChangeDate:
+          title: statusChangeDate
+          description: The date of the last change to the claim status. YYYYMMDD
+          type: string
+        cancellationReasonCode:
+          title: cancellationReasonCode
+          description: Code indicating the cancellation reason.
+          type: string
+        largeLossFlag:
+          title: largeLossFlag
+          description: 'Flag indicating whether the insurer deems the claim to be for a significantly large amount (e.g. more than C(dollarsign)10,000): Y (yes) or N (no).'
+          type: boolean
+        premiumValueOutstanding:
+          title: premiumValueOutstanding
+          description: Total amount of premium value outstanding at point of claim.
+          type: integer
+        cancellationReasonDescription:
+          title: cancellationReasonDescription
+          description: Description indicating the cancellation reason.
+          type: string
+        numberOfClaimants:
+          title: numberOfClaimants
+          description: Total number of claimants.
+          type: integer
+        incidentDiscoveryDate:
+          title: incidentDiscoveryDate
+          description: The date that the claimant discovered the incident being claimed for had occurred. YYYYMMDD
+
+          type: string
+        claimHandler:
+          title: claimHandler
+          description: Handler identifier or team name.
+          type: string
+        previousClaimPolicyNumber:
+          title: previousClaimPolicyNumber
+          description: Number of related policy that is being claimed on.
+          type: string
+        claimRecoveryValueEstimate:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        claimNumber:
+          title: claimNumber
+          description: Unique Claim reference number.
+          type: string
+        incidentLocation:
+          title: incidentLocation
+          description: 'Description of the incident location, could be an address or description of the location where the incident occurred.'
+          type: string
+        claimTypeDescription:
+          title: claimTypeDescription
+          description: Description of the type of claim.
+          type: string
+        claimTypeCode:
+          title: claimTypeCode
+          description: Code representing the type of claim.
+          type: string
+        totalValueEstimate:
+          title: totalValueEstimate
+          description: Estimate of the total value of the claim to be paid out. Could also be used to represent an estimate of the remaining value to be paid out.
+          type: integer
+        multipleClaimantsFlag:
+          title: multipleClaimantsFlag
+          description: 'Flag indicating whether there are multiple claimants: Y (yes) or N (no).'
+          type: boolean
+        incidentDescription:
+          title: incidentDescription
+          description: Description or circumstances of the incident.
+          type: string
+        status:
+          title: status
+          description: 'Status of the claim (e.g. Open, Closed, Re-Opened, etc.)'
+          type: string
+    ConsumerDevice:
+      title: Device
+      type: object
+      properties:
+        deviceIp:
+          title: deviceIp
+          description : Device Ip Address
+          type: string
+        deviceScore:
+          title: deviceScore
+          description: Rule set score
+          type: string
+        deviceRuleHitNumber:
+          title: deviceRuleHitNumber
+          description: Rule hit number
+          type: string
+        deviceId:
+          title: deviceId
+          type: string
+        deviceProxy:
+          title: deviceProxy
+          description: Device IP address proxy
+          type: string
+        deviceRules:
+          title: deviceRules
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceSessionId:
+          title: deviceSessionId
+          description: Session Id
+          type: string
+        deviceRule10:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceJavascriptEnabled:
+          title: deviceJavascriptEnabled
+          description: Java script enabled on the device or not
+          type: boolean
+        deviceRealCountryCode:
+          title: deviceRealCountryCode
+          description: Country code location of IP address
+          type: string
+        deviceTrustScore:
+          title: deviceTrustScore
+          description: Device trust score
+          type: string
+        deviceNewRecord:
+          title: deviceNewRecord
+          description: Device record
+          type: string
+        deviceType:
+          title: deviceType
+          description: Device type
+          type: string
+        deviceBrowserLanguage:
+          title: deviceBrowserLanguage
+          description: Device browser language
+          type: string
+        deviceResultReason:
+          title: deviceResultReason
+          description: Reason
+          type: string
+        deviceBrowserVersion:
+          title: deviceBrowserVersion
+          description: Device browser version
+          type: string
+        deviceCountryName:
+          title: deviceCountryName
+          description: Device IP Address country name
+          type: string
+        deviceRule1:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceFlashInstalled:
+          title: deviceFlashInstalled
+          description: Flash player installed or not
+          type: boolean
+        deviceFlashEnabled:
+          title: deviceFlashEnabled
+          description: Flash player either enabled or diabled
+          type: boolean
+        deviceCurrentTime:
+          title: deviceCurrentTime
+          description: Current timeStamp
+            -time
+          type: string
+        deviceResult:
+          title: deviceResult
+          description: Result
+          type: string
+        deviceBrowserType:
+          title: deviceBrowserType
+          description: Device Browser type
+          type: string
+        deviceBrowserConfiguredLang:
+          title: deviceBrowserConfiguredLang
+          description: Language preferences in a browser
+          type: string
+        deviceRulesMatched:
+          title: deviceRulesMatched
+          description: Rule set
+          type: string
+        deviceRealIpSource:
+          title: deviceRealIpSource
+          description: Device real IP address source
+          type: string
+        deviceOperatingSystem:
+          title: deviceOperatingSystem
+          description: OS name
+          type: string
+        deviceLocation:
+          $ref: '#/components/schemas/ConsumerGeoPoint'
+        deviceRealRegion:
+          title: deviceRealRegion
+          description: Real IP Address regiopn
+          type: string
+        deviceBrowserCharset:
+          title: deviceBrowserCharset
+          description: Device browser charset
+          type: string
+        deviceFlashVersion:
+          title: deviceFlashVersion
+          description: Falsh player version
+          type: string
+        deviceAlias:
+          title: deviceAlias
+          description: Device alias
+          type: string
+        deviceRealIp:
+          title: deviceRealIp
+          description: Device real IP Address
+          type: string
+        deviceRegion:
+          title: deviceRegion
+          description: IP Address region
+          type: string
+        deviceTrackingNumber:
+          title: deviceTrackingNumber
+          description: Tracking number
+          type: string
+        deviceCountryCode:
+          title: deviceCountryCode
+          description: IP address country code
+          type: string
+        deviceCheckMatchStatus:
+          title: deviceCheckMatchStatus
+          type: string
+        deviceCheckMeasureOfChange:
+          title: deviceCheckMeasureOfChange
+          type: string
+        deviceIsp:
+          title: deviceIsp
+          description: Device Internet service provider
+          type: string
+        deviceRule4:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule5:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule2:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule3:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceFirstSeen:
+          title: deviceFirstSeen
+          type: string
+        deviceRule8:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule9:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule6:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRule7:
+          $ref: '#/components/schemas/ConsumerDeviceRule'
+        deviceRealLocation:
+          $ref: '#/components/schemas/ConsumerGeoPoint'
+        deviceFlashStorageEnabled:
+          title: deviceFlashStorageEnabled
+          type: boolean
+        deviceScreen:
+          title: deviceScreen
+          description: Device flash storage enabled or not
+          type: string
+        deviceRealCity:
+          title: deviceRealCity
+          description: real IP address city
+          type: string
+        deviceIspOrganization:
+          title: deviceIspOrganization
+          description: Internet service provider (ISP) organization details
+          type: string
+        deviceFingerPrint:
+          title: deviceFingerPrint
+          description :  To identify it as a unique device
+          type: string
+        deviceCity:
+          title: deviceCity
+          description: Device IP address city
+          type: string
+        deviceRealIsp:
+          title: deviceRealIsp
+          description: Device real Internet Service Provider details
+          type: string
+        deviceCookieEnabled:
+          title: deviceCookieEnabled
+          description: Device cookie enabled or not
+          type: boolean
+        deviceRealProxy:
+          title: deviceRealProxy
+          description: Device real IP address proxy
+          type: string
+        deviceRealCountryName:
+          title: deviceRealCountryName
+          description: Device real IP address country name
+          type: string
+        deviceRealIspOrganization:
+          title: deviceRealIspOrganization
+          description: Device real Isp Organization
+          type: string
+        deviceTimeZone:
+          title: deviceTimeZone
+          description: Device time zone
+          type: string
+    ConsumerFinancial:
+      title: Financial
+      type: object
+      properties:
+        routingNumber:
+          title: routingNumber
+          description: Primary applicant account number
+          type: string
+        transitNumber:
+          title: transitNumber
+          description: Should identify the different branch / transit / store
+          type: string
+        accountType:
+          title: accountType
+          description: "Specific Account Type applied for:\r\nInd= Individual Account\r\nJoint= Joint Account\r\nDepst= Deposit Account\r\nCheck= Checking Account\r\nSavng= Saving Account\r\nMMA= Money Market Account\r\nCurnt= Current Account\r\nPersl= Personal Account\r\nTaxFr= Tax Free\r\nLwcst= Low Cost Account\r\nNmbnk= Numbered bank account"
+          type: string
+        creditLimit:
+          title: creditLimit
+          type: integer
+        accountNumber:
+          title: accountNumber
+          description: Primary applicant account number
+          type: string
+    ConsumerTelco:
+      title: Telco
+      type: object
+      properties:
+        ratePlan:
+          title: ratePlan
+          description: Rateplan customer activated on
+          type: string
+        orderType:
+          title: orderType
+          description: 'Type of order (New Service, Move, Change)'
+          type: string
+        activatingAgent:
+          $ref: '#/components/schemas/ConsumerParty'
+        storeNumber:
+          title: storeNumber
+          description: Store number where device/service activated (formerly sent in transit number)
+          type: string
+        customerReferenceNumber:
+          title: customerReferenceNumber
+          description: Customer reference number (different than application number)
+          type: string
+        imeiNumber:
+          title: imeiNumber
+          description: International Mobile Equipment Identity number - device serial number
+          type: string
+        promoGroupCode:
+          title: promoGroupCode
+          description: Promotion group code activated on
+          type: string
+        deviceModel:
+          title: deviceModel
+          description: 'Model of device (eg. iPhoneX, S9, etc.)'
+          type: string
+        activationDate:
+          title: activationDate
+          description: Date the device/service was activated.
+
+          type: string
+        deviceManufacturer:
+          title: deviceManufacturer
+          description: 'Manufacturer of the device (eg. Samsung, Apple, etc.)'
+          type: string
+        ban:
+          title: ban
+          type: string
+    ConsumerPeriod:
+      title: Period
+      type: object
+      properties:
+        valueInDays:
+          title: valueInDays
+          type: string
+          pattern: ^-?\d*(\.\d*)?$
+        units:
+          title: units
+          type: string
+        value:
+          title: value
+          type: integer
+
+    ConsumerDeviceRule:
+      title: DeviceRule
+      type: object
+      properties:
+        ruleType:
+          title: ruleType
+          type: string
+        name:
+          title: name
+          type: string
+        index:
+          title: index
+          type: string
+        weight:
+          title: weight
+          type: string
+    ConsumerInsurancePolicy:
+      title: InsurancePolicy
+      type: object
+      properties:
+        premiumPaymentMethod:
+          title: premiumPaymentMethod
+          description: 'Premium payment method (e.g. Broker Account, Debit Card, Credit Card, Cheque, Direct Debit, etc.)'
+          type: string
+        policyNumber:
+          title: policyNumber
+          description: Unique policy reference number
+          type: string
+        policyEndDate:
+          title: policyEndDate
+          description: The date when the policy expires. YYYYMMDD
+
+          type: string
+        policyInceptionDate:
+          title: policyInceptionDate
+          description: Original date of when the policy was first taken out. YYYYMMDD
+
+          type: string
+        policyBrand:
+          title: policyBrand
+          description: Brand of policy.
+          type: string
+        policyTermInDays:
+          title: policyTermInDays
+          description: Policy length
+          type: integer
+        statusChangeDate:
+          title: statusChangeDate
+          description: The date of the last change to the policy status. YYYYMMDD
+
+          type: string
+        cancellationReasonCode:
+          title: cancellationReasonCode
+          description: Code indicating the cancellation reason.
+          type: string
+        policyStartTimestamp:
+          title: policyStartTimestamp
+          description: 'Timestamp when the policy begins. YYYY-MM-DDThh:mm:ssZ format. For example, 2019-05-29T13:46:19-0500'
+
+          type: string
+        policyValue:
+          title: policyValue
+          description: Value of the Policy
+          type: integer
+        numberOfPolicyHolders:
+          title: numberOfPolicyHolders
+          description: Total number of policy holders.
+          type: integer
+        cancellationReasonDescription:
+          title: cancellationReasonDescription
+          description: Description indicating the cancellation reason.
+          type: string
+        policyChangeDate:
+          title: policyChangeDate
+          description: Original date of when the policy was first taken out. YYYYMMDD
+
+          type: string
+        premiumValuePerMonth:
+          $ref: '#/components/schemas/ConsumerCurrency'
+        policyBranch:
+          title: policyBranch
+          description: Broker branch that issued the policy.
+          type: string
+        status:
+          title: status
+          description: 'Status of the policy (e.g. Active, Renewed, Cancelled, Lapsed, etc.)'
+          type: string
+    ConsumerInsurance:
+      title: Insurance
+      type: object
+      properties:
+        autoRepairMechanic:
+          $ref: '#/components/schemas/ConsumerParty'
+        insuranceClaim:
+          $ref: '#/components/schemas/ConsumerInsuranceClaim'
+        insurancePolicy:
+          $ref: '#/components/schemas/ConsumerInsurancePolicy'
+        otherParty1:
+          $ref: '#/components/schemas/ConsumerParty'
+        productDecision:
+          title: productDecision
+          description: Accepted/Cancelled/Voided/NA
+          type: string
+        otherParty5:
+          $ref: '#/components/schemas/ConsumerParty'
+        otherParty4:
+          $ref: '#/components/schemas/ConsumerParty'
+        otherParty3:
+          $ref: '#/components/schemas/ConsumerParty'
+        towingAssociate:
+          $ref: '#/components/schemas/ConsumerParty'
+        otherParty2:
+          $ref: '#/components/schemas/ConsumerParty'
+        previousClaimAmount:
+          title: previousClaimAmount
+          description: Total cost of the claim to the best of the party's knowledge.
+          type: integer
+        decisionReason:
+          title: decisionReason
+          description: Reason for the decision
+          type: string
+        caseInvestigator:
+          $ref: '#/components/schemas/ConsumerParty'
+        previousClaimAtFaultFlag:
+          title: previousClaimAtFaultFlag
+          description: 'Flag indicating whether the party was at fault for causing the incident claimed for: Y (yes) or N (no).'
+          type: boolean
+        previousClaimIncidentDate:
+          title: previousClaimIncidentDate
+          description: Date that the incident occured. YYYYMMDD
+
+          type: string
+        caseAssessor:
+          $ref: '#/components/schemas/ConsumerParty'
+        previousClaimReferenceNumber:
+          title: previousClaimReferenceNumber
+          description: Unique previous claim reference number.
+          type: string
+        medicalProfessional1:
+          $ref: '#/components/schemas/ConsumerParty'
+        insuranceAgent:
+          $ref: '#/components/schemas/ConsumerParty'
+        medicalProfessional2:
+          $ref: '#/components/schemas/ConsumerParty'
+        otherParty6:
+          $ref: '#/components/schemas/ConsumerParty'
+        medicalProfessional3:
+          $ref: '#/components/schemas/ConsumerParty'
+        medicalProfessional4:
+          $ref: '#/components/schemas/ConsumerParty'
+        decisionDate:
+          title: decisionDate
+          description: Date the decision was made. YYYYMMDD
+
+          type: string
+        previousClaimTypeDescription:
+          title: previousClaimTypeDescription
+          description: Description of the previous claim.
+          type: string
+        productCode:
+          title: productCode
+          description: Auto/Life/Health/Home/Travel/Pet/Other
+          type: string
+        previousClaimIncidentDescription:
+          title: previousClaimIncidentDescription
+          description: 'Brief description of the incident (e.g. what happened, what caused the incident, etc.)'
+          type: string
+        insuranceBroker:
+          $ref: '#/components/schemas/ConsumerParty'
+    ConsumerBilling:
+      title: Billing
+      description: Equifax billing data related to an application
+      type: object
+      properties:
+        memberNumber:
+          title: memberNumber
+          type: string
+        accessName:
+          title: accessName
+          type: string
+        clientName:
+          title: clientName
+          type: string
+        workflowName:
+          title: workflowName
+          type: string
+
+    ConsumerApplication:
+      title: Application
+      type: object
+      properties:
+        customerReferenceId:
+          title: customerReferenceId
+          description: Reference Id provided by the customer to track to their systems
+          type: string
+        creditFile:
+          $ref: '#/components/schemas/ConsumerCreditFile'
+        recordSubType:
+          title: recordSubType
+          description: |-
+            Sub type record identifier if the record is a Hotlist.
+
+            Possible value for a hotlist:
+
+            WHITELIST
+
+            INTERDICTS
+
+            DECEASED
+
+            Any other hotlist name
+          type: string
+        clientApplicationTimestampUTC:
+          title: clientApplicationTimestampUTC
+          description: "\t\nYYYY-MM-DDThh:mm:ss.SSSZ\n\nTime in UTC when the application was submitted by the applicant according to the customer"
+
+          type: string
+        billing:
+          $ref: '#/components/schemas/ConsumerBilling'
+
+        customerProvidedIPAddress:
+          title: customerProvidedIPAddress
+          type: string
+        jointApplicant1:
+          $ref: '#/components/schemas/ConsumerParty'
+        bankAccountNumber:
+          title: bankAccountNumber
+          description: |-
+            Bank account number
+
+            example:
+
+            ES9820385778983000760236
+          type: string
+        jointApplicant2:
+          $ref: '#/components/schemas/ConsumerParty'
+        jointApplicant3:
+          $ref: '#/components/schemas/ConsumerParty'
+        flexFields:
+          $ref: '#/components/schemas/ConsumerFlexFields'
+        bankTransitNumber:
+          title: bankTransitNumber
+          description: Transit number
+          type: string
+        product:
+          $ref: '#/components/schemas/ConsumerProduct'
+        fraudScore:
+          title: fraudScore
+          type: object
+          properties:
+            thirdParty:
+              $ref: '#/components/schemas/ApplicationFraudScore'
+            external:
+              $ref: '#/components/schemas/ApplicationFraudScore'
+            firstParty:
+              $ref: '#/components/schemas/ApplicationFraudScore'
+        jointApplicant2Employer:
+          $ref: '#/components/schemas/ConsumerParty'
+        primaryApplicant:
+          $ref: '#/components/schemas/ConsumerParty'
+        recordType:
+          title: recordType
+          description: "\t\nType record identifier. Possible values:\n\nAPPLICATION: value for ingestion record\n\nHOTLIST: Value for hotlist record"
+          type: string
+
+        jointApplicant1Employer:
+          $ref: '#/components/schemas/ConsumerParty'
+        applicationRequestType:
+          title: applicationRequestType
+          description: "Select the product code that most closely describes the type of application request.\r\nNew Application (NA),\r\nCredit Increase (CI),\r\nRefinance (RF)\r\nand Pre-Approval (PA)."
+          type: string
+
+        numberOfProducts:
+          title: numberOfProducts
+          type: integer
+        jointApplicant3Employer:
+          $ref: '#/components/schemas/ConsumerParty'
+        decisionPath:
+          title: decisionPath
+          description: DECISION PATH
+          type: string
+
+        transactionId:
+          title: transactionId
+          description: KFE unique identifier. Can't be provided by customer or data factory.
+          type: string
+
+
+
+        primaryApplicantEmployer:
+          $ref: '#/components/schemas/ConsumerParty'
+        decisionType:
+          title: decisionType
+          description: 'Decision determined by Customer - eg. approved, declined, pre-approved, conditionally approved, etc.'
+          type: string
+        device:
+          $ref: '#/components/schemas/ConsumerDevice'
+        accountOwnershipType:
+          title: accountOwnershipType
+          description: |-
+            I - Individual
+            J - Joint (Co-Applicant)
+            C - Commercial
+          type: string
+
+        applicationSource:
+          title: applicationSource
+          description: "The codes can be matched to channels applicable to the business. Use the letter (e.g. I) and not the full word (e.g. Internet)\r\nThe Telco Application Source is the 6 codes (A,F,E,D,R,C) that can be matched to channels that the application originated from."
+          type: string
+
+
+        customer:
+          $ref: '#/components/schemas/ConsumerCustomer'
+      required:
+        - recordType
+    ConsumerPerson:
+      title: Person
+      type: object
+      properties:
+        profession:
+          title: profession
+          description: "\t\nApplicant profession\n\nex: \"profession\" = \"Physician\""
+          type: string
+        employeeId:
+          title: employeeId
+          description: Id of agent who activated new device/service
+          type: string
+
+        dateOfBirth:
+          title: dateOfBirth
+          description: "\t\nYYYY-MM-DD\n\nDate of Birth of the applicant or co-applicant (depending on the applicantType) submitted in the fraudulent application"
+
+          type: string
+
+        salaryPerYear:
+          title: salaryPerYear
+          type: integer
+        personName:
+          $ref: '#/components/schemas/ConsumerPersonName'
+
+        employedSince:
+          title: employedSince
+
+          type: string
+    Response:
+      type: object
+      properties:
+        entries:
+          type: array
+          description: entries
+          items:
+            $ref: '#/components/schemas/Entries'
+        type:
+          title: type
+          description: "Type of response"
+          type: string
+    Entries:
+      type: object
+      properties:
+        id:
+          title: id
+          description: "ID of the savings account."
+          type: string
+        entity:
+          title: entity
+          description: "Table name"
+          type: string
+        decisionBy:
+          title: decisionBy
+          description: "Person who took the decision "
+          type: string
+        timestamp:
+          title: timestamp
+          description: "Time Stamp"
+          type: string
+
+        decisionReasons:
+          title: decisionReasons
+          description: "Reason statement attached with the Label. This is a leaf-level
+                        categorization for the Decision selected and it can be configured in the
+                        Simility web console"
+          type: array
+          items:
+            type: string
+        decisionLabels:
+          title: decisionLabels
+          description: ""
+          type: array
+          items:
+            type: string
+        note:
+          title: note
+          description: "Note entered while passing decision."
+          type: string
+        score:
+          title: score
+          description: "Simility score for the decision."
+          type: string
+        leadLabels:
+          title: leadLabels
+          description: "Simility score for the decision."
+          type: object
+          additionalProperties:
+            type: integer
+        queue:
+          title: queue
+          description: "Queue from which decision was taken. The value could be null
+                        sometimes."
+          type: string
+        queueState:
+          title: queueState
+          description: ""
+          type: string
+        additionalData:
+          title: additionalData
+          description: "You can pass additional parameters as part of the decision payload
+                        using this field if required."
+          type: object
+          additionalProperties:
+            type: string
+    APIErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+          example: 0
+        description:
+          type: string
+          example: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally added when additional error details are available.
+          properties:
+            timeStamp:
+              type: string
+              example: 1566987677
+            correlation_id:
+              type: string
+              example: 9897809
+            transaction_id:
+              type: string
+              example: 8976578
+            messages:
+              type: object
+              properties:
+                error_code:
+                  type: string
+                  description: error code
+                  example: 600
+                error_message:
+                  type: string
+                  description: Error description
+                  example: please contact
+    blocklistItems:
+      type: object
+      properties:
+        eid:
+          title: eid
+          type: string
+          description: entity Id that has to be blacklisted          
+        entityName:
+          title: entityName
+          type: string
+          description: name of the entity that needs to be blacklisted or whitelisted
+        appPrefix:
+          title: appPrefix
+          type: string
+          description: app Prefix
+        feedbackStatus:
+          title: feedbackStatus
+          type: string
+          description: Blacklisted or Whitelisted
+        expiryDate:
+          title: expiryDate
+          type: string
+          description: expiryDate          
+    FraudBlocklist:
+      title: FraudBlocklist
+      type: object
+      properties:
+        blocklistItems:
+          title: blocklistItems
+          type: array
+          items:
+           $ref: '#/components/schemas/blocklistItems'
+          description: List of items to be blocklisted
+    FraudBlocklistResponse:
+      title: FraudBlocklistResponse
+      type: object
+      properties:
+        blocklistResponseItems:
+          title: blocklistResponseItems
+          type: array
+          items:
+            $ref: '#/components/schemas/blocklistResponseItems'
+    blocklistResponseItems:
+      type: object
+      properties:
+        feedbackEntity:
+          $ref: '#/components/schemas/feedbackEntity'
+        updateStatus:
+          title: updateStatus
+          description: Status of update
+          type: string
+    feedbackEntity:
+      type: object
+      properties:
+        eid:
+          title: eid
+          type: string
+          description: eid
+        entityName:
+          title: entityName
+          type: string
+          description: entity name
+        appPrefix:
+          title: appPrefix
+          type: string
+          description: appPrefix
+        feedbackStatus:
+          title: feedbackStatus
+          type: string 
+          description: feedback status
+        modifiedBy: 
+          title: modifiedBy
+          type: string
+          description: modified by
+        modificationDate:
+          title: modificationDate
+          type: string
+          description: modification date
+        expiryDate:
+          title: expiryDate
+          type: string
+          description: expiry date        
+  examples:
+    response:
+      value:
+        entries:
+          - id: TestId245
+            entity: application
+            decisionLabels:
+              - Not_FRAUD
+            timestamp: '2020-07-15 15:59:43'
+            decisionBy: autodecider@simility.com
+            note: 'efx_ca_dev_1::application::Not_Fraud'
+            score: 0
+            leadLabels:
+              EFX_CompanyApplicant_BusinessEmailAddress_NotEmpty: 10.0
+              EFX_PrimaryApplicant_DOB_IsEmpty: -10.0
+              EFX_PrimaryApplicant_EmailAddress_IsEmpty: 0.0
+            queueState: Closed
+            additionalData:
+              transaction_id: 0d63bdf4-7f29-a22e-4010-151d0be03bfd
+              correlation_id: CONSUMER_ALL_MD7007
+              customer_member_number: 999ZZ59558
+        type: decision
+  
+    feedBackRequest:
+      value:
+        id: TestId202
+        application:
+          decision: NOT_FRAUD
+    FraudBlocklistRequest:
+      value:
+        blocklistItems:
+          - eid: test1@gmail.com
+            entityName: applicant_email
+            appPrefix: app
+            feedbackStatus: Blacklisted
+            expiryDate: '2022-01-22T20:20:30.573Z'
+          - eid: Little John
+            entityName: applicant_full_name
+            appPrefix: app
+            feedbackStatus: Blacklisted
+    FraudBlocklistResponse:
+      value:
+        blocklistResponseItems:
+          - feedbackEntity:
+              eid: test1@gmail.com
+              entityName: applicant_email
+              appPrefix: app
+              feedbackStatus: blacklisted1
+              modifiedBy: admin
+              modificationDate: Aug 14,2019 5:03:10,
+              expiryDate: '2022-01-22T20:20:30.573Z'              
+            updateStatus: succeeded  
+          - feedbackEntity:
+              eid: Little John
+              entityName: applicant_full_name
+              appPrefix: app
+              feedbackStatus: blacklisted
+              modifiedBy: admin
+              modificationDate: Aug 14,2019 5:03:10
+            updateStatus: succeeded  
+            
+    commercialRequest:
+      value:
+        id: TestId245
+        application:
+          applicationRequestType: NA
+          applicationSource: I
+          bankAccountNumber: string
+          bankTransitNumber: string
+          clientApplicationTimestampUTC: '2020-01-22T20:52:19.095Z'
+          companyApplicant:
+            businessEmail:
+              emailAddress: string
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              businessEstablishedDate: string
+              companyAssets: 0
+              companyName: string
+              isExistingCustomer: true
+              natureOfBusiness: string
+              numberOfDirectors: 0
+              numberOfEmployees: 0
+              numberOfVehicles: 0
+              payrollPerYear: 0
+              registrationNumber: string
+              revenuePerYear: 0
+              sicCode: string
+              tradeName: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            formerAddress1:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            formerBusinessPhone:
+              phoneNumber: string
+            parentCompanyAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            verifiedIncomePerYear: 0
+          companyOfficer1:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer2:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer3:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer4:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer5:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer6:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer7:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer8:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          companyOfficer9:
+            businessEmail:
+              emailAddress: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc2:
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              personName:
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          customer:
+            customerMemberNumber: string
+            customerName: string
+          customerProvidedIPAddress: string
+          customerReferenceId: string
+          decisionPath: FAMD
+          decisionType: string
+          flexFields:
+            dates:
+              name1: string
+              value1: string
+            numbers:
+              name1: string
+              value1: 0
+            strings:
+              name1: string
+              value1: string
+          fraudScore:
+            commercial:
+              reasonCodes: string
+              score: 0
+            external:
+              reasonCodes: string
+              score: 0
+          numberOfProducts: 0
+          product:
+            accountOpenedDate: string
+            accountTypeFreeFormat: string
+            auto:
+              dealer:
+                company:
+                  companyName: string
+              dealerCode: string
+              financeManager:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              ownershipType: string
+              preownedFlag: true
+              purchasedVehicle:
+                vin: string
+                year: 0
+                vehicleType: string
+                trimPackage: string
+                make: string
+                model: string
+              salesPerson:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              tradeInVehicle:
+                make: string
+                model: string
+                odometerInKM: 0
+                trimPackage: string
+                value: 0
+                vin: string
+                year: 0
+            customerSince: string
+            dealerIncentives: 0
+            ecommerce:
+              avs: X
+              cvv2: M
+              paymentMethod: string
+              shippingMethod: string
+              vbv: '0'
+            financial:
+              accountType: string
+              accountNumber: string
+              transitNumber: string
+              creditLimit: 0
+            insurance:
+              autoRepairMechanic:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              caseAssessor:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              caseInvestigator:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              decisionDate: string
+              decisionReason: string
+              insuranceAgent:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              insuranceBroker:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              insuranceClaim:
+                cancellationReasonCode: string
+                cancellationReasonDescription: string
+                claimHandler: string
+                claimIncidentTimestamp: '2020-01-22T20:52:19.098Z'
+                claimNumber: string
+                claimRecoveryValueEstimate:
+                  value: string
+                claimRecoveryValuePaid:
+                  value: string
+                claimSettledDate: string
+                claimStartTimestamp: '2020-01-22T20:52:19.098Z'
+                claimTotalValueEstimate:
+                  value: string
+                claimTotalValuePaid:
+                  value: string
+                claimTypeCode: string
+                claimTypeDescription: string
+                incidentCode: string
+                incidentDescription: string
+                incidentDiscoveryDate: string
+                incidentLocation: string
+                largeLossFlag: true
+                multipleClaimantsFlag: true
+                numberOfClaimants: 0
+                premiumValueOutstanding: 0
+                previousClaimPolicyNumber: string
+                status: string
+                statusChangeDate: string
+              insurancePolicy:
+                cancellationReasonCode: string
+                cancellationReasonDescription: string
+                numberOfPolicyHolders: 0
+                policyBranch: string
+                policyBrand: string
+                policyChangeDate: string
+                policyEndDate: string
+                policyInceptionDate: string
+                policyNumber: string
+                policyStartTimestamp: '2020-01-22T20:52:19.098Z'
+                policyTermInDays: 0
+                policyValue: 0
+                premiumPaymentMethod: string
+                premiumValuePerMonth:
+                  value: string
+                status: string
+                statusChangeDate: string
+              medicalProfessional1:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional2:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional3:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional4:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty1:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty2:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty3:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty4:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty5:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty6:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              previousClaimAmount: 0
+              previousClaimAtFaultFlag: true
+              previousClaimIncidentDate: string
+              previousClaimIncidentDescription: string
+              previousClaimReferenceNumber: string
+              previousClaimTypeDescription: string
+              productCode: string
+              productDecision: string
+              towingAssociate:
+                company:
+                  companyName: string
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+            invoiceDate: string
+            mortgage:
+              appraiser:
+                company:
+                  companyName: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              broker:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              brokerage:
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+              builder:
+                company:
+                  companyName: string
+              costCenter: string
+              downPaymentAmountInGiftedFunds: 0
+              gds: 0
+              lawyer:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              lender:
+                company:
+                  companyName: string
+              ltv: 0
+              mortgageCloseDate: string
+              mortgageDownPaymentAmount: 0
+              property:
+                primaryAddressSinceDate: string
+                propertyAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                propertyAppraisalAmount: 0
+                propertyAreaSize: string
+                propertyNeighbourhood: string
+                propertyType: string
+                purchasePrice: 0
+                rentalFlag: true
+              realtor:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              securityAddress:
+                city: string
+                postalCode: string
+                stateOrProvince: string
+                streetName: string
+                streetNumber: string
+                unitNumber: string
+              sourceNameOfGift:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              sourceOfMortgageDownPayment: string
+              subBroker:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              tds: 0
+              underwriter:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+            originalAmount: 0
+            preApprovedLoanAmount: 0
+            productType: string
+            telco:
+              activatingAgent:
+                person:
+                  employeeId: string
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              activationDate: string
+              ban: string
+              customerReferenceNumber: string
+              deviceManufacturer: string
+              deviceModel: string
+              imeiNumber: string
+              orderType: string
+              promoGroupCode: string
+              ratePlan: string
+              storeNumber: string
+            termInMonths: 0
+          recordSubType: string
+          recordType: APPLICATION
+        fraud:
+          fraudAssessment: POSSIBLE
+          fraudDetectionTimestampUTC: '2020-01-22T20:52:19.103Z'
+          fraudReasonCode: string
+          fraudType: string
+          statusNotes: string
+
+    '400.00':
+      value:
+        efxErrorCode: "400.00"
+        description: Bad Request.
+        additionalErrorDetails:
+          timeStamp: 1569858242565
+          messages:
+            error_code:
+            error_message:
+    '401.01':
+      value:
+        efxErrorCode: "401.01"
+        description: Unauthorized.
+    '405.01':
+      value:
+        efxErrorCode: "405.01"
+        description: Method Not Allowed.
+
+    '415.01':
+      value:
+        efxErrorCode: "415.01"
+        description: Payload Format is in an Unsupported Format.
+    '500.01':
+      value:
+        efxErrorCode: "500.01"
+        description: An internal error has occurred.
+    '501.01':
+      value:
+        efxErrorCode: "501.01"
+        description: Not-implemented - Specified resource is not implemented.
+    '503.01':
+      value:
+        efxErrorCode: "503.01"
+        description: Service is un-available.
+    '504.01':
+      value:
+        efxErrorCode: "504.01"
+        description: Gateway timeout.
+    consumerRequest:
+      value:
+        id: TEST_123
+        application:
+          accountOwnershipType: ''
+          applicationRequestType: NA
+          applicationSource: I
+          bankAccountNumber: string
+          bankTransitNumber: string
+          device:
+            deviceAlias: device2
+          customer:
+            customerName: string
+          clientApplicationTimestampUTC: '2020-01-22T20:20:30.573Z'
+          customerProvidedIPAddress: string
+          customerReferenceId: string
+          decisionPath: FAMD
+          decisionType: string
+          flexFields:
+            dates:
+              name1: string
+            numbers:
+              name1: string
+              value1: 0
+            strings:
+              name1: string
+          fraudScore:
+            external:
+              reasonCodes: string
+              score: 0
+            firstParty:
+              reasonCodes: string
+              score: 0
+            thirdParty:
+              reasonCodes: string
+              score: 0
+          jointApplicant1:
+            additionalIncomePerYear: 0
+            additionalIncomeSource: string
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              startDateAtResidence: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+            formerAddress1:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              startDateAtResidence: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+            formerBusinessPhone:
+              extension: string
+              phoneNumber: string
+            formerResidentialPhone:
+              phoneNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc3:
+              documentId: string
+            identificationDoc7:
+              area1: string
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              employedSince: string
+              personName:
+                aliasGivenName: string
+                aliasLastName: string
+                aliasMiddleName: string
+                aliasSuffix: string
+                aliasTitle: string
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+                title: string
+              profession: string
+              salaryPerYear: 0
+            personalEmail:
+              emailAddress: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          jointApplicant1Employer:
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              companyName: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+          jointApplicant2:
+            additionalIncomePerYear: 0
+            additionalIncomeSource: string
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              startDateAtResidence: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+            formerAddress1:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              startDateAtResidence: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+            formerBusinessPhone:
+              extension: string
+              phoneNumber: string
+            formerResidentialPhone:
+              phoneNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc3:
+              documentId: string
+            identificationDoc7:
+              area1: string
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              employedSince: string
+              personName:
+                aliasGivenName: string
+                aliasLastName: string
+                aliasMiddleName: string
+                aliasSuffix: string
+                aliasTitle: string
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+                title: string
+              profession: string
+              salaryPerYear: 0
+            personalEmail:
+              emailAddress: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          jointApplicant2Employer:
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              companyName: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+          jointApplicant3:
+            additionalIncomePerYear: 0
+            additionalIncomeSource: string
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+              startDateAtResidence: string
+            formerAddress1:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              startDateAtResidence: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+              accommodationType: string
+            formerBusinessPhone:
+              extension: string
+              phoneNumber: string
+            formerResidentialPhone:
+              phoneNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc3:
+              documentId: string
+            identificationDoc7:
+              area1: string
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              employedSince: string
+              personName:
+                aliasGivenName: string
+                aliasLastName: string
+                aliasMiddleName: string
+                aliasSuffix: string
+                aliasTitle: string
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+                title: string
+              profession: string
+              salaryPerYear: 0
+            personalEmail:
+              emailAddress: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+          jointApplicant3Employer:
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              companyName: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+          numberOfProducts: 0
+          primaryApplicant:
+            additionalIncomePerYear: 0
+            additionalIncomeSource: string
+            businessEmail:
+              emailAddress: string
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              businessEstablishedDate: string
+              sicCode: string
+              tradeName: string
+            contactPhone:
+              phoneNumber: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              startDateAtResidence: string
+              unitNumber: string
+              accommodationType: string
+            formerAddress1:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              startDateAtResidence: string
+              unitNumber: string
+              accommodationType: string
+            formerAddress2:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              startDateAtResidence: string
+              unitNumber: string
+              accommodationType: string
+            formerBusinessPhone:
+              extension: string
+              phoneNumber: string
+            formerResidentialPhone:
+              phoneNumber: string
+            identificationDoc1:
+              area1: string
+              documentId: string
+            identificationDoc3:
+              documentId: string
+            identificationDoc7:
+              area1: string
+              area2: string
+              documentId: string
+            mobilePhone:
+              phoneNumber: string
+            person:
+              dateOfBirth: string
+              employedSince: string
+              personName:
+                aliasGivenName: string
+                aliasLastName: string
+                aliasMiddleName: string
+                aliasSuffix: string
+                aliasTitle: string
+                firstName: string
+                lastName: string
+                middleName: string
+                suffix: string
+                title: string
+              profession: string
+              salaryPerYear: 0
+            personalEmail:
+              emailAddress: string
+            residentialPhone:
+              phoneNumber: string
+            socialSecurityNumber:
+              documentId: string
+            verifiedIncomePerYear: 0
+          primaryApplicantEmployer:
+            businessPhone:
+              extension: string
+              phoneNumber: string
+            company:
+              companyName: string
+            currentAddress:
+              city: string
+              postalCode: string
+              stateOrProvince: string
+              streetName: string
+              streetNumber: string
+              unitNumber: string
+          product:
+            accountOpenedDate: string
+            accountTypeFreeFormat: string
+            auto:
+              dealer:
+                company:
+                  companyName: string
+              dealerCode: string
+              financeManager:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              ownershipType: string
+              preownedFlag: true
+              purchasedVehicle:
+                make: string
+                model: string
+                trimPackage: string
+                vehicleType: string
+                vin: string
+                year: 0
+              salesPerson:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              tradeInVehicle:
+                make: string
+                model: string
+                odometerInKM: 0
+                trimPackage: string
+                value: 0
+                vin: string
+                year: 0
+            customerSince: string
+            dealerIncentives: 0
+            ecommerce:
+              avs: X
+              cvv2: M
+              paymentMethod: string
+              shippingMethod: string
+              vbv: '0'
+            financial:
+              accountNumber: string
+              accountType: string
+              creditLimit: 0
+              transitNumber: string
+            insurance:
+              autoRepairMechanic:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              caseAssessor:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              caseInvestigator:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              decisionDate: string
+              decisionReason: string
+              insuranceAgent:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              insuranceBroker:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              insuranceClaim:
+                cancellationReasonCode: string
+                cancellationReasonDescription: string
+                claimHandler: string
+                claimIncidentTimestamp: '2020-01-22T20:20:30.577Z'
+                claimNumber: string
+                claimRecoveryValueEstimate:
+                  value: string
+                claimRecoveryValuePaid:
+                  value: string
+                claimSettledDate: string
+                claimStartTimestamp: '2020-01-22T20:20:30.577Z'
+                claimTotalValueEstimate:
+                  value: string
+                claimTotalValuePaid:
+                  value: string
+                claimTypeCode: string
+                claimTypeDescription: string
+                incidentCode: string
+                incidentDescription: string
+                incidentDiscoveryDate: string
+                incidentLocation: string
+                largeLossFlag: true
+                multipleClaimantsFlag: true
+                numberOfClaimants: 0
+                premiumValueOutstanding: 0
+                previousClaimPolicyNumber: string
+                status: string
+                statusChangeDate: string
+              insurancePolicy:
+                cancellationReasonCode: string
+                cancellationReasonDescription: string
+                numberOfPolicyHolders: 0
+                policyBranch: string
+                policyBrand: string
+                policyChangeDate: string
+                policyEndDate: string
+                policyInceptionDate: string
+                policyNumber: string
+                policyStartTimestamp: '2020-01-22T20:20:30.577Z'
+                policyTermInDays: 0
+                policyValue: 0
+                premiumPaymentMethod: string
+                premiumValuePerMonth:
+                  value: string
+                status: string
+                statusChangeDate: string
+              medicalProfessional1:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional2:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional3:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              medicalProfessional4:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty1:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty2:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty3:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty4:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty5:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              otherParty6:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              previousClaimAmount: 0
+              previousClaimAtFaultFlag: true
+              previousClaimIncidentDate: string
+              previousClaimIncidentDescription: string
+              previousClaimReferenceNumber: string
+              previousClaimTypeDescription: string
+              productCode: string
+              productDecision: string
+              towingAssociate:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+            invoiceDate: string
+            mortgage:
+              appraiser:
+                company:
+                  companyName: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              broker:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              brokerage:
+                businessPhone:
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+              builder:
+                company:
+                  companyName: string
+              costCenter: string
+              downPaymentAmountInGiftedFunds: 0
+              gds: 0
+              lawyer:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              lender:
+                company:
+                  companyName: string
+              ltv: 0
+              mortgageCloseDate: string
+              mortgageDownPaymentAmount: 0
+              property:
+                primaryAddressSinceDate: string
+                propertyAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                propertyAppraisalAmount: 0
+                propertyAreaSize: string
+                propertyNeighbourhood: string
+                propertyType: string
+                purchasePrice: 0
+                rentalFlag: true
+              realtor:
+                businessEmail:
+                  emailAddress: string
+                businessOrProfessionalLicense:
+                  documentId: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                company:
+                  companyName: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              securityAddress:
+                city: string
+                postalCode: string
+                stateOrProvince: string
+                streetName: string
+                streetNumber: string
+                unitNumber: string
+              sourceNameOfGift:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              sourceOfMortgageDownPayment: string
+              subBroker:
+                businessEmail:
+                  emailAddress: string
+                businessPhone:
+                  extension: string
+                  phoneNumber: string
+                currentAddress:
+                  city: string
+                  postalCode: string
+                  stateOrProvince: string
+                  streetName: string
+                  streetNumber: string
+                  unitNumber: string
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              tds: 0
+              underwriter:
+                person:
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+            originalAmount: 0
+            preApprovedLoanAmount: 0
+            productType: string
+            telco:
+              activatingAgent:
+                person:
+                  employeeId: string
+                  personName:
+                    firstName: string
+                    lastName: string
+                    middleName: string
+              activationDate: string
+              ban: string
+              customerReferenceNumber: string
+              deviceManufacturer: string
+              deviceModel: string
+              imeiNumber: string
+              orderType: string
+              promoGroupCode: string
+              ratePlan: string
+              storeNumber: string
+            termInMonths: 0
+          recordType: APPLICATION
+          recordSubType: string
+          transactionId: string
+        fraud:
+          fraudAssessment: POSSIBLE
+          fraudDetectionTimestampUTC: '2020-01-22T20:20:30.582Z'
+          fraudReasonCode: string
+          fraudType: string
+          statusNotes: string

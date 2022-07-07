@@ -1,0 +1,416 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://api.sandbox.equifax.com/specialty-finance-monitor'
+    description: Server base URL
+info:
+  description: >
+    # Introduction
+
+    The Specialty Finance Monitor & Block api allows users to add/remove consumers
+    from private monitoring lists and our global do not process list.
+
+    # Authentication
+    
+    Bearer token acquired through the Equifax developer OAuth service.
+  version: "1.0.3"
+  title: Specialty Finance Monitor and Block API
+tags:
+  - name: ID Monitoring
+    description: The ID Monitoring API allows our users to add and remove consumers from private monitoring lists
+  - name: Global Do Not Process List
+    description: The Do Not Process API allows our users to add and remove consumers from do not process lists
+paths:
+  /v1/monitoring/add:
+    post:
+      tags:
+        - ID Monitoring
+      summary: 'Adds a consumer to a monitoring list owned by the user.'
+      requestBody:
+        description: Consumer object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerAdd'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/monitoring/remove:
+    post:
+      tags:
+        - ID Monitoring
+      summary: 'Removes a consumer from a monitoring list owned by the user.'
+      requestBody:
+        description: Consumer identifier
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ConsumerBySSN'
+                - $ref: '#/components/schemas/ConsumerByConsumerID'
+            examples:
+              ConsumerBySSN:
+                value:
+                  monitoring_list: ListA
+                  ssn: 123456789
+              ConsumerByConsumerID:
+                value:
+                  monitoring_list: ListA
+                  consumer_id: 98765432
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/monitoring/status:
+    get:
+      tags:
+        - ID Monitoring
+      summary: 'Used to retrieve the monitoring status of a consumer for a monitoring list owned by the API user.'
+      requestBody:
+        description: Consumer identifier
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerByIdentifier'
+            examples:
+              Ssn:
+                value:
+                  monitoring_list: ListA
+                  ssn: 123456789
+              ConsumerID:
+                value:
+                  monitoring_list: ListB
+                  consumer_id: 123456
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/monitoring/alerts:
+    get:
+      tags:
+        - ID Monitoring
+      summary: 'Used to retrieve the monitoring alerts for a monitoring list owned by the API user.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonitoringListAlertRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListAlertsResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/block/add:
+    post:
+      tags:
+        - Global Do Not Process List
+      summary: 'Used to enable DNP for a consumer on a monitoring list owned by the API user.'
+      requestBody:
+        description: Consumer object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerBySSN'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/block/remove:
+    post:
+      tags:
+        - Global Do Not Process List
+      summary: 'Used to disable DNP for a consumer on a monitoring list owned by the API user.'
+      requestBody:
+        description: Consumer identifier
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ConsumerBySSN'
+                - $ref: '#/components/schemas/ConsumerByConsumerID'
+            examples:
+              ConsumerBySSN:
+                value:
+                  monitoring_list: ListA
+                  ssn: 123456789
+              ConsumerByConsumerID:
+                value:
+                  monitoring_list: ListA
+                  consumer_id: 98765432
+      responses:
+        '200':
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/block/status:
+    get:
+      tags:
+        - Global Do Not Process List
+      summary: 'Used to retrieve the DNP status of a consumer for a monitoring list owned by the API user.'
+      requestBody:
+        description: Consumer identifier
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerByIdentifier'
+            examples:
+              Ssn:
+                value:
+                  monitoring_list: ListA
+                  ssn: 123456789
+              ConsumerID:
+                value:
+                  monitoring_list: ListB
+                  consumer_id: 123456
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringListStatusResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ConsumerAdd:
+      required:
+        - monitoring_list
+        - ssn
+        - external_id
+        - first_name
+        - last_name
+        - dob
+      type: object
+      properties:
+        monitoring_list:
+          type: string
+        ssn:
+          type: string
+        external_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        dob:
+          type: string
+      example:
+        monitoring_list: ListA
+        ssn: 123456789
+        external_id: 99999
+        first_name: John
+        last_name: Doe
+        dob: 1980-01-01
+    ConsumerByIdentifier:
+      required:
+        - monitoring_list
+      type: object
+      properties:
+        monitoring_list:
+          type: string
+        ssn:
+          type: string
+        consumer_id:
+          type: string
+    ConsumerBySSN:
+      required:
+        - monitoring_list
+        - ssn
+      type: object
+      properties:
+        monitoring_list:
+          type: string
+        ssn:
+          type: string
+      example:
+        monitoring_list: ListA
+        ssn: 123456789
+    ConsumerByConsumerID:
+      required:
+        - monitoring_list
+        - consumer_id
+      type: object
+      properties:
+        monitoring_list:
+          type: string
+        consumer_id:
+          type: string
+      example:
+        monitoring_list: ListA
+        consumer_id: 98765432
+    MonitoringListResponse:
+      type: object
+      properties:
+        message:
+          type: object
+          properties:
+            consumer_id:
+              type: string
+        http_status_code:
+          type: integer
+    MonitoringListStatusResponse:
+      type: object
+      properties:
+        message:
+          type: object
+          properties:
+            status:
+              type: boolean
+        http_status_code:
+          type: integer
+    MonitoringListAlertRequest:
+      type: object
+      required:
+        - date_end
+        - date_start
+        - monitoring_list
+      properties:
+        monitoring_list:
+          type: string
+        date_start:
+          type: string
+        date_end:
+          type: string
+    MonitoringListAlertsResponse:
+      type: object
+      properties:
+        message:
+          type: object
+          properties:
+            alerts:
+              type: array
+              items:
+                $ref: '#/components/schemas/Alert'
+        http_status_code:
+          type: integer
+    Alert:
+      type: object
+      properties:
+        consumer_id:
+          type: string
+        type:
+          type: string
+        date:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        http_status_code:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+security:
+  - bearerAuth: []

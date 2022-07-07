@@ -1,0 +1,1255 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    
+    This API allows merchants to retrieve a list of active credit card data for consumers with a related identity so that the consumer can easily pay for items online (desktop or mobile) without having to key in payment information or register their payment credentials for recurrent use.
+    
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    3. Make **[handshake call](#tag/Handshake-call)** to start a new API session.
+    4. Submit consumer's **[consent](#tag/Consent)** to obtain their data.
+    5. Obtain consumer's **[credit cards](#tag/CreditCards)**.
+    
+  version: 'v2'
+  title: InstaTouch Pay API
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+servers:
+- url: https://api.sandbox.equifax.com/business    
+paths:
+  /instatouch-identity/v2/user-sessions:
+    post:
+      tags:
+      - Handshake call
+      description: Handshake Call initiates a new session with InstaTouch.  The session ID generated in this call is used in subsequent calls.
+      operationId: Start initial handshake
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HandshakeRequest'
+            examples:
+              User Sessions Request:
+                $ref: '#/components/examples/User_sessions_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HandshakeResponse'
+              examples:
+                User Sessions Response:
+                  $ref: '#/components/examples/User_sessions_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-pay"]
+
+  /instatouch-identity/v2/user-sessions/user-consents:
+    post:
+      tags:
+      - Consent
+      description: |
+        Consumer consent is required to obtain a list of available credit cards. The purpose of this API is to record the consumer’s choice to Opt In or Opt Out and can only be used once.
+      operationId: Manage consent
+      parameters:
+      - name: efx-sessionId
+        in: header
+        description: In addition to authentication headers, all requests must include the session ID.
+        required: true
+        schema:
+          type: string
+        example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRequest'
+            examples:
+              User consent Request:
+                $ref: '#/components/examples/User_consent_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentResponse'
+              examples:
+                User consent Response:
+                  $ref: '#/components/examples/User_consent_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-pay"]
+
+  /instatouch-pay/v2/card-tokens:
+    post:
+      tags:
+      - CreditCards
+      description: This API will provide details (link, token and other fields) for each credit card to be selected by the consumer.
+      operationId: Retrieve Pay Identities
+      parameters:
+      - name: efx-sessionId
+        in: header
+        description: In addition to authentication headers, all requests must include the session ID.
+        required: true
+        schema:
+          type: string
+        example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayResponse'
+            examples:
+              Card Tokens Request:
+                $ref: '#/components/examples/card_tokens_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayResponse'
+              examples:
+                Card Tokens Response:
+                  $ref: '#/components/examples/card_tokens_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-pay"]
+
+  /instatouch-pay/v2/ids/card-tokens:
+    post:
+      tags:
+      - CreditCards
+      description: This API will provide details (link, token and other fields) for each credit card to be selected by the consumer using the unique id.
+      operationId: Retrieve Pay Identities-uniqueId
+      parameters:
+      - name: efx-sessionId
+        in: header
+        description: In addition to authentication headers, all requests must include the session ID.
+        required: true
+        schema:
+          type: string
+        example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayConnexusFlowRequest'
+            examples:
+              ID Card Tokens Request:
+                $ref: '#/components/examples/id_card_tokens_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayResponse'
+              examples:
+                ID Card Tokens Response:
+                  $ref: '#/components/examples/id_card_tokens_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity https://api.equifax.com/business/instatouch-pay"]
+  /instatouch-pay/v2/card-number:
+    post:
+      tags:
+      - CreditCards
+      description: This API will provide creditcard number selected by the consumer using the unique id.
+      operationId: Retrieve Creditcard number
+      parameters:
+      - name: efx-sessionId
+        in: header
+        description: In addition to authentication headers, all requests must include the session ID.
+        required: true
+        schema:
+          type: string
+        example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayCardNumberRequest'
+            examples:
+              ID Card Tokens Request:
+                $ref: '#/components/examples/id_card_number_req'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayCardNumberResponse'
+              examples:
+                ID Card Tokens Response:
+                  $ref: '#/components/examples/id_card_number_res'
+        400:
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                400.01:
+                  $ref: '#/components/examples/400.01'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                401.03:
+                  $ref: '#/components/examples/401.03'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/404.01'
+        415:
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                404.01:
+                  $ref: '#/components/examples/415.01'
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                422.01:
+                  $ref: '#/components/examples/422.01'
+        429:
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                429.01:
+                  $ref: '#/components/examples/429.01'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                500.01:
+                  $ref: '#/components/examples/500.01'
+        501:
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                501.01:
+                  $ref: '#/components/examples/501.01'
+        503:
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                503.01:
+                  $ref: '#/components/examples/503.01'
+        504:
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                504.01:
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth 2.0: ["scopes: https://api.equifax.com/business/instatouch-identity https://api.equifax.com/business/instatouch-pay"]
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+  schemas:
+    ConsumerIdentifier:
+      type: object
+      required:
+        - subjectIdentifier
+        - subjectType
+      properties:
+        subjectType:
+          type: string
+          description: Subject type that indicates what the subjectIdentifier field represents.
+          maxLength: 50
+          example: mdn
+        subjectIdentifier:
+          type: string
+          description: Subject identifying value.
+          maxLength: 11
+          example: 3035036891
+    HandshakeResponse:
+      type: object
+      required:
+        - carrier
+        - instaTouch
+        - sessionID
+      properties:
+        transactionId:
+          type: string
+          description: Transaction id.
+          maxLength: 36
+          example: b5e477bed68344edba18679598969ed1
+        dateTime:
+          type: string
+          description: Date and time stamp of the response.
+          example: "2018-09-24T15:29:57.073+0000"
+        sessionID:
+          type: string
+          description: A unique identifier, this must be passed on for subsequent API calls. It has a Time To Live (TTL) value of 20 to 24 minutes.
+          maxLength: 32
+          example: 81fef9abca404f1cb85546e1877415d5
+        instaTouch:
+          type: string
+          description: Call back URLs to let InstaTouch platform know mobile identification is complete and pass the carrier attributes.
+          maxLength: 200
+          example:  https://api.equifax.com/business/instatouch-identity
+        carrier:
+          type: string
+          maxLength: 50
+          description: |
+            Call back URL to authenticate and identify the mobile device with the carrier. This call has to be made from the application before you proceed with mobile identification steps mentioned below.  
+            If the user is on Wi-Fi, the response won’t have this attribute coming back. In that case proceed with the OTP process.
+          example: att.com
+    HandshakeRequest:
+      type: object
+      required:
+        - merchantId
+      properties:
+        merchantId:
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          maxLength: 16
+          example: efxtest
+        identityFlag:
+          type: string
+          description: A flag attribute that is used to bypass registration with the mobile network operators to retrieve a Header Enrichment URL. Include this flag attribute if its not necessary to incorporate Consumer Identity APIs in implementation.
+          maxLength: 2
+          example: N
+    ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditional when additional error details are available.
+    ConsumerConsent:
+      required:
+      - consentEvent
+      - consentEventDate
+      - consentForServices
+      - consentMethod
+      - consentType
+      type: object
+      properties:
+        consentEventDate:
+          type: string
+          description: The date and time the consent was acquired from the consumer. In ISO 8601 format, UTC-based.
+          format: date-time
+        consentEvent:
+          type: string
+          description: Type of consent event to distinguish if opting-in or opting-out.
+          example: opt-in
+        consentType:
+          type: string
+          description: The type of consent being initiated. Can be “whitelist” or “SMS”.
+          example: whitelist
+        consentMethod:
+          type: string
+          description: "The method used for opting in/out is required\
+            \ if consentType is whitelist. \nValid values are: \n- TCO: Where\
+            \ the consumer gave consent by accepting terms and conditions online.\
+            \ \n- TCP: Consent was given via terms and conditions on paper. \n- MA:\
+            \ Consent was given via a mobile app. \n- Other: Another method that has\
+            \ been agreed with Equifax for acquiring consent from the consumer. \n\n"
+          example: other
+        consentForServices:
+          type: array
+          description: Determines which services have received consent (for example identity, pay, employment, phone, accountOnFile) based on the API product.
+          items:
+            type: string
+            example: pay
+    ConsentResponse:
+      required:
+      - consumerIdentifier
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Unique identifier.
+          example: b5e477bed68344edba18679598969ed1
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifier'
+    ConsentRequest:
+      required:
+      - consumerConsent
+      - consumerIdentifier
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process. 
+          example: efxtest
+        consumerConsent:
+          $ref: '#/components/schemas/ConsumerConsent'
+        consumerIdentifier:
+          $ref: '#/components/schemas/ConsumerIdentifier'
+    ConsumerCreditCard:
+      required:
+      - expDateEnd
+      - linkToCardinfo
+      - number
+      - tokenId
+      - type
+      type: object
+      properties:
+        href:
+          maxLength: 200
+          type: string
+          description: The URL for the method to return the full card data for this card.
+          example: https://securev2.instatouch.equifax.com/pay/cardprocess
+        type:
+          maxLength: 30
+          type: string
+          description: Card type.
+          example: VISA
+          enum:
+          - VISA
+          - MASTERCARD
+          - STORECARD
+        number:
+          maxLength: 20
+          type: string
+          description: Card number. This value is masked up to the last four digits.
+          example: XXXXXXXXXXXX5674
+        tokenId:
+          maxLength: 32
+          type: string
+          description: Value identifying card in InstaTouch. Use this value to call the get card details method to get complete payment details for card.
+          example: 3aebcbc8e3c8440ba3f54edd3a7d306a
+        expDateInd:
+          maxLength: 1
+          type: string
+          description: Indicates if user has provided expiry date previously for the card.
+          example: Y
+    PayCardNumberRequest:
+      required:
+      - identity
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        identity:
+          $ref: '#/components/schemas/UniqueId'
+        authentication:
+          $ref: '#/components/schemas/authentication'
+        card:
+          $ref: '#/components/schemas/card'  
+    PayCardNumberResponse:
+      required:
+      - cards
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Unique identifier.
+          example: b5e477bed68344edba18679598969ed1
+        cards:
+          $ref: '#/components/schemas/cards'      
+    PayConnexusFlowRequest:
+      required:
+      - identity
+      - merchantId
+      type: object
+      properties:
+        merchantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          example: efxtest
+        identity:
+          $ref: '#/components/schemas/UniqueId'
+    PaymentChannel:
+      required:
+      - href
+      - name
+      type: object
+      properties:
+        href:
+          maxLength: 200
+          type: string
+          description: The URL to redirect to external payment gateway.
+          example: http://demo.paypal.com/
+        name:
+          maxLength: 30
+          type: string
+          description: Name of payment gateway.
+          example: PayPal
+    UniqueId:
+      type: object
+      properties:
+        id:
+          maxLength: 32
+          type: string
+          description: The unique consumer identifier. Use this value as the unique ID for this consumer’s identity in other InstaTouch methods.
+          example: 350865610845
+    authentication:
+      type: object
+      properties:
+        userId:
+          maxLength: 32
+          type: string
+          description: Value will be provided by instatouch team.
+          example: efxtest 
+        password:
+          maxLength: 32
+          type: string
+          description: Value will be provided by instatouch team.
+          example: efxtest  
+    card:
+      type: object
+      required:
+      - tokenId
+      properties:
+        tokenId:
+          maxLength: 32
+          type: string
+          description: Value identifying card in InstaTouch. Use this value to call the get card details method to get complete payment details for card.
+          example: 3aebcbc8e3c8440ba3f54edd3a7d306a 
+        expDate:
+          maxLength: 8
+          type: string
+          description: Expiery date of Credit card.
+          example: "02/22" 
+    cards:
+      type: object
+      required:
+      - tokenId
+      - number
+      properties:
+        number:
+          maxLength: 16
+          type: string
+          description: Value identifying card in InstaTouch. Use this value to call the get card details method to get complete payment details for card.
+          example: 1111111111111111 
+        tokenId:
+          maxLength: 32
+          type: string
+          description: Value identifying card in InstaTouch. Use this value to call the get card details method to get complete payment details for card.
+          example: 3aebcbc8e3c8440ba3f54edd3a7d306a 
+        expiryDate:
+          maxLength: 8
+          type: string
+          description: Expiery date of Credit card.
+          example: "02/22" 
+        cardType:
+          maxLength: 50
+          type: string
+          description: Type of Credit card.
+          example: Visa
+    PayResponse:
+      required:
+      - creditCards
+      - identity
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 36
+          type: string
+          description: Unique identifier.
+          example: b5e477bed68344edba18679598969ed1
+        identity:
+          $ref: '#/components/schemas/Identity'
+        cards:
+          type: array
+          description: List of credit cards.
+          items:
+            $ref: '#/components/schemas/ConsumerCreditCard'
+        others:
+          type: array
+          description: Other payment channels.
+          items:
+            $ref: '#/components/schemas/PaymentChannel'
+    Identity:
+      required:
+      - address
+      - name
+      type: object
+      properties:
+        id:
+          maxLength: 32
+          type: string
+          description: The unique consumer identifier. Use this value as the ID value for this consumer’s identity in all InstaTouch methods.
+          example: 062528ba32384dfb8d9e744004fc476c
+        name:
+          $ref: '#/components/schemas/Name'
+        addresses:
+          type: array
+          description: Address
+          items:
+            $ref: '#/components/schemas/Address'
+        identification:
+          $ref: '#/components/schemas/Identification'
+        contact:
+          $ref: '#/components/schemas/Contact'
+    Contact:
+      type: object
+      properties:
+        emailAddress:
+          type: string
+          description: Email address.
+          example: Wshakepear@gmail.com
+          maxLength: 50
+        homePhone:
+          type: string
+          description: Home phone number.
+          example: '3039469554'
+          maxLength: 11
+        mobile:
+          type: string
+          description: Mobile phone number.
+          example: '3035036891'
+          maxLength: 11
+    Identification:
+      title: Unique identifying attributes of the consumer.
+      type: object
+      properties:
+        ssn:
+          maxLength: 9
+          type: string
+          description: Social security number.
+          example: 666410014
+        dob:
+          maxLength: 10
+          type: string
+          description: Date of birth.
+          example: "11/15/1999"
+    Address:
+      required:
+      - city
+      - state
+      - streetAddress
+      - type
+      - zipCode
+      type: object
+      properties:
+        type:
+          maxLength: 100
+          type: string
+          description: The type of address
+          example: Home
+        streetAddress:
+          maxLength: 100
+          type: string
+          description: Street address.
+          example: 23448 North Scottdale Rd
+        city:
+          maxLength: 100
+          type: string
+          description: City.
+          example: Alpharetta
+        state:
+          maxLength: 2
+          type: string
+          description: State.
+          example: GA
+        zipCode:
+          maxLength: 5
+          type: string
+          description: ZIP code.
+          example: 30004
+    Name:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        firstName:
+          maxLength: 50
+          type: string
+          description: First name.
+          example: Williams
+        lastName:
+          maxLength: 50
+          type: string
+          description: Last name.
+          example: Shakepear
+    
+  examples:
+    User_sessions_req:
+      value:
+        merchantId: efxtest
+        identityFlag: N
+        
+    User_sessions_res:
+      value:
+        transactionId: B5e477bed68344edba18679598969ed1
+        dateTime: 2017-11-01T12:00:00.000Z
+        sessionID: ff55119ceb2e47c6bdf5e7f21a47d1c7
+        instaTouch:  https://api.equifax.com/business/instatouch-identity
+        carrier: att.com
+  
+    User_consent_req:
+      value:
+        merchantId: efxtest
+        consumerConsent:
+          consentEventDate: 2018-09-11T14:00:19.195Z
+          consentEvent: opt-in
+          consentType: whitelist
+          consentMethod: TCO
+          consentForServices:
+          - pay
+        consumerIdentifier:
+          subjectType: SESSIONID
+          subjectIdentifier: ff55119ceb2e47c6bdf5e7f21a47d1c7
+    User_consent_res:
+      value:
+        transactionId: B5e477bed68344edba18679598969ed1
+        consumerIdentifier:
+          subjectType: SESSIONID
+          subjectIdentifier: ff55119ceb2e47c6bdf5e7f21a47d1c7
+   
+    
+    User_att_res:
+      value:
+        transactionId: B5e477bed68344edba18679598969ed1
+        identity:
+          id: "919743776320"
+          name:
+            firstName: Williams
+            lastName: Shakepear
+          addresses:
+          - type: HOME
+            streetAddress: 23448 North Scottdale Rd
+            city: Alpharetta
+            state: GA
+            zipCode: "30004"
+          identification:
+            ssn: "666410014"
+            dob: 11/15
+          contact:
+            emailAddress: Wshakepear@gmail.com
+            homePhone: "3039469554"
+            mobile: "3035036891"
+    card_tokens_req:
+      value:
+        merchantId: efxtest
+        identity:
+          name:
+            firstName: Williams
+            lastName: Shakepear
+          addresses:
+          - type: HOME
+            streetAddress: 23448 North Scottdale Rd
+            city: Alpharetta
+            state: GA
+            zipCode: "30004"
+            country: US
+        authentication:
+          zipCode: "30004"
+          ssn: "0014"
+          dob: 11/15
+    card_tokens_res:
+      value:
+        transactionId: B5e477bed68344edba18679598969ed1
+        identity:
+          id: "919743776320"
+        cards:
+        - href: card.info.com
+          type: VISA
+          number: XXXX-XXXX-XXXX-5674
+          tokenId: 3aebcbc8e3c8440ba3f54edd3a7d306a
+          expDateInd: Y
+        others:
+        - href: online.pay.com
+          name: onlinePay
+    id_card_tokens_req:
+      value:
+        merchantId: efxtest
+        identity:
+          id: "919743776320"
+    id_card_number_req:
+      value:
+        merchantId: "efxtest"
+        identity:
+          id: "919743776320"
+        authentication:
+          userId: efxtest
+          password: efxtest
+        card:
+          tokenId: B5e477bed68344edba18679598969ed1
+          expDate: "02/27"
+    id_card_number_res:
+      value:
+        transactionId: X5e477bed68344edba18679598269esx
+        cards:
+          number: 1111111111111111
+          tokenId: a3ebcbc8e3c8440ba3f54edd3a7d306a
+          expiryDate: "02/22"
+          cardType: AMERICAN_EXPRESS
+    id_card_tokens_res:
+      value:
+        transactionId: B5e477bed68344edba18679598969ed1
+        identity:
+          id: "919743776320"
+        cards:
+        - href: card.info.com
+          type: VISA
+          number: XXXXXXXXXXX3572
+          tokenId: 3aebcbc8e3c8440ba3f54edd3a7d306a
+          expDateInd: Y
+        others:
+        - href: online.pay.com
+          name: onlinePay
+    400.01:
+      value:
+        efxErrorCode: "400.01"
+        description: Invalid JSON payload.
+    401.03:
+      value:
+        efxErrorCode: "401.03"
+        description: Invalid mandatory parameters.
+    403.01:
+      value:
+        efxErrorCode: "403.01"
+        description: Access Denied.
+    404.01:
+      value:
+        efxErrorCode: "404.01"
+        description: The specified resource does not exist.
+    415.01:
+      value:
+        efxErrorCode: "415.01"
+        description: Payload Format is in an Unsupported Format.
+    422.01:
+      value:
+        efxErrorCode: "422.01"
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    429.01:
+      value:
+        efxErrorCode: "429.01"
+        description: Exceeded the maximum number of requests within a specified time frame.
+    500.01:
+      value:
+        efxErrorCode: "500.01"
+        description: An internal error has occurred.
+    501.01:
+      value:
+        efxErrorCode: "501.01"
+        description: Not implemented - Specified resource is not implemented.
+    503.01:
+      value:
+        efxErrorCode: "503.01"
+        description: Service is unavailable.
+    504.01:
+      value:
+        efxErrorCode: "504.01"
+        description: Gateway timeout.

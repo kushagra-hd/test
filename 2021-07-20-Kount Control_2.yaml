@@ -1,0 +1,1876 @@
+openapi: 3.0.0
+info:
+  title: Kount Control
+  description: |
+    # Introduction
+      Kount Control API enables a Login Decision request to return a recommendation based on Profiles and Policies set within the Kount Control Portal.
+        After a user authenticates with a username and password, a server-side request is invoked to the Login decision endpoint. The response to this API call will include the login decision, the Profile and other metadata about the login event. There are companion API calls for Kount Control to be used to improve decisioning and risk mitigation: Device Data Collection (DDC) is performed by placing the DDC JavaScript snippet within the browser page, or a native iOS/Android SDK within the mobile application.
+      # Getting started
+
+
+    1. **<a href="/user/applications" target="_blank">Subscribe</a>** to get API
+    credentials.
+
+    2. **<a href="/oauth" target="_blank">Get an
+    access token</a>** using the credentials.
+
+    3. **[KountEvent](#tag/KountEvent)**
+    4. **[KountInfoGet](#tag/KountInfoGet)**
+    5. **[KountLogin](#tag/KountLogin)**
+    6. **[KountTrustedDeviceUpdate](#tag/KountTrustedDeviceUpdate)**
+    7. **[KountTrustedDeviceCreate](#tag/KountTrustedDeviceCreate)**
+    8. **[KountTrustedDeviceState](#tag/KountTrustedDeviceState)**
+    9. **[KountTrustedDeviceSessionState](#tag/KountTrustedDeviceSessionState)**
+    10. **[KountTrustedDeviceUserState](#tag/KountTrustedDeviceUserState)**
+    11. **[KountTrustedDeviceUserAndSessionState](#tag/KountTrustedDeviceUserAndSessionState)**
+    12. **[KountTrustedDeviceDelete](#tag/KountTrustedDeviceDelete)**
+    13. **[KountTrustedDeviceDeleteID](#tag/KountTrustedDeviceDeleteID)**
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: 1.0.0
+servers:
+- url: https://api.sandbox.equifax.com/business/kcontrol
+  description: Sandbox
+security:
+- BearerAuth:
+  - Events
+  - Info
+  - Login
+  - Trusted Device
+paths:
+  '/events':
+    post:
+      tags:
+        - KountEvent
+      description: Provide information data for a given event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+        required: true
+      responses:
+        "200":
+          description: successful request
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/info/clients/{clientId}/sessions/{sessionId}':
+    get:
+      tags:
+        - KountInfoGet
+      summary: Info Request
+      description: Retrieve information data for a given client and session
+      parameters:
+      - name: X-Correlation-ID
+        in: header
+        description: Unique event identifier throughout Kount systems
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/X-Correlation-ID'
+      - name: X-Client-ID
+        in: header
+        description: Authorized client ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      - name: sessionId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/sessionId'
+      responses:
+        "200":
+          description: information request response
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/infoData'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'            
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/login':
+    post:
+      tags:
+      - KountLogin
+      summary: Login Decision Request
+      description: Request to Kount triggering an evaluation of Client defined policies
+        and returning a decision based on those policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginPostRequest'
+        required: true
+      responses:
+        "200":
+          description: successful request
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginPostResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device':
+    put:
+      tags:
+        - KountTrustedDeviceUpdate
+      summary: Update Trusted Device Record
+      description: Request to Equifax updating a Trusted Device record for the specified
+        User and the Device associated to the Session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trustedDevicePutRequest'
+        required: true
+      responses:
+        '200':
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDevicePutResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+    post:
+      tags:
+        - KountTrustedDeviceCreate
+      summary: Create Trusted Device Record
+      description: Request to Equifax creating a Trusted Device record for the specified
+        User and the Device associated to the Session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trustedDevicePostRequest'
+        required: true
+      responses:
+        "200":
+          description: trusted Device created
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDevicePostResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "409":
+          description: resource already exists in collection
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '409':
+                  $ref: '#/components/examples/409'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device/devices/{deviceId}/clients/{clientId}/users':
+    get:
+      tags:
+        - KountTrustedDeviceState
+      summary: Trust States by Device
+      description: Request to Equifax returning an array of all Trusted Device user
+        records for the Device specified
+      parameters:
+      - name: deviceId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/deviceId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceGetMultiResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device/sessions/{sessionId}/clients/{clientId}/users':
+    get:
+      tags:
+        - KountTrustedDeviceSessionState
+      summary: Trust States by Session
+      description: Request to Equifax returning an array of all Trusted Device User
+        records for the Session specified
+      parameters:
+      - name: sessionId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/sessionId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceGetMultiResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device/users/{userId}/clients/{clientId}/devices':
+    get:
+      tags:
+        - KountTrustedDeviceUserState
+      summary: Trust States by User
+      description: Request to Equifax returning an array of all Trusted Device records
+        for the User specified
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/userId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceGetMultiResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device/sessions/{sessionId}/users/{userId}/clients/{clientId}':
+    get:
+      tags:
+        - KountTrustedDeviceUserAndSessionState
+      summary: Trust State by Session and User
+      description: Fetch a single Trusted Device records for the Session and User
+        specified
+      parameters:
+      - name: sessionId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/sessionId'
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/userId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceGetResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'                  
+    delete:
+      tags:
+        - KountTrustedDeviceDelete
+      summary: Delete Trusted Device Record
+      description: Request to Equifax deleting a Trusted Device record for the specified
+        User and the Device associated to the Session
+      parameters:
+      - name: sessionId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/sessionId'
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/userId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceDeleteResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+  '/trusted-device/devices/{deviceId}/users/{userId}/clients/{clientId}':
+    delete:
+      tags:
+        - KountTrustedDeviceDeleteID
+      summary: Delete Trusted Device Record by Device Id
+      description: Request to Equifax deleting a Trusted Device record for the specified
+        User and the Device associated to the Device Id
+      parameters:
+      - name: deviceId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/deviceId'
+      - name: userId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/userId'
+      - name: clientId
+        in: path
+        description: Kount's unique identifier for a Client
+        required: true
+        style: simple
+        explode: false
+        schema:
+          $ref: '#/components/schemas/clientId'
+      responses:
+        "200":
+          description: ok
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/trustedDeviceDeleteResponse'
+        "400":
+          description: validation request failed
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '400':
+                  $ref: '#/components/examples/400'
+        "404":
+          description: resource not found
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '404':
+                  $ref: '#/components/examples/404'
+        "500":
+          description: internal error
+          headers:
+            X-Correlation-ID:
+              description: Unique event identifier throughout Kount systems
+              style: simple
+              explode: false
+              schema:
+                $ref: '#/components/schemas/X-Correlation-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                '500':
+                  $ref: '#/components/examples/500'
+      security:
+        - OAuth 2.0:
+          - 'scopes:  https://api.equifax.com/business/kcontrol/'
+components:
+  schemas:
+    loginChallengeOutcome:
+      required:
+      - challengeStatus
+      - challengeType
+      - clientId
+      - eventType
+      - loginDecisionCorrelationId
+      - userId
+      type: object
+      properties:
+        challengeOutcome:
+          $ref: '#/components/schemas/loginChallengeOutcome_challengeOutcome'
+    loginFailedAttempt:
+      required:
+      - clientId
+      - eventType
+      - sessionId
+      type: object
+      properties:
+        failedAttempt:
+          $ref: '#/components/schemas/loginFailedAttempt_failedAttempt'
+    loginPostRequest:
+      required:
+      - clientId
+      - sessionId
+      - userId
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        loginUrl:
+          $ref: '#/components/schemas/loginUrl'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        userAuthenticationStatus:
+          $ref: '#/components/schemas/userAuthenticationStatus'
+        username:
+          $ref: '#/components/schemas/username'
+        userPassword:
+          $ref: '#/components/schemas/userPassword'
+        userCreationDate:
+          $ref: '#/components/schemas/userCreationDate'
+        userIp:
+          $ref: '#/components/schemas/userIp'
+        userType:
+          $ref: '#/components/schemas/userType'
+    loginPostResponse:
+      type: object
+      properties:
+        decision:
+          $ref: '#/components/schemas/decision'
+        userProfile:
+          $ref: '#/components/schemas/userProfile'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        trustedDeviceState:
+          $ref: '#/components/schemas/trustState'
+        trustedDeviceFriendlyName:
+          $ref: '#/components/schemas/friendlyName'
+        deviceId:
+          $ref: '#/components/schemas/deviceId'
+        matchedToDevice:
+          $ref: '#/components/schemas/matchedToDevice'
+    error:
+      type: object
+      properties:
+        efxErrorCode: 
+          type: integer
+        description:
+          type: string
+        additionalErrorDetails: 
+          type: object
+          properties: 
+            correlationId:  
+              $ref: '#/components/schemas/X-Correlation-ID'
+            error:
+              $ref: '#/components/schemas/error_error'
+    loginDecisionCorrelationId:
+      pattern: ^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$
+      type: string
+      description: Unique identifier for the origional login decision from Kount
+      format: uuid
+      example: 3438ac3c-37eb-4902-adef-ed16b4431030
+    X-Correlation-ID:
+      pattern: ^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$
+      type: string
+      description: Unique event identifier throughout Kount systems
+      format: uuid
+      example: 2438ac3c-37eb-4902-adef-ed16b4431030
+    eventType:
+      type: string
+      description: The type of the given event
+      enum:
+      - failed_attempt
+      - challenge_outcome
+    clientId:
+      pattern: ^[a-zA-Z0-9]{1,64}$
+      type: string
+      description: Kount's unique identifier for a Client
+      example: "900900"
+    userId:
+      pattern: .{1,255}$
+      type: string
+      description: Client’s unique identifier for a Client’s User
+      example: meoyyd8za8jdmwfm
+    username:
+      pattern: ^.{0,128}$
+      type: string
+      description: Username for a Client’s user
+      example: meoyyd8za8jdmwfm
+    userPassword:
+      pattern: '`^.{0,128}$`'
+      type: string
+      description: Irrevocable hash of the Client's user's password
+      example: 38401eb46f8fbb74c1846a5f47f68d83a9bef126b1d4143f886cd464323cdaab
+    sessionId:
+      pattern: ^[\w-]{0,32}$
+      type: string
+      description: Device collection event identifier
+      example: d121ea2210434ffc8a90daff9cc97e76
+    userIp:
+      type: string
+      description: User’s IPv4 address as identified by the Client
+      format: ipv4
+      example: 208.75.113.3
+    userCreationDate:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: Date account was created for a Client's user
+      format: date-time
+      example: 2018-02-22T01:02:03.123Z
+    challengeStatus:
+      type: string
+      description: Represents the success or failure result of the challenge
+      enum:
+      - Success
+      - Failed
+    userType:
+      pattern: ^[a-zA-Z0-9]{1,128}$
+      type: string
+      description: Client’s designation for a Client’s user
+      example: VIP
+    loginUrl:
+      type: string
+      description: Webpage from which a Client’s user is attempting to log in
+      example: http://www.example.com/login
+    sentTimestamp:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: GMT timestamp for when the challenge was sent to Client's User
+      format: date-time
+      example: 2018-02-22T01:02:03.123Z
+    completedTimestamp:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: GMT timestamp for when the Client's User completed the challenge
+      format: date-time
+      example: 2018-02-22T01:02:03.223Z
+    challengeType:
+      type: string
+      description: The type of challenge sent to the User's Client
+      enum:
+      - Captcha
+      - Captcha2
+      - Puzzle
+      - SecretQuestion
+      - EmailLink
+      - EmailPIN
+      - TextPIN
+      - TextLink
+      - MFAAppGoogle
+      - MFAAppDuo
+      - MFAAppiOS
+      - MFAAppAuthy
+      - MFAAppMicrosoft
+      - MFAAppLastPass
+      - MFAAppOther
+    failureType:
+      type: string
+      description: If challenge is failed, the reason for the failure
+      enum:
+      - TimedOut
+      - IncorrectResponse
+      - ExpiredSession
+      - ExpiredLink
+      - InvalidLink
+      - InvalidData
+      - MissingData
+    deviceId:
+      pattern: ^[a-zA-Z0-9]{1, 32}$
+      type: string
+      description: Kount's unique identifier for a device
+      example: 28221029bfc449169eccecccbd18eb0b
+    timeCollection:
+      type: string
+      description: GMT timestamp for when device and network data was collected
+      format: date-time
+    deviceFirstSeen:
+      type: string
+      description: Kount's first record of the device
+      format: date-time
+    ip:
+      pattern: ^\w{1,255}$
+      type: string
+      description: IPv4 address for the device
+      example: 208.75.113.3
+    tor:
+      type: boolean
+      description: Tor internet gateway identified
+      example: false
+    ipRegisteredOrg:
+      type: string
+      description: Organization is responsible for actions/content associated with
+        the IP address
+      example: Kount Inc.
+    hostingFacility:
+      type: boolean
+      description: Connection originated from a colocation, cloud storage, or web
+        hosting provider
+      example: false
+    browser:
+      type: string
+      description: Browser and version
+      example: Safari 77.0.255294728
+    js:
+      type: boolean
+      description: JavaScript was enabled in the browser
+      example: true
+    mobileModel:
+      type: string
+      description: Mobile device model
+      example: iPhone7,2
+    operatingSystem:
+      type: string
+      description: Operating System and version
+      example: iPhone OS 12.3.1
+    deviceLanguage:
+      type: string
+      description: Language set on the device
+      example: en-US
+    resolution:
+      pattern: ^(\d+x\d+)*$
+      type: string
+      description: Height and width of viewing screen
+      example: 667x375
+    locationServices:
+      type: boolean
+      description: Device GPS was used to determine location
+      example: false
+    countryCode:
+      pattern: ^([a-zA-Z0-9]{2})?$
+      type: string
+      description: ISO-3166 2-alpha character country code
+      example: US
+    country:
+      type: string
+      description: Name of country based on ISO-3166 country code
+      example: United States of America
+    regionCode:
+      pattern: ^([a-zA-Z0-9]{2})?$
+      type: string
+      description: ISO-3166 2-alphanumeric character state or province code
+      example: ID
+    region:
+      pattern: ^([a-zA-Z0-9]{2})?$
+      type: string
+      description: Name of region based on ISO-3166 state or province code
+      example: Idaho
+    city:
+      type: string
+      description: City or town name
+      example: Boise
+    latitude:
+      maximum: 90
+      minimum: -90
+      type: number
+      description: North to south geographic coordinate with range of - 90 to 90
+      format: float
+      example: 45.5639
+    longitude:
+      maximum: 180
+      minimum: -180
+      type: number
+      description: East to west geographic coordinate with range of - 180 to 180
+      format: float
+      example: -116.1214
+    ipRisk:
+      type: boolean
+      description: Is there risk associated with IP address (true/false)
+      example: false
+    infoData:
+      type: object
+      properties:
+        deviceId:
+          $ref: '#/components/schemas/deviceId'
+        timeCollection:
+          $ref: '#/components/schemas/timeCollection'
+        deviceFirstSeen:
+          $ref: '#/components/schemas/deviceFirstSeen'
+        ip:
+          $ref: '#/components/schemas/ip'
+        tor:
+          $ref: '#/components/schemas/tor'
+        ipRegisteredOrg:
+          $ref: '#/components/schemas/ipRegisteredOrg'
+        hostingFacility:
+          $ref: '#/components/schemas/hostingFacility'
+        browser:
+          $ref: '#/components/schemas/browser'
+        js:
+          $ref: '#/components/schemas/js'
+        mobileModel:
+          $ref: '#/components/schemas/mobileModel'
+        operatingSystem:
+          $ref: '#/components/schemas/operatingSystem'
+        deviceLanguage:
+          $ref: '#/components/schemas/deviceLanguage'
+        resolution:
+          $ref: '#/components/schemas/resolution'
+        locationServices:
+          $ref: '#/components/schemas/locationServices'
+        countryCode:
+          $ref: '#/components/schemas/countryCode'
+        country:
+          $ref: '#/components/schemas/country'
+        regionCode:
+          $ref: '#/components/schemas/regionCode'
+        region:
+          $ref: '#/components/schemas/region'
+        city:
+          $ref: '#/components/schemas/city'
+        latitude:
+          $ref: '#/components/schemas/latitude'
+        longitude:
+          $ref: '#/components/schemas/longitude'
+        ipRisk:
+          $ref: '#/components/schemas/ipRisk'
+    decision:
+      type: string
+      description: Final Decision generated by Client\'s Profile (Allow, Block, or
+        Challenge)
+      enum:
+      - Allow
+      - Block
+      - Challenge
+    userProfile:
+      type: string
+      description: Client Profile triggered by event attributes
+      example: VIP
+    trustState:
+      type: string
+      description: TRUSTED - Used to minimize friction for a User who has passed step-up
+        authentication. <br />BANNED - Used to block access to an account for a specified
+        Device. <br />UNASSIGNED - Used to preserve a connection between a user and
+        a device without a trust judgment
+      enum:
+      - TRUSTED
+      - BANNED
+      - UNASSIGNED
+    friendlyName:
+      pattern: "^.{1,32}\b$"
+      type: string
+      description: Human readable identifier for a Device. If not provided, a default
+        name will be generated based on Device attributes
+      example: Brad's Phone
+    matchedToDevice:
+      pattern: ^[a-zA-Z0-9]{1, 32}$
+      type: string
+      description: fuzzy device match
+    userAuthenticationStatus:
+      pattern: ^[a-zA-Z0-9]{1,64}$
+      type: string
+      description: Not validated/restricted, intended to indicate if user already
+        completed step up authN
+      example: "true"
+    trustedDevicePostRequest:
+      required:
+      - clientId
+      - sessionId
+      - trustState
+      - userId
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        trustState:
+          $ref: '#/components/schemas/trustState'
+        friendlyName:
+          $ref: '#/components/schemas/friendlyName'
+    trustedDevicePostResponse:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        deviceId:
+          $ref: '#/components/schemas/deviceId'
+        trustState:
+          $ref: '#/components/schemas/trustState'
+        friendlyName:
+          $ref: '#/components/schemas/friendlyName'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        lastUpdated:
+          $ref: '#/components/schemas/lastUpdated'
+    trustedDevicePutRequest:
+      required:
+      - clientId
+      - sessionId
+      - trustState
+      - userId
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        trustState:
+          $ref: '#/components/schemas/trustState'
+        friendlyName:
+          $ref: '#/components/schemas/friendlyName'
+    trustedDevicePutResponse:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        deviceId:
+          $ref: '#/components/schemas/deviceId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        trustState:
+          $ref: '#/components/schemas/trustState'
+        friendlyName:
+          $ref: '#/components/schemas/friendlyName'
+        lastUpdated:
+          $ref: '#/components/schemas/lastUpdated'
+    trustedDeviceDeleteResponse:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        userId:
+          $ref: '#/components/schemas/userId'
+    trustedDeviceGetResponse:
+      type: object
+      properties:
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/trustedDeviceGetResponse_details'
+    trustedDeviceGetMultiResponse:
+      type: object
+      properties:
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/trustedDeviceGetResponse_details'
+    lastSeen:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: When a Device/User pair was last seen in connection to a Login
+        Decision Request
+      format: date-time
+    createdAt:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: When a Device/User pair was created
+      format: date-time
+    lastUpdated:
+      pattern: YYYY-MM-DD'T'hh:mm:ss.fff'Z'
+      type: string
+      description: When a Device/User pair was last updated
+      format: date-time
+    event:
+      type: array
+      description: Type of event
+      example:
+      - DISPUTE
+      - CANCEL
+      items:
+        type: string
+        description: Type of event
+        enum:
+        - DISPUTE
+        - CANCEL
+        - DISPUTE_NOTICE
+        - FRAUD_NOTICE
+        - CANCEL_NOTICE
+    body:
+      oneOf:
+      - $ref: '#/components/schemas/loginChallengeOutcome'
+      - $ref: '#/components/schemas/loginFailedAttempt'
+    loginChallengeOutcome_challengeOutcome:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        loginDecisionCorrelationId:
+          $ref: '#/components/schemas/loginDecisionCorrelationId'
+        challengeType:
+          $ref: '#/components/schemas/challengeType'
+        challengeStatus:
+          $ref: '#/components/schemas/challengeStatus'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        sentTimestamp:
+          $ref: '#/components/schemas/sentTimestamp'
+        completedTimestamp:
+          $ref: '#/components/schemas/completedTimestamp'
+        failureType:
+          $ref: '#/components/schemas/failureType'
+    loginFailedAttempt_failedAttempt:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        sessionId:
+          $ref: '#/components/schemas/sessionId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        username:
+          $ref: '#/components/schemas/username'
+        userPassword:
+          $ref: '#/components/schemas/userPassword'
+        userIp:
+          $ref: '#/components/schemas/userIp'
+        loginUrl:
+          $ref: '#/components/schemas/loginUrl'
+    error_error:
+      type: object
+      properties:
+        cause:
+          type: string
+        code:
+          type: integer
+        message:
+          type: string
+    trustedDeviceGetResponse_details:
+      type: object
+      properties:
+        clientId:
+          $ref: '#/components/schemas/clientId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        deviceId:
+          $ref: '#/components/schemas/deviceId'
+        trustState:
+          $ref: '#/components/schemas/trustState'
+        friendlyName:
+          $ref: '#/components/schemas/friendlyName'
+        lastSeen:
+          $ref: '#/components/schemas/lastSeen'
+        createdAt:
+          $ref: '#/components/schemas/createdAt'
+        lastUpdated:
+          $ref: '#/components/schemas/lastUpdated'
+  responses:
+    ResourceAlreadyExists:
+      description: resource already exists in collection
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    TrustedDevicePostResponse:
+      description: trusted Device created
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDevicePostResponse'
+    TrustedDevicePutResponse:
+      description: trusted Device Updated
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDevicePutResponse'
+    TrustedDeviceDeleteResponse:
+      description: trusted Device Deleted
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDeviceDeleteResponse'
+    TrustedDeviceReadUsersResponse:
+      description: trusted Device Read User Response
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDeviceGetMultiResponse'
+    TrustedDeviceReadDevicesResponse:
+      description: trusted Device Read Devices Response
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDeviceGetMultiResponse'
+    TrustedDeviceReadResponse:
+      description: trusted Device Read Response
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/trustedDeviceGetResponse'
+    DeviceDataResponse:
+      description: information request response
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/infoData'
+    LoginPostResponse:
+      description: successful request
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/loginPostResponse'
+    EventResponse:
+      description: successful request
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+    BadRequest:
+      description: validation request failed
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    InternalServerError:
+      description: internal error
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+    ResourceNotFound:
+      description: resource not found
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    InfoResponse:
+      description: information request response
+      headers:
+        X-Correlation-ID:
+          description: Unique event identifier throughout Kount systems
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/X-Correlation-ID'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/infoData'
+    BadRequestError:
+      description: The request could not be understood by the server due to malformed
+        syntax
+    UnauthorizedError:
+      description: Authentication failure, access token is missing or invalid
+    ForbiddenError:
+      description: Server can be reached and process the request, but refuses to take
+        any further action
+    InternalServerErrors:
+      description: An internal system error was encountered while processing the request
+    PostNotificationResponse:
+      description: successful response from the partner
+    Forbidden:
+      description: resource exists but is invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+  parameters:
+    X-Correlation-ID:
+      name: X-Correlation-ID
+      in: header
+      description: Unique event identifier throughout Kount systems
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/X-Correlation-ID'
+    X-Client-ID:
+      name: X-Client-ID
+      in: header
+      description: Authorized client ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/clientId'
+    clientId:
+      name: clientId
+      in: path
+      description: Kount's unique identifier for a Client
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/clientId'
+    sessionId:
+      name: sessionId
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/sessionId'
+    deviceId:
+      name: deviceId
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/deviceId'
+    userId:
+      name: userId
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        $ref: '#/components/schemas/userId'
+    event:
+      name: event
+      in: query
+      description: Type of event
+      required: true
+      style: form
+      explode: true
+      schema:
+        $ref: '#/components/schemas/event'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  examples:
+    "400":
+      value:
+        "efxErrorCode": "400"
+        "description": "Please refer to additionalErrorDetails"
+        additionalErrorDetails: {
+          correlationId: "2438ac3c-37eb-4902-adef-ed16b4431030",
+          error: {
+            cause: "input parameter is not correct",
+            code: "400",
+            message: "validation request failed"
+          }
+        }
+
+    "404":
+      value:
+        "efxErrorCode": "404"
+        "description": Please refer to additionalErrorDetails
+        additionalErrorDetails: {
+          correlationId: "2438ac3c-37eb-4902-adef-ed16b4431030",
+          error: {
+            cause: "required resource not exist",
+            code: "404",
+            message: resource not found
+          }
+        }
+    "409":
+      value:
+        "efxErrorCode": "409"
+        "description":  Please refer to additionalErrorDetails
+        additionalErrorDetails: {
+          correlationId: "2438ac3c-37eb-4902-adef-ed16b4431030",
+          error: {
+            cause: "required resource already exist",
+            code: "409",
+            message: required resource already exist
+          }
+        }
+    "500":
+      value:
+        "efxErrorCode": "500"
+        "description": Please refer to additionalErrorDetails
+        additionalErrorDetails: {
+          correlationId: "2438ac3c-37eb-4902-adef-ed16b4431030",
+          error: {
+            cause: "internal server error",
+            code: "500",
+            message: an internal server error has occurred. please contact support with your correlationId
+          }
+        }

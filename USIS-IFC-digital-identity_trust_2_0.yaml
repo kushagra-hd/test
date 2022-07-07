@@ -1,0 +1,708 @@
+---
+openapi: 3.0.0
+info:
+  title: Digital Identity Trust
+  description: |
+    # Introduction
+    This API is used to submit personal attributes for Digital Identity Trust.
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: 2.0.0
+  x-apigee-id: ""
+servers:
+- url: https://api.sandbox.equifax.com/business/id-risk-assessment/v2
+paths:
+  /initiate:
+    post:
+      tags:
+      - initiate
+      description: The Digital Identity Trust API will assess risk using personal attributes
+      operationId: Assess Identity Risk
+      parameters:
+      - name: efx-client-correlationId
+        in: header
+        description: In addition to authentication headers, All requests must include the client - correlationId.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+      requestBody:
+        description: inputRequest
+        content:
+          application/vnd.com.equifax.clientConfig.v1+json:
+            schema:
+              $ref: '#/components/schemas/idInitiateRequest'
+            examples:
+              Request:
+                $ref: '#/components/examples/idInitiateRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idInitiateResponse'
+              examples:
+                Response:
+                  $ref: '#/components/examples/idInitiateResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "400.01":
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "401.03":
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "404.01":
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "415.01":
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "422.01":
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "429.01":
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "500.01":
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "500.01":
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "503.01":
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                "504.01":
+                  $ref: '#/components/examples/504.01'
+      security:
+      - OAuth2.0:
+        - 'scopes: https://api.equifax.com/business/id-risk-assessment/v2'
+components:
+  schemas:
+    name:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        namePrefix:
+          maxLength: 10
+          type: string
+          description: The consumer name prefix
+          example: Mr
+        firstName:
+          maxLength: 25
+          type: string
+          description: The consumer first name
+          example: John
+        middleName:
+          maxLength: 25
+          type: string
+          description: The consumer middle name
+          example: middleName
+        lastName:
+          maxLength: 25
+          type: string
+          description: The consumer last name
+          example: Smith
+        secondLastName:
+          maxLength: 25
+          type: string
+          description: The consumer second last name , if it exists.
+          example: secondLastName
+        nameSuffix:
+          maxLength: 10
+          type: string
+          description: The consumer’s name suffix, which appends after the family name and qualifies the name.
+          example: V
+    address:
+      type: array
+      items:
+        $ref: '#/components/schemas/address_inner'
+    dateOfBirth:
+      required:
+      - day
+      - month
+      type: object
+      properties:
+        day:
+          maxLength: 10
+          type: string
+          description: The consumer birth day
+          example: "01"
+        month:
+          maxLength: 10
+          type: string
+          description: The consumer birth month
+          example: "01"
+        year:
+          maxLength: 10
+          type: string
+          description: The consumer birth year
+          example: "2000"
+    governmentId:
+      required:
+      - documentType
+      - value
+      type: object
+      properties:
+        documentType:
+          maxLength: 25
+          type: string
+          description: Document type
+          example: SSN
+        value:
+          maxLength: 10
+          type: number
+          description: Documet type value
+          example: 69991132
+    phone:
+      type: array
+      items:
+        $ref: '#/components/schemas/phone_inner'
+    email:
+      type: array
+      items:
+        $ref: '#/components/schemas/email_inner'
+    ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error
+        description:
+          type: string
+        additionalErrorDetails:
+          $ref: '#/components/schemas/AdditionalErrorDetails'
+    AdditionalErrorDetails:
+      type: object
+      properties:
+        erroCode:
+          maxLength: 10
+          type: string
+          description: Error code.
+          example: 4xx
+        developerMessage:
+          maxLength: 50
+          type: string
+          description: Error code.
+          example: error message
+        detailedMessage:
+          maxLength: 100
+          type: string
+          description: Error code.
+          example: some detailed description on error
+    idInitiateResponse:
+      required:
+      - correlationId
+      - decision
+      - referenceTransactionId
+      - timestamp
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          maxLength: 80
+          type: string
+          description: Transaction ID for this request
+          example: e14ed0e2-b147-4368-af7f-00eb8072fdbe
+        correlationId:
+          maxLength: 80
+          type: string
+          description: Correlation ID for this request
+          example: c54de4e6-867e-4d79-981e-8c11f3c2b8b8
+        referenceTransactionId:
+          maxLength: 36
+          type: string
+          description: Reference Transaction ID for this request
+          example: referenceId
+        timestamp:
+          maxLength: 40
+          type: string
+          description: Time stamp for this request
+          example: 2021-08-05T09:29:42.030+0000
+        decision:
+          maxLength: 40
+          type: string
+          description: Decision generated by the Id Verification API
+          example: Deny
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/idInitiateResponse_details'
+    idInitiateRequest:
+      required:
+      - applicationId
+      - configId
+      - correlationId
+      - productId
+      - tenantId
+      type: object
+      properties:
+        tenantId:
+          maxLength: 16
+          type: string
+          description: The ID number used to identify the integrating partner.
+          example: usisdit2prodtest
+        applicationId:
+          maxLength: 40
+          type: string
+          description: Pre-determined Application Identifier configured during onboarding
+          example: dit2appplication
+        referenceId:
+          maxLength: 40
+          type: string
+          description: A pass-through identifier used by the customer's application to identify their interactions with Equifax services.
+          example: referenceId
+        consumerId:
+          maxLength: 16
+          type: string
+          description: Consumer Id
+          example: consumerId
+        correlationId:
+          maxLength: 40
+          type: string
+          description: Unique transaction ID to identify all interactions in the execution of a transaction end to end.
+          example: a5333424-19c2-4b7c-ab40-5d5ebb30cc4f
+        productId:
+          maxLength: 16
+          type: string
+          description: Product Id
+          example: dit2
+        configId:
+          maxLength: 40
+          type: string
+          description: Specifies the configuration of the product that is executing the capability.
+          example: configId
+        entityId:
+          maxLength: 40
+          type: string
+          description: Entity Id
+          example: entityId
+        data:
+          $ref: '#/components/schemas/idInitiateRequest_data'
+    Identity:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/name'
+        addresse:
+          $ref: '#/components/schemas/address'
+        dateOfBirth:
+          $ref: '#/components/schemas/dateOfBirth'
+        governmentId:
+          $ref: '#/components/schemas/governmentId'
+        phone:
+          $ref: '#/components/schemas/phone'
+        email:
+          $ref: '#/components/schemas/email'
+    AdditionalFields:
+      type: array
+      items:
+        $ref: '#/components/schemas/AdditionalFields_inner'
+    address_inner:
+      required:
+      - addressLine1
+      - addressType
+      - city
+      - countryCode
+      - postalCode
+      type: object
+      properties:
+        addressType:
+          maxLength: 10
+          type: string
+          description: The consumer address type
+          example: current
+        countryCode:
+          maxLength: 2
+          type: string
+          description: The consumer country code
+          example: US
+        addressLine1:
+          maxLength: 60
+          type: string
+          description: The address line 1 of the consumer
+          example: 123 Main St
+        addressLine2:
+          maxLength: 60
+          type: string
+          description: The address line 2 of the consumer
+          example: 123 ABC
+        city:
+          maxLength: 30
+          type: string
+          description: The consumer's address city
+          example: Abernant
+        county:
+          maxLength: 2
+          type: string
+          description: The consumer county
+          example: US
+        region:
+          maxLength: 60
+          type: string
+          description: The consumer region
+        postalCode:
+          maxLength: 10
+          type: string
+          description: The consumer postal code
+          example: "30009"
+        postalIdentifier:
+          maxLength: 10
+          type: string
+          description: The consumer postalIdentifier
+        isPrimary:
+          type: boolean
+          description: Designates if this is the consumer primary address (true/ false)
+          example: true
+    phone_inner:
+      required:
+      - countryCode
+      - number
+      type: object
+      properties:
+        countryCode:
+          maxLength: 3
+          type: number
+          description: 1 to 3 digit code representing the country in which the telephone number is registered.
+          example: 123
+        area:
+          maxLength: 3
+          type: number
+          description: The consumer area code
+          example: 456
+        number:
+          maxLength: 20
+          type: number
+          description: The consumer phone number
+          example: 1234567890
+        type:
+          maxLength: 20
+          type: string
+          description: The type of phone like Landline or Mobile
+          example: Mobile
+        isPrimary:
+          type: boolean
+          description: Designates if this is the consumer primary phone number (true or false)
+          example: true
+    email_inner:
+      type: object
+      properties:
+        email:
+          maxLength: 256
+          type: string
+          description: The consumer email address
+          example: john.smith.ait@equifax.com
+        emailType:
+          maxLength: 30
+          type: string
+          description: The Consumer email type
+          example: Personal
+    idInitiateResponse_details:
+      type: object
+      properties:
+        key:
+          maxLength: 40
+          type: string
+          example: deviceReputation
+        value:
+          maxLength: 256
+          type: string
+          example: "N"
+    idInitiateRequest_data:
+      type: object
+      properties:
+        ipAddress:
+          maxLength: 40
+          type: string
+          description: Consumer’s device IP address.
+          example: 192.168.1.45
+        identity:
+          $ref: '#/components/schemas/Identity'
+        additionalFields:
+          $ref: '#/components/schemas/AdditionalFields'
+    AdditionalFields_inner:
+      type: object
+      properties:
+        key:
+          maxLength: 80
+          type: string
+          example: key
+        value:
+          maxLength: 80
+          type: string
+          example: value
+  examples:
+    "400.01":
+      value:
+        efxErrorCode: "400.01"
+        description: Invalid JSON payload.
+    "401.03":
+      value:
+        efxErrorCode: "401.03"
+        description: Invalid mandatory parameters.
+    "403.01":
+      value:
+        efxErrorCode: "403.01"
+        description: Access Denied.
+    "404.01":
+      value:
+        efxErrorCode: "404.01"
+        description: The specified resource does not exist.
+    "415.01":
+      value:
+        efxErrorCode: "415.01"
+        description: Payload Format is in an Unsupported Format.
+    "422.01":
+      value:
+        efxErrorCode: "422.01"
+        description: Unprocessable Entity.
+        additionalErrorDetails:
+          referenceTransactionId: 3dbd67c2-66c5-499a-8e5yu
+          errorCode: "422"
+          developerMessage: Required field merchantId is missing
+          detailMessage: some detail msg
+    "429.01":
+      value:
+        efxErrorCode: "429.01"
+        description: Exceeded the maximum number of requests within a specified time frame.
+    "500.01":
+      value:
+        efxErrorCode: "500.01"
+        description: An internal error has occurred.
+    "501.01":
+      value:
+        efxErrorCode: "500.01"
+        description: Not-implemented - Specified resource is not implemented.
+    "503.01":
+      value:
+        efxErrorCode: "503.01"
+        description: Service is un-available.
+    "504.01":
+      value:
+        efxErrorCode: "504.01"
+        description: Gateway timeout.
+    idInitiateRequest:
+      value:
+        tenantId: usisdit2prodtest
+        applicationId: dit2appplication
+        referenceId: reference-1
+        consumerId: consumerId
+        correlationId: '{{$guid}}'
+        productId: dit2
+        configId: configId
+        entityId: entityId
+        data:
+          ipAddress: 192.168.1.45
+          identity:
+            name:
+              firstName: john
+              middleName: ""
+              lastName: scott
+              secondLastName: secondLastName
+              namePrefix: Mr
+              nameSuffix: V
+            address:
+            - addressType: Current
+              countryCode: US
+              addressLine1: 1505 Windward Concourse
+              addressLine2: ""
+              city: Alpharetta
+              county: Fulton
+              region: GA
+              postalCode: "30005"
+              postalIdentifier: postalIdentifier
+              isPrimary: "true"
+            dateOfBirth:
+              day: "12"
+              month: "11"
+              year: "1987"
+            governmentId:
+              documentType: SSN
+              value: "111222666"
+            phone:
+            - countryCode: "1"
+              area: ""
+              number: "1234567890"
+              type: Mobile
+              isPrimary: "true"
+            email:
+            - email: myroslav.kuzemchak@gmail.com
+              emailType: Personal
+          additionalFields:
+          - key: clientId
+            value: 611000
+          - key: sessionId
+            value: c4e8d84d7eb942d0893b5d94343b0a1b
+    idInitiateResponse:
+      value:
+        transactionId: 350fce1b-908e-4590-8666-ec3edcf79177
+        correlationId: b05f691a-0e06-45cc-84db-3237f6ff9972
+        referenceTransactionId: reference-1
+        decision: Deny
+        timestamp: 2022-01-27T11:07:38.643+0000
+        details:
+        - key: phoneInsights
+          value: "N"
+        - key: phoneInsightsReason
+          value: phoneUseRisk
+        - key: phoneVerification
+          value: "N"
+        - key: phoneVerificationReason
+          value: phoneNotValid
+        - key: phoneAffiliation
+          value: "N"
+        - key: phoneAffiliationReason
+          value: AffiliationNotConfirmed
+        - key: phoneTrust
+          value: "N"
+        - key: emailInsights
+          value: "Y"
+        - key: emailInsightsReason
+          value: NoInsightsReturned
+        - key: emailVerification
+          value: "Y"
+        - key: emailVerificationReason
+          value: emailExists
+        - key: emailAffiliation
+          value: "N"
+        - key: emailAffiliationReason
+          value: AffiliationNotConfirmed
+        - key: emailTrust
+          value: "N"
+        - key: addressInsights
+          value: "Y"
+        - key: addressInsightsReason
+          value: NoInsightsReturned
+        - key: addressVerification
+          value: "N"
+        - key: addressVerificationReason
+          value: Unverifiable
+        - key: addressAffiliation
+          value: "N"
+        - key: addressAffiliationReason
+          value: AffiliationNotConfirmed
+        - key: addressTrust
+          value: "N"
+        - key: identityVerification
+          value: "N"
+        - key: identityVerificationReason
+          value: Unverifiable
+        - key: identityResolution
+          value: "N"
+        - key: identityResolutionReason
+          value: IdentityNotResolved
+        - key: identityRisk
+          value: "N"
+        - key: identityRiskReason
+          value: NoRiskDetected
+        - key: identityTrust
+          value: "N"
+        - key: SSNInsights
+          value: "Y"
+        - key: SSNInsightsReason
+          value: NoInsightsReturned
+        - key: SSNVerification
+          value: "N"
+        - key: SSNVerificationReason
+          value: SSN Not Found
+        - key: SSNAffiliation
+          value: "N"
+        - key: SSNAffiliationReason
+          value: No Data Found
+        - key: SSNTrust
+          value: "N"
+        - key: dobInsights
+          value: "Y"
+        - key: dobInsightsReason
+          value: DOB > 20
+        - key: dobVerification
+          value: "N"
+        - key: dobVerificationReason
+          value: DOB Not Verified
+        - key: dobAffiliation
+          value: "N"
+        - key: dobAffiliationReason
+          value: No Data Found
+        - key: dobTrust
+          value: "N"
+        - key: deviceReputation
+          value: "N"
+        - key: deviceReputationReason
+          value: NoInsightsReturned
+        - key: deviceTrust
+          value: "N"
+        originalTransactionId: 350fce1b-908e-4590-8666-ec3edcf79177
+  securitySchemes:
+    OAuth2.0:
+      type: http
+      scheme: bearer

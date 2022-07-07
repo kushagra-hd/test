@@ -1,0 +1,1064 @@
+openapi: 3.0.0
+info:
+  title: Asset View
+  description: |
+    # Introduction
+      Asset View streamlines verifications for both lenders and borrowers making the mortgage process easy and efficient.  Borrowers are required to register and securely link their asset accounts on the consumer portal enabling digital asset verification directly with borrowers’ financial institutions.
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. **<a href="/oauth" target="_blank">Get an access token</a>** using the credentials.
+    3. **[Verification of Assets](#tag/Verification-of-assets)**.
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: '1.0.0'
+  termsOfService: ''
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://apidocs.equifax.com/virts/efxus/Verification_of_Assets/1.0.0
+  - url: https://api.sandbox.equifax.com/business/asset-view/v1
+tags:
+- name: "VOA Operations"
+  description: "Services required to request and fulfill VOA"
+paths:
+  /initiate:
+    post:
+      tags:
+        - VOA Operations
+      summary: Initiates a VOA request
+      description: Accepts a VOA Request and invokes CDS
+      operationId: initiate
+      security:
+      - OAuth2.0:
+        - 'scopes:  https://api.equifax.com/business/asset-view/v1'            
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          pattern: "application/json"
+          type: string
+        description: Value should be "application/json"
+      - name: "Authorization"
+        required: true
+        in: "header"
+        description: "Authentication scheme - Contains authorization token in Base 64 format"
+        schema:
+          type: "string"
+          example: "{basic auth token}"
+      - name: efx-client-correlation-id
+        in: header
+        required: true
+        schema:
+          pattern: "^[a-zA-Z0-9_\\-]*$"
+          type: string
+      - name: "userName"
+        in: "header"
+        required: true        
+        description: "User Name"
+        schema:
+          type: "string"
+          example: "string"   
+      - name: "userValue"
+        in: "header"
+        required: true        
+        description: "User Value"
+        schema:
+          type: "string"
+          example: "string"          
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetViewInitiateRequest'
+            examples: 
+              InitiateRequest:
+                $ref: '#/components/examples/InitiateRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/GatewayResponseObjectForInitiateRefreshSuccess'
+              examples: 
+                GatewayResponseObjectForInitiateRefreshSuccess:
+                  $ref: '#/components/examples/GatewayResponseObjectForInitiateSuccess'
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+  /retrieve:
+    post:
+      tags:
+        - VOA Operations
+      summary: >-
+        Delivery channels to call this endpoint to get a fulfilled
+        response.
+      description: Retrieval (json) for Lenders
+      operationId: retrieveAccountData
+      security:
+      - OAuth2.0:
+        - 'scopes:  https://api.equifax.com/business/verification-of-assets/v1'           
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          pattern: "application/json"
+          type: string
+        description: Value should be "application/json"
+      - name: "Authorization"
+        required: true
+        in: "header"
+        description: "Authentication scheme - Contains authorization token in Base 64 format"
+        schema:
+          type: "string"
+          example: "{basic auth token}"
+      - name: efx-client-correlation-id
+        in: header
+        required: true
+        schema:
+          pattern: "^[a-zA-Z0-9_\\-]*$"
+          type: string
+      - name: "userName"
+        in: "header"
+        required: true        
+        description: "User Name"
+        schema:
+          type: "string"
+          example: "string"   
+      - name: "userValue"
+        in: "header"
+        required: true        
+        description: "User Value"
+        schema:
+          type: "string"
+          example: "string"           
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetRetrieveRequest'
+            examples: 
+              InitiateRequest:
+                $ref: '#/components/examples/RefreshReteiveRequest'
+              
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetRetrieveResponse'
+              examples:
+                GatewayResponseObjectForRetrieveSuccess:
+                  $ref: '#/components/examples/GatewayResponseObjectForRetrieveSuccess'  
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+  /refresh:
+    post:
+      tags:
+        - VOA Operations
+      summary: Refresh balances on initial VOA request
+      description: Accepts a VOA Refresh Request and invokes CDS  
+      operationId: refresh
+      security:
+      - OAuth2.0:
+        - 'scopes:  https://api.equifax.com/business/verification-of-assets/v1'       
+      parameters:
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          pattern: "application/json"
+          type: string
+        description: Value should be "application/json"
+      - name: "Authorization"
+        required: true
+        in: "header"
+        description: "Authentication scheme - Contains authorization token in Base 64 format"
+        schema:
+          type: "string"
+          example: "{basic auth token}"
+      - name: efx-client-correlation-id
+        in: header
+        required: true
+        schema:
+          pattern: "^[a-zA-Z0-9_\\-]*$"
+          type: string
+      - name: "userName"
+        in: "header"
+        required: true        
+        description: "User Name"
+        schema:
+          type: "string"
+          example: "string"   
+      - name: "userValue"
+        in: "header"
+        required: true        
+        description: "User Value"
+        schema:
+          type: "string"
+          example: "string"           
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetViewRefreshRequest'
+            examples: 
+              InitiateRequest:
+                $ref: '#/components/examples/RefreshReteiveRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayResponseObjectForInitiateRefreshSuccess'
+              examples: 
+                GatewayResponseObjectForInitiateRefreshSuccess:
+                  $ref: '#/components/examples/GatewayResponseObjectForRefreshSuccess'
+                
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+components:
+  securitySchemes:
+    OAuth2.0:
+      type: "http"
+      scheme: "bearer"
+  schemas:
+    AssetRetrieveRequest:
+      type: object
+      required: 
+      - referenceNumber
+      - consumerIdentifierLast4
+      properties:
+        referenceNumber:
+          type: string
+        consumerIdentifierLast4:
+          type: string
+        includePdf:
+          type: boolean
+        
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    GatewayResponseObjectForInitiateRefreshSuccess:
+      type: object
+      properties:
+        correlationId:
+          type: string
+        status:
+          type: string
+        data:      
+          type: object
+          properties:
+            referenceNumber:
+              type: object
+            status:
+              type: string
+    GatewayResponseObjectForFailure:
+      type: object
+      properties:
+        correlationId:
+          type: string
+        status:
+          type: string
+        error:
+          $ref: '#/components/schemas/Error'
+    AssetViewRefreshRequest:
+      type: object
+      required: 
+      - referenceNumber
+      - consumerIdentifierLast4
+      properties:
+        referenceNumber:
+          type: string
+        consumerIdentifierLast4:
+          type: string
+    Address:
+      required:
+      - address1
+      - city
+      - country
+      - state
+      - zipCode
+      type: object
+      properties:
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        address1:
+          type: string
+        zipCode:
+          type: string
+    AssetViewInitiateRequest:
+      required:
+      - permissiblePurpose
+      - monitoringDuration
+      - consumer
+      type: object
+      properties:
+        permissiblePurpose:
+          type: string
+        loanNumber:
+          type: string
+        monitoringDuration:
+          type: string
+        consumer:
+          $ref: '#/components/schemas/Consumer'
+    Consumer:
+      required:
+      - address
+      - dob
+      - email
+      - firstName
+      - identifier
+      - lastName
+      type: object
+      properties:
+        identifier:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        dob:
+          type: string
+          format: date
+        address:
+          $ref: '#/components/schemas/Address'
+ 
+    AssetRetrieveResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        expiredDate:
+          type: string
+          format: date-time
+        numberOfDays:
+          type: string
+        lenderName:
+          type: string
+        lenderId:
+          type: string
+        retrieveResponse:
+          $ref: '#/components/schemas/VOARetrieveResponse'
+    VOARetrieveResponse:
+      type: object
+      properties:
+        referenceNumber:
+          type: string
+        permissiblePurpose:
+          type: string
+        loanNumber:
+          type: string
+        currentAsOfDate:
+          type: string
+        consumer:
+          $ref: '#/components/schemas/Consumer'
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'  
+        pdfContents:
+          type: string            
+    Account:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        currency:
+          type: string
+        accountName:
+          type: string
+        institutionName:
+          type: string
+        routingNumber:
+          type: string
+        holders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holder'
+        accountType:
+          type: string
+        accountSubType:
+          type: string
+        accountVerificationMatchType:
+          type: string
+          enum:
+            - "none"
+            - "exact"
+            - "enhanced"
+            - "failure"
+        accountStatus:
+          type: string
+        balances:
+          $ref: '#/components/schemas/Balance'
+        processStartDate:
+          type: string
+        processEndDate:
+          type: string
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+    Transaction:
+      type: object
+      properties:
+        amount:
+          type: string
+        transactionType:
+          type: string
+        postDate:
+          type: string
+        description:
+          type: string     
+    Balance:
+      type: object
+      properties:
+        currentBalance:
+          type: string
+        availableBalance:
+          type: string
+    Holder:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    APIError:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally added when additional error details are available.
+          properties:
+            code:
+              type: number
+              description: Internal code to identify the error
+            message:
+              type: string
+              description: Short error message
+            timeStamp:
+              type: string
+              format: date-time
+              description: Date and time when the error occurred          
+  examples:
+
+    RefreshReteiveRequest:
+      value:
+        referenceNumber: "999626929858"
+        consumerIdentifierLast4: "4005"
+        includePdf : true
+
+    InitiateRequest:
+      value:
+        monitoringDuration: 2M
+        loanNumber: "2224144007"
+        permissiblePurpose: PPCREDIT
+        consumer: 
+            identifier: 909-02-4007
+            firstName: Sirius
+            lastName: Black
+            address: 
+                zipCode: "63011"
+                city: St. Louis
+                address1: 672 Lake St
+                state: MO
+            dob: "1970-05-27"
+            email: sirius.demo@equifax.com
+    GatewayResponseObjectForRetrieveSuccess:
+      value:  
+        correlationId: "74caca7a-aced-4009-b421-7d52a9322f78"
+        status: "Success"
+        data:
+          referenceNumber: "999626929858"
+          status: Retrieve Successful,
+          expiredDate: 2022-06-07T13:09:37.030+00:00,
+          numberOfDays: 60,
+          lenderName: Mortgage Activation - Test,
+          lenderId: 80418,
+          retrieveResponse:             
+              referenceNumber: 999626929858,
+              permissiblePurpose: PPCREDIT,
+              loanNumber: 2224144005,
+              currentAsOfDate: 2022-04-08,
+              consumer:                 
+                  identifier: 909024005,
+                  firstName: Sirius,
+                  lastName: Black,
+                  email: rahul.kashikar+3psguat@equifax.com,
+                  dob: 1970-05-27,
+                  address:                     
+                      city: St. Louis,
+                      state: MO,
+                      country: US,
+                      address1: 672 Lake St,
+                      zipCode: "63011"
+              accounts: 
+                    - accountNumber: xxxx5164,
+                      currency: USD,
+                      accountName: Investment account,
+                      institutionName: Dag Site
+                      routingNumber: 
+                      holders: 
+                      accountType: INVESTMENT,
+                      accountSubType: OTHER,
+                      accountVerificationMatchType: false,
+                      accountStatus: ACTIVE,
+                      balances:      
+                          currentBalance: 120000.00,
+                          availableBalance: null
+  
+                      processStartDate: 2022-02-15,
+                      processEndDate: 2022-04-08,
+                      transactions: 
+                            - amount: 2608.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-15,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 985.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-19,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4396.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-22,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 209.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-25,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2267.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-27,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 4662.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-28,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 3932.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-02,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 1338.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-08,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 424.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-11,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3490.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-22,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 1846.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-25,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3583.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-29,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 43.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-31,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 3510.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-02,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 817.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-03,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2403.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-04,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3105.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-05,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4187.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-06,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2049.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-07,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4186.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-08,
+                              description: ACH Transfer FIDELITY
+      
+                    - accountNumber: xxxx5163,
+                      currency: USD,
+                      accountName: Investment account,
+                      institutionName: Dag Site
+                      routingNumber: 
+                      holders: 
+                      accountType: INVESTMENT,
+                      accountSubType: OTHER,
+                      accountVerificationMatchType: false,
+                      accountStatus: ACTIVE,
+                      balances:                         
+                          currentBalance: 150000.00,
+                          availableBalance: null
+  
+                      processStartDate: 2022-02-15,
+                      processEndDate: 2022-04-08,
+                      transactions: 
+                            - amount: 2608.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-15,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 985.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-19,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4396.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-22,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 209.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-25,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2267.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-27,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 4662.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-28,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 3932.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-02,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 1338.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-08,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 424.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-11,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3490.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-22,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 1846.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-25,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3583.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-29,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 43.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-31,
+                              description: ACH Transfer VANGUARD
+  
+  
+                            - amount: 3510.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-02,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 817.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-03,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2403.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-04,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 3105.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-05,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4187.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-06,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 2049.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-07,
+                              description: ACH Transfer FIDELITY
+  
+  
+                            - amount: 4186.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-04-08,
+                              description: ACH Transfer FIDELITY
+                          
+                    - accountNumber: xxxx5179,
+                      currency: USD,
+                      accountName: Savings,
+                      institutionName: Dag Site
+                      routingNumber: 
+                      holders: 
+                              firstName: Home,
+                              lastName: Loanseeker
+                          
+                      
+                      accountType: BANK,
+                      accountSubType: SAVINGS,
+                      accountVerificationMatchType: false,
+                      accountStatus: ACTIVE,
+                      balances:                         
+                          currentBalance: 145461.00
+                          availableBalance: 145461.00
+  
+                      processStartDate: 2022-02-07,
+                      processEndDate: 2022-04-06,
+                      transactions: 
+                            - amount: 800.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-07,
+                              description: Web Authorized Pmt Recur PaymentRec Disney Hotstar XXXXXXXXXX5455
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-09,
+                              description: Web Authorized Pmt Recur PaymentRec Car loan XXXXXXXXX4354
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-11,
+                              description: Web Authorized Pmt RecurPaymentRec XXXXXX1102
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-11,
+                              description: Web Authorized Pmt RecurPaymentRec XXXXXX1101
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-12,
+                              description: Web Authorized Pmt RecurPaymentRec XXXXXX1202
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-12,
+                              description: Web Authorized Pmt RecurPaymentRec XXXXXX1202
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-13,
+                              description: Web Authorized Pmt Recur XXXXXX1302
+  
+  
+                            - amount: 2000.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-02-13,
+                              description: Web Authorized Pmt Recur XXXXXX1301
+  
+  
+                            - amount: 50.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-02-17,
+                              description: Direct deposit - Ministry Of Magic XXXXXXXXXX9938LWV
+  
+  
+                            - amount: 70.00,
+                              transactionType: DEBIT
+                              postDate: 2022-02-25
+                              description: Web Authorized Pmt  Ref No XXXXX7227 Leaky Couldron
+  
+  
+                            - amount: 80.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-03-05,
+                              description: Web Authorized Pmt  Ref No XXXXX7228 Leaky Couldron
+  
+  
+                            - amount: 90.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-03-13,
+                              description: Web Authorized Pmt  Ref No XXXXX7229 Leaky Couldron
+  
+  
+                            - amount: 210.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-03-21,
+                              description: Web Authorized Pmt  Ref No XXXXX7230 Leaky Couldron
+  
+  
+                            - amount: 4000.00,
+                              transactionType: CREDIT,
+                              postDate: 2022-03-29,
+                              description: Direct deposit - Ministry Of Magic XXXXXXXXXX9938LWV
+  
+  
+                            - amount: 450.00,
+                              transactionType: DEBIT,
+                              postDate: 2022-04-06,
+                              description: Cash Withdrawal XX/XX XX:XXp #XXXXTeller          
+              pdfContents: "JVBERi0xLjcKJeLjz9MKNSAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDQ0MjE+PnN0cmVhbQp42u0dSY4jufGuV+gFOdwXYOCD4QU+2u4PVKkkA4YTxvji7zsiuCQpkUyyprrnYjQEZaqCwWAwdi79y4Vf8d9//nGR+mqt2oS/cik2o67Sbhb+cr88Ln+9/HKJvzL4F/5yNLjtl5/+svPrH/4dIBNKbiw2iVCCu02ZZ7S//3b56U8Ab67fHhcEkf5qHbSz128fF7YZzby7Pn8D8p8Z03fGmWDcasbf4cPh3TwYY5LBy/E3/cG4Z+Edn28WYX/37Z+XP36rKZbObDzzwbjNv7DhCRSIQTgH4KoHlcA2XUPFsXscOgGKq2N80zwMXcUh199h6EYxJmCo3DGpbWsoionNho41o+F0eiZAXvZMk0z9yPuNyYeAD4e+bsTW/C5M6J/eBb1L5D79puFb0Le83+k3er/fwt/Td2yL+BAuwN5Cu4caTJFTQ74rJTcWwIzHp+7oEVCQyM3wXb8FMXMeRAtEyd1AtN6CyDFFYobP9Dfhoii6IHo+tO3Ml+YiUazYhtPWoZgAK4qf5wt4qV3k50fxfEs8bvLVXA3IvVJXLdhVqE2bljyPoIhKgYSjQCOk34yPesy94cBMzrRDpsIre2Hq+6HHqK+JsSDo3BpiaGY66nViKuo0/m5Nb2BCJpKV7YxKcwQBGe4ocgYB9ou+PEmDs2i02rw+F6cTFXbYU+pWG2BiX44BVpT9HkJBikrKqaNyAVfvj6C0qJRW0HtQWBZgbXiWD4mKGD70m4pKyjMcPZMy8/iJcNSWR2XmyUi0Rir8+QwoydGARjAXmNLjBsCa6Vk4kz/0M/g7exT+5G1NucnKRNrP9BtgZXsqf6V+gy87k/EAouWm5ZmM4zAmuCvvgaOowTxx+ha4p/Thpfvccx6piaR5u/m+M0NQVZJWqIFM4QIQgpqAxASzEYlRlU0nGAoZGBEXplsQDPFc69o8cdYV7RPGK2E3XjJ/JNoIa6e535HdJK/IhBwvQVzUtURsy/RZoG9kiNDYd6ZA38lNIquZcSGkkPdMQf4b2sUEi8/2DWHH1n0o1gEErII7k2phpqUahSUKVBKEgTWHYNglQgb8Q7CKjEL7KUqKFoAMcXwmY45GVncl8IRHSujNZPJgho0ZSKBGtz7LqWRd0XtH3T/sQaFaKkbxNkprhO1JpPebVNmzqyHBCKt7PNXRWYnikxykjO8yRrKPghS26et/u5HN3/4cIiCO4f9+0Tq//Ovy9zCUTcoJBHKzLiOgl4ygEHDtIRZ2Z6FbH+oldGNqw5ez0A1jXoyF8QOpF5kXzg476986SquVRitCIZnfelGZDrYGpAPTpxIq5Y0sEqwtBECyYW++OkOErrTPRHXsTQQBJitxYnC0EZsX52rEi6AXSYRh9AwNw14jCRaw9zUDQWVJwsG74CY/gi4mPqGH8O/BJb4Q48LUk0ttGiJZcEb0DJEHwczUY8nADfRa"                
+  
+    GatewayResponseObjectForInitiateSuccess:
+      value:  
+        correlationId: "74caca7a-aced-4009-b421-7d52a9322f78"
+        status: "Success"
+        data:
+          referenceNumber: "999626929858"
+          status: "Request Initiated Successfully"
+    GatewayResponseObjectForRefreshSuccess:
+      value:  
+        correlationId: "74caca7a-aced-4009-b421-7d52a9322f78"
+        status: "Success"
+        data:
+          referenceNumber: "999626929858"
+          status: "Refresh Successful"
+  
+
+    '400.00':
+      value:
+        efxErrorCode: '400.00'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 400
+          message: Missing mandatory params
+          timeStamp: '2021-01-08T19:22:33'
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 400
+          message: Invalid Request
+          timeStamp: '2021-01-08T19:22:33'
+    '400.02':
+      value:
+        efxErrorCode: '400.01'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 400
+          message: Invalid JSON payload
+          timeStamp: '2021-01-08T19:22:33'
+    '401.00':
+      value:
+        efxErrorCode: '401.00'
+        description: UnAuthorized Request
+    '403.01':
+      value:
+        efxErrorCode: "403.01"
+        description: Access Denied.
+    '500.00':
+      value:
+        efxErrorCode: '500.00'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 500
+          message: Internal Server Error
+          timeStamp: '2021-01-17T22:15:48'
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 500
+          message: Error connecting downstream services 
+          timeStamp: '2021-01-17T22:15:48'
+    '500.03':
+      value:
+        efxErrorCode: '500.03'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 500
+          message: Unexpected response - Lender is NULL
+          timeStamp: '2021-01-17T22:15:48'
+    '500.04':
+      value:
+        efxErrorCode: '500.04'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          code: 500
+          message: Unexpected response - Verifier is NULL
+          timeStamp: '2021-01-17T22:15:48'
+    '503.00':
+      value:
+        efxErrorCode: '503.00'
+        description: Gateway Timeout
+  ####################
+  # Common responses
+  ####################
+  responses:
+    '400':
+      description: 'invalid input, object invalid'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+          examples:
+            '400.00':
+              $ref: '#/components/examples/400.00'
+            '400.01':
+              $ref: '#/components/examples/400.01'
+            '400.02':
+              $ref: '#/components/examples/400.02'
+    '401':
+      description: UnAuthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+          examples:
+            '401.00':
+              $ref: '#/components/examples/401.00'
+    '404':
+      description: Data Not Found
+      content: {}
+    '405':
+      description: Method Not Allowed
+      content: {}
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+          examples:
+            '500.00':
+              $ref: '#/components/examples/500.00'
+            '500.01':
+              $ref: '#/components/examples/500.01'
+    '503':
+      description: Service is unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIError'
+          examples:
+            '503.00':
+              $ref: '#/components/examples/503.00'

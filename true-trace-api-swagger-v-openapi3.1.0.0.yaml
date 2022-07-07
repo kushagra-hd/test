@@ -1,0 +1,673 @@
+openapi: 3.0.1
+info:
+  title: True Trace
+  version: OpenAPI3.1.0.0
+servers:
+- url: https://sandbox-us-api.experian.com/consumerservices/truetrace
+paths:
+  /v1/true-trace:
+    post:
+      tags:
+      - Consumer Services
+      summary: True Trace
+      description: 'TrueTrace API allows combining skip tracing data and consumer
+        credit data, as well as alternative and exclusive data sources. With this
+        unique combination of information, TrueTrace is a resource to help you locate
+        past-due consumers more quickly and easily.
+        <br><br> We are providing non-executable "Request schema" which contains all request parameters and executable 10 test cases for client testing under "Examples" dropdown below which includes first 5 positive test cases and rest 5 negative test cases. Eg: Success_1, Failure_Invalid surname etc.'
+      operationId: truetrace
+      parameters:
+      - name: clientReferenceId
+        in: header
+        description: API client generated reference Id to uniquely identify the API
+          request.
+        schema:
+          type: string
+          default: SBMYSQL
+          enum:
+          - SBMYSQL
+      - name: Content-Type
+        in: header
+        description: Input Request format
+        required: true
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      - name: Accept
+        in: header
+        description: Output Response format
+        schema:
+          type: string
+          default: application/json
+          enum:
+          - application/json
+      requestBody:
+        description: Consumer's PII , Requestor Information, Addons and any custom
+          options to be specified here.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/trueTraceRequest'
+            examples:
+              Request schema:   #Request schema
+                value:
+                  {
+                    "consumerPii": {
+                      "name": {
+                        "lastName": "string",
+                        "firstName": "string"
+                      },
+                      "ssn": {
+                        "ssn": "string"
+                      },
+                      "phone": [
+                        {
+                          "number": "string"
+                        }
+                      ],
+                      "address": {
+                        "line1": "string",
+                        "city": "string",
+                        "state": "string",
+                        "zipCode": "string"
+                      }
+                    },
+                    "requestor": {
+                      "subscriberCode": "string"
+                    },
+                    "reportType": {
+                      "reportType": "string"
+                    },
+                    "searchType": {
+                      "searchType": "string"
+                    }
+                  }
+              Success_PPS:   # Example 1
+                value:
+                  consumerPii:
+                    address:
+                      line1: 510 MONDRE ST
+                      city: MICHIGAN CITY
+                      state: IN
+                      zipCode: '46360'
+                    name:
+                      lastName: CANN
+                      firstName: JOHN
+                    ssn:
+                      ssn: '111111111'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: PPS
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_PTIA:   # Example 2
+                value:
+                  consumerPii:
+                    phone:
+                      - number: '1234567890'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: PTIA
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_BA:   # Example 3
+                value:
+                  consumerPii:
+                    address:
+                      line1: 1073 BUCKINGHAM DR
+                      city: CAROL STREAM
+                      state: IL
+                      zipCode: '60188'
+                    name:
+                      lastName: ARMSTRONG
+                      firstName: KARL
+                    ssn:
+                      ssn: '111111111'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: BA
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_BAAPS:   # Example 4
+                value:
+                  consumerPii:
+                    address:
+                      line1: 3878 DAKLAWN AVE
+                      city: DALLAS
+                      state: TX
+                      zipCode: '75219'
+                    name:
+                      lastName: NATIUIDAD
+                      firstName: KATHLEEN
+                    ssn:
+                      ssn: '111111111'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: BAAPS
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_RSS:   # Example 5
+                value:
+                  consumerPii:
+                    address:
+                      line1: 11918 LATIGO
+                      city: OAKTON
+                      state: VA
+                      zipCode: '22124'
+                    ssn:
+                      ssn: '111111111'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: RSS
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_NS:   # Example 6
+                value:
+                  consumerPii:
+                    address:
+                      line1: 9875 WHITEWOOD AVE
+                      city: ELLSWORTH AFB
+                      state: SD
+                      zipCode: '57706'
+                    name:
+                      lastName: ELREFAI
+                      firstName: PHILLIP
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: NS
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+              Success_CS:   # Example 7
+                value:
+                  consumerPii:
+                    ssn:
+                      ssn: '111111111'
+                    address:
+                      line1: 3880 TOWN HILL RD
+                      city: WOLCOTT
+                      state: VT
+                      zipCode: '56803147'
+                    name:
+                      lastName: BOND
+                      firstName: MAUREEN
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: CS
+                  requestor:
+                    subscriberCode: '2222222'
+                                                      
+              Success_RPS:   # Example 8
+                value:
+                  consumerPii:
+                    phone:
+                      - number: '1234567890'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: RPS
+                  requestor:
+                    subscriberCode: '2222222'
+                                                     
+              Failure_Profile Not Found:   # Example 9
+                value:
+                  consumerPii:
+                    ssn:
+                      ssn: '111111111'
+                    address:
+                      line1: RR 2 BOX 5
+                      city: TAMAQUA
+                      state: PA
+                      zipCode: '18252'
+                    name:
+                      firstName: ABC
+                      lastName: ABC
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: CS
+                  requestor:
+                    subscriberCode: '2222222'
+                     
+              Failure_Metronet Time-out:   # Example 10
+                value:
+                  consumerPii:
+                    name:
+                      lastName: BLUEBERRY
+                      firstName: DONNA
+                    ssn:
+                      ssn: '111111111'
+                    phone:
+                      - number: '1234567890'
+                    address:
+                      line1: '12 KENETH STR #34'
+                      city: COSTA MESA
+                      state: CA
+                      zipCode: '92626'
+                  reportType:
+                    reportType: R
+                  searchType:
+                    searchType: PPS
+                  requestor:
+                    subscriberCode: '2222222'
+                  
+        required: true
+      responses:
+        200:
+          description: API responds with a JSON.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/trueTraceResp'
+        400:
+          description: Client Exception due to invalid data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        403:
+          description: Request Forbidden.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: Not found Data.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Server Related Error.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        504:
+          description: Timeout.
+          headers:
+            experianTransactionId:
+              description: Unique ID generated by Experian for this API request
+              schema:
+                type: string
+            clientReferenceId:
+              description: Echo back of the reference Id , if provided on API request
+                header
+              schema:
+                type: string
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - OauthSecurity:
+        - user
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    trueTraceRequest:
+      required:
+      - consumerPii
+      - reportType
+      - requestor
+      - searchType
+      type: object
+      properties:
+        consumerPii:
+          $ref: '#/components/schemas/PrimaryApplicant'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+        reportType:
+          $ref: '#/components/schemas/ReportType'
+        searchType:
+          $ref: '#/components/schemas/SearchType'
+      description: Request payload to retrieve a true trace api
+    trueTraceResp:
+      type: object
+      properties:
+        trueTraceResponse:
+          $ref: '#/components/schemas/trueTraceResp1'
+      description: Request payload to retrieve a true trace api
+    PAName:
+      required:
+      - firstName
+      - lastName
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: The full applicant's surname is required. If the surname contains
+            two surnames, then split the surnames with a hyphen (e.g., Smith-Jones).
+            The surname can also be input with an apostrophe (e.g., O'Brien), although
+            apostrophe usage is limited to the letters D, L, and O.
+          default: CONSUMER
+        firstName:
+          type: string
+          description: The full first name is required. The minimum entry is the first
+            name initial. Blanks and special characters (except dash) are not allowed.
+            Compound names should contain a dash (e.g., Billy-Bob).
+          default: JOHN
+      description: Consumer's Name
+    Address:
+      required:
+      - line1
+      - zipCode
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address Line 1
+          default: 10655 N BIRCH ST
+        city:
+          type: string
+          description: City
+          default: BURBANK
+        state:
+          type: string
+          description: State
+          default: CA
+        zipCode:
+          type: string
+          description: ZIP Code
+          default: "915021234"
+      description: Consumer's Address
+    subscriberCode:
+      type: object
+      properties:
+        subCode:
+          type: string
+          description: Social Security Number
+          default: "999999990"
+      description: Consumer's Social Security Number
+    Phone:
+      type: object
+      properties:
+        number:
+          type: string
+          description: Phone Number
+          default: 818.555.1111
+      description: Consumer's Phone
+    PrimaryApplicant:
+      required:
+      - name
+      - ssn
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PAName'
+        ssn:
+          $ref: '#/components/schemas/ssnNumber'
+        phone:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        address:
+          $ref: '#/components/schemas/Address'
+      description: Primary Credit Applicant Information
+    Requestor:
+      required:
+      - subscriberCode
+      type: object
+      properties:
+        subscriberCode:
+          type: string
+          description: Subscriber Number assigned by Experian
+          default: "5991764"
+      description: Information on the API requestor
+    ReportType:
+      type: object
+      properties:
+        reportType:
+          type: string
+          description: Permissible Purpose Type Code. 2 digits containing the account
+            type code only.
+          default: "18"
+      description: 'Specifies information on why this credit inquiry is being submitted
+        This is used to denote the purpose type, terms, and amount. '
+    SearchType:
+      type: object
+      properties:
+        searchType:
+          type: string
+          description: End User Identification. Resellers of credit reports must enter
+            the name of the end user upto 30 characters.
+          default: ENDUSER
+      description: 'If the API requestor is a reseller submitting a credit inquiry
+        to Experian, additional information should be provided.  '
+    trueTraceResp1:
+      type: object
+      properties:
+        addressInformation:
+          type: array
+          description: Best Consumer Addresses
+          items:
+            $ref: '#/components/schemas/addressInformationResp'
+        consumerIdentity:
+          $ref: '#/components/schemas/consumerIdentity'
+        reportType:
+          $ref: '#/components/schemas/reportType'
+        searchType:
+          $ref: '#/components/schemas/searchType'
+        ssn:
+          $ref: '#/components/schemas/ssnNumber'
+        subscriberCode:
+          $ref: '#/components/schemas/subscriberCode'
+    addressInformationResp:
+      type: object
+      properties:
+        addressType:
+          type: string
+          description: Address range that includes the address and the census geography
+            the address is within
+          default: "4567890"
+        city:
+          type: string
+          description: City for the address.
+          default: BURBANK
+        county:
+          type: string
+          description: County Code
+          default: "123"
+        houseNumber:
+          type: string
+          description: Structural Characteristic/Dwelling Configuration
+        ReportedDate:
+          type: string
+          description: 'Date address first reported. Format = MMDDCCYY '
+          default: "6011995.0"
+        lastUpdatedDate:
+          type: string
+          description: 'Date address last updated. Format = MMDDCCYY '
+          default: "1011998.0"
+        source:
+          type: string
+          description: Source of Address
+        state:
+          type: string
+          description: 'Valid two-letter US state code or Canadian province. '
+          default: CA
+        street:
+          type: string
+          description: 'Full street name. '
+          default: BIRCH
+        zipCode:
+          type: string
+          description: ZIP Code.
+          default: "915021234"
+      description: Best Consumer Addresses
+    consumerIdentity:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/consumerIdentityName'
+        phone:
+          $ref: '#/components/schemas/consumerIdentityPhone'
+    consumerIdentityName:
+      type: array
+      description: Best Consumer Name for Request
+      items:
+        $ref: '#/components/schemas/consumerIdentityNameResp'
+    consumerIdentityNameResp:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Consumer's Full First Name.
+          default: JON
+        lastName:
+          type: string
+          description: Consumer's Full Last Name.
+          default: J
+    consumerIdentityPhone:
+      type: array
+      description: Present when DemographicsAll or DemographicsPhone is requested
+        on input or via subcode option.
+      items:
+        $ref: '#/components/schemas/consumerIdentityPhoneResp'
+    consumerIdentityPhoneResp:
+      type: object
+      properties:
+        lastUpdatedDate:
+          type: string
+          description: 'Consumer Phone Number. '
+          default: "5555555555"
+        code:
+          type: string
+          description: 'Consumer Phone Number. '
+          default: "5555555555"
+        number:
+          type: string
+          description: 'Consumer Phone Number. '
+          default: "5555555555"
+        protedIndicator:
+          type: string
+          description: 'Consumer Phone Number. '
+          default: "5555555555"
+        reportedDate:
+          type: string
+          description: 'Consumer Phone Number. '
+          default: "5555555555"
+        score:
+          type: string
+          description: Phone Source.
+          default: I
+        type:
+          type: string
+          description: Phone number type
+          default: ""
+    reportType:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Report Type.
+          default: ""
+      description: Present when "Report Type" is requested on input or via subcode
+        and is allowed for the subcode.
+    searchType:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Message Number for ofac.
+          default: ""
+      description: Present when "ofacmsg" is requested on input or via subcode and
+        is allowed for the subcode.
+    ssnNumber:
+      type: object
+      properties:
+        ssn:
+          type: string
+          description: Message Number for ofac.
+          default: ""
+      description: Present when "ofacmsg" is requested on input or via subcode and
+        is allowed for the subcode.
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Client friendly message explaining the error
+        errorCode:
+          type: string
+          description: Experian generated code for this error
+      description: Error Response
+  securitySchemes:
+    OauthSecurity:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://sandbox-us-api.experian.com/oauth2/v1/token
+          scopes:
+            user: user scope

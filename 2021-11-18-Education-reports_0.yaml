@@ -1,0 +1,1018 @@
+openapi: "3.0.0"
+
+info:
+  title: Education Verification
+  description: |
+    # Introduction
+    The Education Verification - Grad Verification, Grad Verification Plus, Enrollment Verify API Report returns consumerIdentity and educationVerification sections. It is used to verify the Graduation and Enrollment details.
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. **<a href="/oauth" target="_blank">Get an access token</a>** using the credentials.
+    3. **[Verify candidate's education](#tag/Education-Reports)**.
+
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: "1.0.0"
+  termsOfService: ''
+
+servers:
+  - url: https://api.sandbox.equifax.com/business/education/v1
+
+paths:
+  /reports:
+    post:
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/education/v1/reports:r'  
+      tags:
+        - Education Verification - Grad Verify & Grad Verify Plus
+      description: >
+        The Education Verification - Grad Verify API returns consumerIdentity and educationVerification sections. It is used to verify the Education details on Graduation.
+
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            default: application/json
+            enum:
+            - application/json
+        -  name: customerReferenceNumber
+           in: header
+           description: Reference Number provided by customer
+           schema:
+             type: string
+        -  name: mockuprequired
+           in: header
+           description: Used in the lower environments to indicate that a mocked response should be sent instead of real response. This should not be used in the higher environments (UAT and PROD). When this is set to "true", the applicants.primaryConsumer.personalInformation.customerReferenceIdentifier element in the request should contain the value MOCK/scenario_id.
+           schema:
+             type: string
+        -  name: organizationcode
+           in: header
+           description: Organization code. If the first flavor of url is used then organizationcode is required to be passed in the header
+           schema:
+             type: string 
+        -  name: ig-orchestrationcode
+           in: header
+           description: Orchestration code. If the first flavor of url is used then ig-orchestrationcode is required to be passed in the header
+           schema:
+             type: string                                       
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Response"
+                  - $ref: "#/components/schemas/Response"                  
+              examples:
+                EnrollmentResponse:
+                  $ref: "#/components/examples/EnrollmentVerifyResponse" 
+                GradVerifyResponse:
+                  $ref: "#/components/examples/GradVerifyResponse"      
+                GradVerifyPlusResponse:
+                  $ref: "#/components/examples/GradVerifyPlusResponse" 
+             
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload is in an unsupported format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+  schemas:
+    Request:
+      required:
+        - applicants
+      properties:
+        applicants:
+          $ref: "#/components/schemas/Applicants"
+    Applicants:
+      type: object
+      description: 'Contains information of the order along with primary consumer details.'
+      required:
+        - orderInfo
+        - primaryConsumer
+      properties:
+        customerReferenceIdentifier:
+          type :  string
+          description: "Applicant’s reference identifier."
+          example: '1519'      
+        orderInfo:
+          $ref: "#/components/schemas/OrderInfo"
+        primaryConsumer:
+          $ref: "#/components/schemas/PrimaryConsumer"
+      
+    OrderInfo:
+      type: object
+      description: 'Container to hold order information such as requestor, inquiry date, inquiry type, source details, etc.'
+      required:
+        - organizationId
+        - organizationName
+        - locationId
+        - locationName
+        - inquiryType
+      properties:
+        organizationId:
+          type: number
+          description: 'Customer Organization ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 10002119
+        locationId:
+          type: number
+          description: 'Customer Location ID is the department or product line the Customer is configured for in the Equifax system. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 964128
+        organizationName:
+          type: string
+          description: 'Customer Organization Name corresponding to the ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 'ABC Corp Location'
+        locationName:
+          type: string
+          description: 'Location Name corresponding to the ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 'ABC Corp Verifier'
+        inquiryDate:
+          type: string
+          example: '2018-04-11'
+          description: 'Inquiry date in the format yyyy-mm-dd.'
+        inquiryType:
+          type: string
+          example: 'GraduateVerification or GraduateVerificationPlus or EnrollmentVerification'
+          description: 'Inquiry type. Informational purpose to indicate the type of inquiry.'
+
+        permPurpose:
+          type: string
+          enum:
+            - PPCHLDSPA
+            - PPCREDIT
+            - PPCRTORD
+            - PPEMPLOY
+            - PPGOVRNM
+            - PPASSESS
+            - PPBUSNSS
+            - PPINSRNC
+            - PPREVIEW
+            - PPSECRTY
+            - PPWRTTEN
+            - PPEMPLOYA
+            - PPCHLDSP
+          description: 'Represents the permissible purpose code Only the following values are allowed = "PPCHLDSPA", "PPCREDIT", "PPCRTORD", "PPEMPLOY", "PPGOVRNM", "PPASSESS", "PPBUSNSS", "PPINSRNC", "PPREVIEW", "PPSECRTY", "PPWRTTEN", "PPEMPLOYA", "PPCHLDSP"'
+          example: 'PPCREDIT'
+        trackingId:
+          type: string
+          description: 'Tracking id is a customer provided system id.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'Source system id is a customer provided system name.'
+          example: string
+        sourceName:
+          type: string
+          description: 'Source name is a customer provided system name.'
+          example: string
+        resellerName:
+          type: string
+          description: 'Reseller name.'
+          example: string
+        platformName:
+          type: string
+          description: 'Platform name.'
+          example: string
+        intermediaryName:
+          type: string
+          description: 'Intermediary name.'
+          example: string
+                  
+        requestor:
+          $ref: "#/components/schemas/Requestor"
+    Requestor:
+      type: object
+      description: 'Object with requestor details such as name, organization, email, address, phone numbers.'
+      properties:
+        name:
+          type: string
+          description: 'Requestor name.'
+          example: 'John Doe'
+        endUser:
+          type: string
+          description: 'Requestor organization.'
+          example: 'ABC Company'
+        email:
+          type: string
+          description: 'Requestor email.'
+          example: 'john.doe@abccompany.com'
+        address:
+          type: string
+          description: 'Requestor address.'
+          example: '111 ABC Road, St. Louis, MO 63146'
+        phoneNumbers:
+          type: array
+          description: 'Requestor phone number related information.'
+          items:
+            $ref: "#/components/schemas/PhoneNumbers"
+    PhoneNumbers:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: 'Requestor phone identifier. The only value supported currently is "primary".'
+          example: 'primary'
+        number:
+          type: string
+          description: 'Requestor phone number.'
+          example: '314-555-5555'
+    
+    Name:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: 'Applicant’s identifier - Identifies whether applicant’s address is current or former.'
+          example: 'current'
+        firstName:
+          type: string
+          description: 'Applicant’s first name Required if name section is present.'
+          example: 'Joanne' 
+        lastName:
+          type: string
+          description: 'Applicant’s last name Required if name section is present.'
+          example: '314-555-5555' 
+        middleName:
+          type: string
+          description: 'Applicant’s middle name.'
+          example: 'M'                              
+        suffix:
+          type: string
+          description: 'Applicant’s suffix.'
+          example: 'Jr.'                                      
+    PrimaryConsumer:
+      type: object
+      description: 'Primary consumer details.'
+      required:
+        - personalInformation
+      properties:
+
+      
+        personalInformation:
+          $ref: "#/components/schemas/PersonalInformation"
+        socialSecurityNumber:
+          type: string
+          description: "Applicant’s SSN."
+          example: '992880001'
+        dateOfBirth:
+          type: string
+          description: "Applicant’s date of birth in the format yyyy-mm-dd."
+          example: '1998-04-11'                
+    FormerNames:
+      type: object
+      description: 'JSON object for former names.'
+      properties:
+        firstName:
+          type: string
+          description: 'Former first name sourced from the Consumer’s Equifax credit file.'
+          example: 'BARBARA'
+        lastName:
+          type: string
+          description: 'Former last name sourced from the Consumer’s Equifax credit file.'
+          example: 'FFHKSVC'
+        middleInitial:
+          type: string
+          description: 'Former name middle initial sourced from the Consumer’s Equifax credit file.'
+          example: 'B'          
+    IdAlerts:
+      type: object
+      description: 'Identity Scan Alert uses detailed comparisons and proprietary analytics to deliver alerts based on the SSN submitted in the inquiry'
+      properties:
+        code:
+          type: string
+          description: 'Available Identity Scan alert codes include:· L – Fraud Victim Alert present in database· N – Active Duty Alert present in database· I – Inquiry SSN associated with a person reported as deceased· 4 – Inquiry SSN may be a tax number· 9 – Inquiry SSN is invalid· A – Inquiry SSN has never been issued or has been issued after June 2011· B – Inquiry SSN reported as misused· S – Identity Scan did not detect any alerts· O – Incomplete scan limited data sources available'
+          example: 'S'
+        description:
+          type: string
+          description: 'Identity Scan alert code description.'
+          example: 'Identity Scan did not detect any alerts'                      
+    PersonalInformation:
+      type: object
+      description: "Personal information details."
+      required:
+
+        - name
+        - education
+      properties:
+
+
+        name:
+          type: array
+          description: "Applicant’s name."
+          items:
+            $ref: "#/components/schemas/Name" 
+        education:
+          
+          $ref: "#/components/schemas/Education"             
+    Response:
+      type: object
+      properties:
+        orderInfo:
+          $ref: "#/components/schemas/OrderInfoResponse"
+        customerIdentity:
+          $ref: "#/components/schemas/CustomerIdentity"
+        educationVerification:
+            $ref: "#/components/schemas/EducationVerification"          
+        responseStatus:
+          type: string
+          description: 'Describes whether the overall report is a Hit or a No-Hit.'
+          enum:
+            - Hit
+            - No-Hit
+          example: Hit
+        transactionId:
+          type : string
+          description: 'Equifax generated report ID.'
+          example: '123456789'
+    EducationVerification:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'Status.'
+          enum:
+            - Completed
+            - Unable to Complete
+        disclaimer:
+          type: string
+          description: 'Disclaimer.'
+          example: 'Disclaimer value for Education Verification.'
+        birthDate:
+          type: string
+          description: 'Birthdate that was receive in the request.'
+          example: '1980-11-01'
+        graduated:
+          type: string
+          description: 'A response containing the “Y” Graduated (Indicator) flag indicates that the subject (based on input parameters) has obtained a degree from a participating college or university. A response containing the “N” Graduated (Indicator) flag indicates one of the following results:· The subject never obtained a college degree. · NSC was unable to confirm the subject based on the information provided in request. · The subject record contained a block and we are unable to release information on this subject (unless consent is obtained). · The subject was enrolled and obtained a degree before NSC began receiving degree records from the applicable school.'
+          example: 'Y' 
+        highestDegreeLevel:
+          type: string
+          description: 'The highest level of degree that the subject has obtained (if applicable) from a participating college or institution:. Doctoral Degree. First Professional Degree . Master’s Degree . Bachelor’s Degree . Associate Degree · Other'
+          example: 'Doctoral Degree'                              
+        currentlyEnrolled:
+          type: string
+          description: 'A response containing the “CC” (Enrollment Confirmed, Currently Enrolled) CurrentlyEnrolled flag verifies that the requested subject (based on input parameters) is currently enrolled at a participating college or institution. A response containing the “CN” (Enrollment Confirmed, Currently Not Enrolled)CurrentlyEnrolled flag indicates one of the following results:The subject is not currently enrolled at a participating college or institution. NSC was unable to confirm the subject based on the information provided in request. The subject record contained a block and we are unable to release information on this subject (unless consent is obtained). The subject was enrolled before NSC began receiving enrollment records from the requested school, this information would not be available. '
+          example: 'CC'  
+        degreeAwardDateRange:
+          type: string
+          description: 'Only on Grad Verify Plus. Contains the date range of graduation (in months) for the most recent degree awarded to the subject. Most recent degree awarded date range may or may not correlate to the highest level degree obtained. · 0-6 Months · 7-12 Months · 13-18 Months · 19-24 Months · 25-36 Months · 37-48 Months · 49-60 Months· GT60 Months'
+          example: 'GT60 Months'
+        enrollmentVerification:
+            $ref: "#/components/schemas/EnrollmentVerification"                       
+        graduateVerification:
+            $ref: "#/components/schemas/GraduateVerification"           
+        graduateVerificationPlus:
+            $ref: "#/components/schemas/GraduateVerificationPlus" 
+        personName:
+            $ref: "#/components/schemas/PersonName"             
+        otherNonDegreeLevel:
+          type: array
+          description: 'Contains additional information provided by participating colleges or institutions for the subject which are not necessarily associated to a college degree:· Certificate · Honors · Diploma · Credential . Undetermined'
+          items:
+            type: string
+    EnrollmentVerification:
+      type: object
+      description: 'Container to hold Enrollment Verification.'
+      properties:
+        currentEnrollment:
+          type: string
+          description: 'Current Enrollment· CC: Enrollment Confirmed - Currently Enrolled· CN: Enrollment Confirmed - Not Currently Enrolled· UN: Unable to Confirm'
+          example: 'CC CN UN'
+        disclaimer:
+          type: string
+          description: 'disclaimer'
+          example: "NOTICE: INFORMATION CONTAINED IN ENROLLMENT VERIFICATION SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."              
+        birthDate:
+          type: string
+          description: 'Date student was born in YYYY-MM-DD format.'
+          example: '1998-04-11'      
+        schoolId:
+            type: string
+            description: 'The six-digit School ID assigned by the Department of Education for the requested school.'
+            example: '1234'            
+        enrollmentDetails:
+            $ref: "#/components/schemas/EnrollmentDetails"
+    EnrollmentDetails:
+      type: object
+      description: Container to hold consumerâ€™s name details.
+      properties:
+        enrollmentDetail:
+          type: array
+          description: "Details of requestor's phone numbers."
+          items:
+            $ref: "#/components/schemas/EnrollmentDetail"  
+    NameOnSchoolRecord:
+      type: object
+      description: 'Container to hold Last, First and Middle Name (and suffix if applicable) on school record for the requested student as part of the enrollment verification.'
+      properties:
+        lastName:
+          type: string
+          description: 'Last Name of student on school record.'
+          example: 'Smithereens' 
+        firstName:
+          type: string
+          description: 'First Name of student on school record.'
+          example: 'John'
+        middleName:
+          type: string
+          description: 'Middle Name of student on school record.'
+          example: 'D'                                              
+        suffix:
+          type: string
+          description: 'Suffix'
+          example: 'Jr.'            
+    EnrollmentDetail:
+      type: object
+      description: 'Container to hold Enrollment Detail data'
+      properties:
+        nameonSchoolRecord:
+          description: "Container to hold Last, First and Middle Name (and suffix if applicable) on school record for the requested student as part of the enrollment verification."
+          items:
+            $ref: "#/components/schemas/NameOnSchoolRecord"
+        officialNameOfSchool:
+          type: string
+          description: 'Official name of the school for which the student’s enrollment is confirmed.'
+          example: 'XYZ School'
+        schoolType:
+          type: string
+          description: 'Type of school which confirmed the requested student’s enrollment:· 2 YR· 4 YR/GRAD · Less than 2 YR'
+          example: '2 YR' 
+        enrollmentSinceDate:
+          type: string
+          description: 'Date from which the school provided enrollment data.'
+          example: '1998-11-04' 
+        enrollments:
+          type: array
+          description: "Container for Enrollments"
+          items:        
+            $ref: "#/components/schemas/Enrollment"
+    Enrollment:
+      type: object
+      description: 'Container to hold enrollment Data'
+      properties:
+        enrollmentStatus:
+          type: string
+          description: 'Enrollment status of the student (if released by the school; if not, then ‘Y’):· F: Full-time· Q: Three-quarter time· H: Half-time· L: Less than half-time'
+          example: 'F'      
+        termBeginDate:
+          type: string
+          description: 'Start-date of the school’s enrollment term.'
+          example: '2010-06-15'
+        termEndDate:
+          type: string
+          description: 'End-date of the school’s enrollment term.'
+          example: '2010-12-15'
+        schoolCertifiedOn:
+          type: string
+          description: 'Date the school certified the enrollment record.'
+          example: '2010-12-20'
+        anticipatedGraduationDate:
+          type: string
+          description: 'Anticipated graduation date of the requested student provided by the school, based on school enrollment data.'
+          example: '2010-12-20'            
+    GraduateVerification:
+      type: object
+      description: 'Container to hold Graduate Verification.'
+      properties:
+        personName:
+            $ref: "#/components/schemas/PersonName"                   
+        highestDegreeLevel:
+          type: string
+          description: 'Container for Name.'
+          example: 'string'      
+        birthDate:
+          type: string
+          description: 'Birthdate that was receive in the request.'
+          example: '1980-11-01'  
+        disclaimer:
+          type: string
+          description: 'disclaimer'
+          example: "NOTICE: INFORMATION CONTAINED IN GRADUATE VERIFICATION SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."          
+        graduated:
+          type: string
+          description: 'A response containing the “Y” Graduated (Indicator) flag indicates that the subject (based on input parameters) has obtained a degree from a participating college or university. A response containing the “N” Graduated (Indicator) flag indicates one of the following results:· The subject never obtained a college degree. · NSC was unable to confirm the subject based on the information provided in request. · The subject record contained a block and we are unable to release information on this subject (unless consent is obtained).· The subject was enrolled and obtained a degree before NSC began receiving degree records from the applicable school.'
+          example: 'Y'
+        otherNonDegreeLevel:
+          type: array
+          description: 'Contains additional information provided by participating colleges or institutions for the subject which are not necessarily associated to a college degree:· Certificate · Honors · Diploma · Credential. Undetermined '
+          items:
+            type: string
+        currentlyEnrolled:
+          type: string
+          description: '· A response containing the “CC” (Enrollment Confirmed, Currently Enrolled) CurrentlyEnrolled flag verifies that the requested subject (based on input parameters) is currently enrolled at a participating college or institution. · A response containing the “CN” (Enrollment Confirmed, Currently Not Enrolled) CurrentlyEnrolled flag indicates one of the following results:The subject is not currently enrolled at a participating college or institution. NSC was unable to confirm the subject based on the information provided in request. The subject record contained a block and we are unable to release information on this subject (unless consent is obtained). The subject was enrolled before NSC began receiving enrollment records from the requested school, this information would not be available.' 
+          example: 'CC'  
+    GraduateVerificationPlus:
+      type: object
+      description: 'Container to hold Graduate Verification Plus.'
+      properties:
+        birthDate:
+          type: string
+          description: 'Birthdate that was receive in the request.'
+          example: '1980-11-01' 
+        disclaimer:
+          type: string
+          description: 'disclaimer'
+          example: "NOTICE: INFORMATION CONTAINED IN GRADUATE VERIFICATION PLUS SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."             
+        graduated:
+          type: string
+          description: 'A response containing the “Y” Graduated (Indicator) flag indicates that the subject (based on input parameters) has obtained a degree from a participating college or university.A response containing the “N” Graduated (Indicator) flag indicates one of the following results: · The subject never obtained a college degree. · NSC was unable to confirm the subject based on the information provided in request. · The subject record contained a block and we are unable to release information on this subject (unless consent is obtained). · The subject was enrolled and obtained a degree before NSC began receiving degree records from the applicable school.'
+          example: 'Y'      
+        highestDegreeLevel:
+          type: string
+          description: 'The highest level of degree that the subject has obtained (if applicable) from a participating college or institution:. Doctoral Degree. First Professional Degree . Master’s Degree . Bachelor’s Degree . Associate Degree · Other '
+          example: 'Doctoral Degree'
+        otherNonDegreeLevel:
+          type: array
+          description: 'Contains additional information provided by participating colleges or institutions for the subject which are not necessarily associated to a college degree:· Certificate· Honors· Diploma· Credential. Undetermined'
+          items:
+            type: string
+        currentlyEnrolled:
+          type: string
+          description: '· A response containing the “CC” (Enrollment Confirmed, Currently Enrolled) CurrentlyEnrolled flag verifies that the requested subject (based on input parameters) is currently enrolled at a participating college or institution. · A response containing the “CN” (Enrollment Confirmed, Currently Not Enrolled) CurrentlyEnrolled flag indicates one of the following results:The subject is not currently enrolled at a participating college or institution. NSC was unable to confirm the subject based on the information provided in request.The subject record contained a block and we are unable to release information on this subject (unless consent is obtained). The subject was enrolled before NSC began receiving enrollment records from the requested school, this information would not be available.'
+          example: 'CC'  
+    PersonName:
+      type: object
+      description: 'Container for Name.'
+      properties:
+        firstName:
+          type: string
+          description: 'First Name.'
+          example: 'John'
+        lastName:
+          type: string
+          description: 'Last Name.'
+          example: 'DOE' 
+                                           
+              
+    Education:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: 'Account Id required to pull the Verification details GradVerify: 10040386 (TEST) GradVerify+: 10040429 (TEST) Please reach out separately for PRODUCTION Account ids'
+          example: '10040386'
+        schoolId:
+          type: string
+          description: 'Account Id required to pull the Verification details GradVerify: 10040386 (TEST) GradVerify+: 10040429 (TEST) Please reach out separately for PRODUCTION Account ids'
+          example: '01234'          
+
+    CustomerIdentity:
+      type: object
+      description: 'Consumer identity object.'
+      properties:
+        status:
+          type: string
+          description: 'Consumer identity information status'
+          enum:
+            - Completed
+            - Unable To Complete          
+          example: 'Completed/Unable To Complete'
+        disclaimer:
+          type: string
+          description: 'Consumer Identity disclaimer statement.'
+          example: 'See Appendix'
+        subjectSsn:
+          type: string
+          description: 'SSN sourced from the Consumer’s Equifax credit file.'
+          example: 'string'
+        ssnValidated:
+          type: string
+          description: 'Indicates if the SSN has been provided to Equifax by 3 or more creditors Y = Yes, N = No or Blank'
+          example: 'Y'
+        ssnStateIssued:
+          type: string
+          description: 'State abbreviation where the Inquiry SSN was issued Inquiry SSN State Issued may contain an “RR”, indicating that the SSN was issued to a railroad employee. (RR = Railroad Board) Discontinued July 1, 1963. '
+          example: 'GA'          
+        subjectName:
+          $ref: "#/components/schemas/SubjectName"
+        idAlerts:
+          type: array
+          description: "Details of requestor's phone numbers."
+          items:
+            $ref: "#/components/schemas/IdAlerts" 
+        formerNames:
+          type: array
+          description: "Details of requestor's phone numbers."
+          items:
+            $ref: "#/components/schemas/FormerNames"
+        homeAddressHistory:
+          type: array
+          description: "Details of requestor's phone numbers."
+          items:
+            $ref: "#/components/schemas/HomeAddressHistory"             
+    HomeAddressHistory:
+      type: object
+      description: 'JSON object for consumer home address history.'
+      properties:
+        addresses:          
+          type: array
+          description: 'Address information sourced from the Consumer’s Equifax credit file.'
+          items:
+            $ref: "#/components/schemas/Addresses"                      
+    Addresses:
+      type: object
+      description: 'Address information sourced from the Consumer’s Equifax credit file.'
+      properties:
+        addressType:
+          type: string
+          description: 'Indicates if the address is a current or former address for the consumer.'
+          example: 'current/former'
+        sourceOfAddress:
+          type: string
+          description: 'Indicates source of address: C = EQUIFAX; D = OTH/Sys-Sys; T = AUT (Automated Update Indicator'
+          example: 'T' 
+        cityName:
+          type: string
+          description: 'Address city sourced from the Consumer’s Equifax credit file.'
+          example: 'MONROE TWP'
+        dateFirstReported:
+          type: string
+          description: 'Date the address was first reported to Equifax. Format yyyy-mm-dd.'
+          example: '2005-12-01'
+        dateLastReported:
+          type: string
+          description: 'Last date the address was reported to Equifax. Format yyyy-mm-dd.'
+          example: '2016-12-28' 
+        stateAbbreviation:
+          type: string
+          description: 'Address state abbreviation sourced from the Consumer’s Equifax credit file. See Appendix X.'
+          example: 'NJ'
+        streetName:
+          type: string
+          description: 'Address street name sourced from the Consumer’s Equifax credit file.'
+          example: 'RCE ISXXSA'
+        houseNumber:
+          type: string
+          description: 'Address house number sourced from the Consumer’s Equifax credit file.'
+          example: '63N'
+        streetType:
+          type: string
+          description: 'Address street type sourced from the Consumer’s Equifax credit file.'
+          example: 'RD'
+        zipCode:
+          type: string
+          description: 'Zip Code sourced from the Consumer’s Equifax credit file'
+          example: '8831'
+        primaryAddress:
+          type: string
+          description: 'Single address line containing house number and street name.'
+          example: '63N RCE ISXXSA RD'
+        countyName:
+          type: string
+          description: 'Address county name.'
+          example: 'MIDDLESEX'                      
+    OrderInfoResponse:
+      type: object
+      description: 'Container to hold  order information along with primary consumer details.'
+      properties:
+        inquiryDate:
+          type: string
+          description: 'Inquiry date in the format yyyy-mm-dd. The value received in the Request is echoed back in the Response.'
+          example: '2018-04-11'
+        inquiryType:
+          type: string
+          description: 'Inquiry type identifier. The value received in the Request is echoed back in the Response.'
+          example: 'BGS-001'
+        permPurpose:
+          type: string
+          description: 'Permissible purpose code. The value received in the Request is echoed back in the Response.'
+          example: 'TBD'
+        trackingId:
+          type: string
+          description: 'Tracking id is a customer provided reference number. The value received in the Request is echoed back in the Response.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'Source system id is a customer provided system id. The value received in the Request is echoed back in the Response.'
+          example: 'string'
+        sourceName:
+          type: string
+          description: 'Source name is a customer provided system name. The value received in the Request is echoed back in the Response.'
+          example: '666314889'
+        inquirySsn:
+          type: string
+          description: 'The value for socialSecurity. The value received in the Request is echoed back in the Response.'
+          example: '666314889'          
+        requestor:
+          $ref: "#/components/schemas/Requestor"
+    SubjectName:
+      type: object
+      description: 'JSON object for consumer name.'
+      properties:
+        firstName:
+          type: string
+          description: 'First name sourced from the Consumer’s Equifax credit file.'
+          example: 'BARBARA'
+        lastName:
+          type: string
+          description: 'Last name sourced from the Consumer’s Equifax credit file.'
+          example: 'FFHKSVC'
+        middleInitial:
+          type: string
+          description: 'Middle Initial sourced from the Consumer’s Equifax credit file'
+          example: 'E'
+    ErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally added when additional error details are available.
+  examples:
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+        additionalErrorDetails: {}
+    '401.03':
+      value:
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+        additionalErrorDetails: {}
+    '403.01':
+      value:
+        efxErrorCode: '403.01'
+        description: Access Denied.
+        additionalErrorDetails: {}
+    '404.01':
+      value:
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+        additionalErrorDetails: {}
+    '415.01':
+      value:
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+        additionalErrorDetails: {}
+    '422.01':
+      value:
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    '429.01':
+      value:
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+        additionalErrorDetails: {}
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+        additionalErrorDetails: {}
+    '501.01':
+      value:
+        efxErrorCode: '501.01'
+        description: Not-implemented - Specified resource is not implemented.
+        additionalErrorDetails: {}
+    '503.01':
+      value:
+        efxErrorCode: '503.01'
+        description: Service is un-available.
+        additionalErrorDetails: {}
+    '504.01':
+      value:
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+        additionalErrorDetails: {}
+    'EnrollmentVerifyResponse':
+      value:
+        orderInfo:
+          inquiryDate: '2018-04-11'
+          permPurpose: PPCREDIT
+          trackingId: '9991110000'
+          resellerName: string
+          platformName: string
+          intermediaryName: string
+          sourceSystemId: string
+          sourceName: string
+          inquiryType: EnrollmentVerification
+          requestor:
+            name: John Doe
+            email: john.doe@abccompany.com
+            address: 111 ABC Rd. St. Louis, MO. 63146
+            phoneNumbers:
+             - identifier: primary
+               number: 314-555-5555
+            endUser: ABC Company
+          inquirySsn: '123456111'
+        responseStatus: Hit
+        consumerIdentity:
+          status: Unable To Complete
+          disclaimer: 'NOTICE: INFORMATION CONTAINED IN THE CONSUMER IDENTITY AND HOME ADDRESS HISTORY SECTION OF THIS REPORT IS THE CONSUMER''S PERSONALLY IDENTIFIABLE INFORMATION SOURCED FROM THE CONSUMER''S EQUIFAX CREDIT FILE (''DATA''). THE DATA IS NOT A CONSUMER REPORT. CLIENT MAY NOT USE THE CONSUMER DATA AS PART OF ITS DECISION-MAKING PROCESS FOR DETERMINING AN INDIVIDUAL''S ELIGIBILITY FOR ANY EMPLOYMENT, CREDIT OR ANY OTHER PURPOSE AUTHORIZED UNDER THE FCRA. INFORMATION PROVIDED UNDER THE IDENTITY ALERTS MAY OR MAY NOT APPLY TO THE CONSUMER FOR WHOM THIS DATA IS SUPPLIED.'
+        educationVerification:
+          status: Completed
+          
+          enrollmentVerification:
+            status: Completed        
+            disclaimer: "NOTICE: INFORMATION CONTAINED IN ENROLLMENT VERIFICATION SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."
+            currentEnrollment: CC
+            enrollmentDetails:
+              enrollmentDetail:
+              - nameOnSchoolRecord:
+                  firstName: JOHN
+                  lastName: SMITHEREENS
+                enrollments:
+                  enrollment:
+                  - enrollmentStatus: F
+                    schoolCertifiedOn: '2017-03-14'
+                    termEndDate: '2018-06-30'
+                    termBeginDate: '2017-07-31'
+                  - enrollmentStatus: L
+                    schoolCertifiedOn: '2016-08-14'
+                    termEndDate: '2017-01-31'
+                    termBeginDate: '2016-07-31'
+                  - enrollmentStatus: L
+                    schoolCertifiedOn: '2016-08-14'
+                    termEndDate: '2017-01-31'
+                    termBeginDate: '2016-07-31'
+              - nameOnSchoolRecord:
+                  firstName: JOHN
+                  lastName: SMITHEREENS
+                enrollments:
+                 enrollment:
+                 - enrollmentStatus: Y
+                   schoolCertifiedOn: '2017-03-14'
+                   termEndDate: '2018-06-30'
+                   termBeginDate: '2017-07-31'
+        transactionId: '6031560052572160'
+    'GradVerifyResponse':
+      value:
+        orderInfo:
+          inquiryDate: '2018-04-11'
+          permPurpose: PPCREDIT
+          trackingId: '9991110000'
+          resellerName: string
+          platformName: string
+          intermediaryName: string
+          sourceSystemId: string
+          sourceName: string
+          inquiryType: EnrollmentVerification
+          requestor:
+            name: John Doe
+            email: john.doe@abccompany.com
+            address: 111 ABC Rd. St. Louis, MO. 63146
+            phoneNumbers:
+             - identifier: primary
+               number: 314-555-5555
+            endUser: ABC Company
+          inquirySsn: '123456111'
+        responseStatus: Hit
+        consumerIdentity:
+          status: Unable To Complete
+          disclaimer: 'NOTICE: INFORMATION CONTAINED IN THE CONSUMER IDENTITY AND HOME ADDRESS HISTORY SECTION OF THIS REPORT IS THE CONSUMER''S PERSONALLY IDENTIFIABLE INFORMATION SOURCED FROM THE CONSUMER''S EQUIFAX CREDIT FILE (''DATA''). THE DATA IS NOT A CONSUMER REPORT. CLIENT MAY NOT USE THE CONSUMER DATA AS PART OF ITS DECISION-MAKING PROCESS FOR DETERMINING AN INDIVIDUAL''S ELIGIBILITY FOR ANY EMPLOYMENT, CREDIT OR ANY OTHER PURPOSE AUTHORIZED UNDER THE FCRA. INFORMATION PROVIDED UNDER THE IDENTITY ALERTS MAY OR MAY NOT APPLY TO THE CONSUMER FOR WHOM THIS DATA IS SUPPLIED.'
+        educationVerification:
+          status: Completed
+          
+          graduateVerification:
+            status: Completed
+            disclaimer: "NOTICE: INFORMATION CONTAINED IN GRADUATE VERIFICATION SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."
+            birthDate: '1980-11-22'
+            personName:
+              firstName: Test
+              lastName: Employees
+            graduated: Y
+            highestDegreeLevel: OTHER
+            otherNonDegreeLevel:
+            - Certificate
+        transactionId: '6031560052572160'
+    'GradVerifyPlusResponse':
+      value:
+        orderInfo:
+          inquiryDate: '2018-04-11'
+          permPurpose: PPCREDIT
+          trackingId: '9991110000'
+          resellerName: string
+          platformName: string
+          intermediaryName: string
+          sourceSystemId: string
+          sourceName: string
+          inquiryType: EnrollmentVerification
+          requestor:
+            name: John Doe
+            email: john.doe@abccompany.com
+            address: 111 ABC Rd. St. Louis, MO. 63146
+            phoneNumbers:
+             - identifier: primary
+               number: 314-555-5555
+            endUser: ABC Company
+          inquirySsn: '123456111'
+        responseStatus: Hit
+        consumerIdentity:
+          status: Unable To Complete
+          disclaimer: "NOTICE: INFORMATION CONTAINED IN THE CONSUMER IDENTITY AND HOME ADDRESS HISTORY SECTION OF THIS REPORT IS THE CONSUMER''S PERSONALLY IDENTIFIABLE INFORMATION SOURCED FROM THE CONSUMER''S EQUIFAX CREDIT FILE (''DATA''). THE DATA IS NOT A CONSUMER REPORT. CLIENT MAY NOT USE THE CONSUMER DATA AS PART OF ITS DECISION-MAKING PROCESS FOR DETERMINING AN INDIVIDUAL''S ELIGIBILITY FOR ANY EMPLOYMENT, CREDIT OR ANY OTHER PURPOSE AUTHORIZED UNDER THE FCRA. INFORMATION PROVIDED UNDER THE IDENTITY ALERTS MAY OR MAY NOT APPLY TO THE CONSUMER FOR WHOM THIS DATA IS SUPPLIED."
+        educationVerification:
+          status: Completed
+     
+          graduateVerificationPlus :
+            status: Completed
+            disclaimer: "NOTICE: INFORMATION CONTAINED IN GRADUATE VERIFICATION PLUS SECTION OF THIS REPORT IS CONSUMER REPORT INFORMATION OBTAINED FROM THE NATIONAL STUDENT CLEARINGHOUSE®. IT CAN BE USED FOR THE FCRA PERMISSIBLE PURPOSE FOR WHICH THIS CONSUMER REPORT WAS OBTAINED, AND THE USER MUST ADHERE TO FCRA REQUIREMENTS, INCLUDING BUT NOT LIMITED TO THE RELEVANT REQUIREMENTS CONTAINED IN THE CFPB'S NOTICE TO USERS OF CONSUMER REPORTS."
+            birthDate: '1980-11-22'
+            personName:
+              firstName: Test
+              lastName: Employees
+            graduated: Y
+            highestDegreeLevel: MASTERS DEGREE
+            degreeAwardDateRange: GT60 Months
+            currentlyEnrolled: CC
+          
+        transactionId: '6031560052572160'

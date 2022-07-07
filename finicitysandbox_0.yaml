@@ -1,0 +1,4920 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Finicity API 
+  description: "Expose Finicity API through Apigee"
+schemes:
+  - https
+host: sandbox-us-api.experian.com
+basePath: /consumerservices/tsvs/v1/integrations
+securityDefinitions:
+  UserSecurity:
+    type: basic
+  OauthSecurity:
+    type: oauth2
+    flow: password
+    tokenUrl: 'https://sandbox-us-api.experian.com/oauth2/v1/token'
+    scopes:
+      admin: admin scope
+      user: user scope
+paths:
+  #Customers for testing and active {CREATE, GET, DELETE}
+  '/aggregation/v1/customers/testing':
+    post:
+      operationId: Testing_Customer
+      summary: Create Testing Customer
+      description: Enroll a testing customer. A testing customer may only register accounts with FinBank.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+          - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum: 
+            - application/json
+            - application/xml
+          default: application/json
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserNameRequest'
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '201':
+          description: Customer Created
+          schema:
+            $ref: '#/definitions/CreateCustomerResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/active':
+    post:
+      operationId: Create_Active_Customer
+      summary: Create Active Customer 
+      description: Enroll an active customer (the actual owner of one or more real-world accounts). The customer's account transactions will be refreshed every night. 
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+          - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserNameRequest'
+      responses:
+        '201':
+          description: Customer Created
+          schema:
+            $ref: '#/definitions/CreateCustomerResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}':
+    get:
+      operationId: Get_Customer
+      summary: Get Customer
+      description: "Return account details for the specified customer. Must know customer ID to search."
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: string
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000  
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    put:
+      operationId: Modify_Customer
+      summary: Modify Customer
+      description: >
+        Modify the details for an enrolled customer. You must specify either firstName/lastName or both in the request.  
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: string
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input Request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CustomerRequest'
+      responses:
+        '204':
+          description: The resource was modified successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      operationId: Delete_Customer
+      summary: Delete Customer
+      tags:
+        - Consumer
+      description: >
+        "Completely remove a customer from the system. This will remove the customer and all associated accounts, transactions, and aggregation support tickets. <br><br>Use this service carefully! It will not pause for confirmation before performing the operation!"
+      produces:
+        - application/json
+        - application/xml
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to modify
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers':
+    get:
+      operationId: Get_Customers
+      summary: Get Customers
+      description: >
+        Find all customers enrolled by the current partner, where the search text is found in the customer's username or any combination of firstName and lastName fields. <br><br>If no search text is provided, return all customers. Valid values for type are testing, active. Customer must already exist in database.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: search
+          in: query
+          type: string
+          description: Text to match or leave empty to return all customers. Request URLs must be URL-encoded. In practice this means that spaces in URL query values must be replaced with ‘+’ and the @ symbol must be replaced with '%40'.
+          default: "New+York+City"
+        - name: username
+          in: query
+          type: string
+          description:  Username for exact match. (Will return 0 or 1 records.)
+          default: "johnDoeUser"         
+        - name: start
+          in: query
+          type: number
+          description: Starting index for this page of results
+          default: 1
+        - name: limit
+          in: query
+          type: number
+          description: Maximum number of entries for this page of results
+          default: 25
+        - name: type
+          in: query
+          type: string
+          description: "One of the values testing or active to return only customers of that type, or leave empty to return all customers."
+          default: testing
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Customers'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'    
+  #Consumer {CREATE, GET, MODIFY}
+  '/decisioning/v1/customers/{customerID}/consumer':
+    post:
+      operationId: Create_Consumer
+      summary: Create Consumer 
+      description: Create a new Consumer Record using a Customer ID 
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: string
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          description: Consumer Information
+          schema:
+            $ref: '#/definitions/ConsumerRequest'
+      responses:
+        '201':
+          description: Consumer is Created
+          schema:
+            $ref: '#/definitions/CreateConsumerResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      operationId: Get_Consumer_for_Customer
+      summary: Get Consumer for Customer
+      description: >
+        Get the details of a consumer record. If a consumer has not been created for this customer, the service will return HTTP 404 (Not Found).
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Consumer'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/consumers/{consumerID}':
+    get:
+      operationId: Get_Consumer
+      summary: Get Consumer
+      description: Get the details of a consumer record.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Accept
+          in: header
+          type: string
+          description: Output Report format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: consumerID
+          in: path
+          required: true
+          type: string
+          description: ID of the consumer (UUID with max length 32 characters)
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Consumer Details
+          schema:
+            $ref: '#/definitions/Consumer'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    put:
+      operationId: Modify_Consumer
+      summary: Modify Consumer
+      description: >
+        Modify the details for an existing consumer. All fields are required for a consumer record, but individual fields for this call are optional because fields that are not specified will be left unchanged.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: consumerID
+          in: path
+          description: ID of Consumer to fetch
+          required: true
+          type: string
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input Request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConsumerRequest'
+      responses:
+        '204':
+          description: The resource was modified successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  #iFrame URI {CREATE}
+  '/connect/v1/generate':
+    post:
+      operationId: Generate_iFrame_URL
+      summary: Generate iFrame URL
+      description: Generates the Finicity Connect Link. 
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input Request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLinkRequest'
+      responses:
+        '201':
+          description: iFrame URI link is Created
+          schema:
+            $ref: '#/definitions/CreateiFrameURIResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  #Account {GET, DELETE}
+  '/aggregation/v1/customers/{customerID}/accounts':
+    get:
+      operationId: Get_Customer_Accounts
+      summary: Get Customer Accounts
+      description: Get details for one account owned by the specified customer. Need the Account ID
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: string
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ArrayOfCustomerAccounts'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse' 
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}':
+    get:
+      operationId: Get_Customer_Account
+      summary: Get Customer Account
+      description: Get details for one account owned by the specified customer. Need the Account ID
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: string
+        - name: accountID
+          in: path
+          description: ID of Customer account to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CustomerAccount'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'  
+    delete:
+      operationId: Delete_Customer_Account
+      summary: Delete Customer Account
+      description: Remove the specified account from the Finicity system.
+      produces:
+        - application/json
+        - application/xml
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The ID of the customer whose account are to be deleted
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the account to be deleted
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '204':
+          description: Customer Deleted
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}/statement':
+    get:
+      operationId: Get_Bank_Statements
+      summary: Get Bank Statements
+      description: >
+        Connect to the account's financial institution and download the most recent monthly statement for the account, in PDF format. This is an interactive refresh, so MFA challenges may be required. The index parameter allows an app to request statements earlier than the most recent one. <br/><br/>The default is 1, meaning the most recent statement. Another value such as 3 would mean to count back and retrieve the third most recent statement. For example, if a request is made in July, the most recent statement (index 1) would probably be for June, and the third most recent statement (index 3) would be for April.<br><br>HTTP status of 200 means the statement was retrieved successfully, and the body of the response contains the bytes of the PDF document.<br><br>HTTP status of 203 means the response contains an MFA challenge in XML or JSON format. 
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: accountID
+          in: path
+          description: ID of Customer account to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: index
+          in: query
+          type: integer
+          description: "Index of statement to retrieve (default is 1, maximum is 6)"
+          default: 1
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: file
+        '203':
+          description: Account Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: Session identifier. Must be copied directly to the subsequent request for Get Bank Statements (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenges'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'  
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}/statement/mfa':
+    post:
+      operationId: Get_Bank_Statements_wMFA
+      summary: Get Bank Statements wMFA
+      description: >
+        Send MFA answers for an earlier challenge while getting an account statement. <br><br>This service is invoked only if a previous call to Get Customer Account Statement or Get Customer Account Statement (with MFA Answers) has returned HTTP 203. The response from that previous call is referred to as "the previous response" below. <br><br>HTTP status of 200 means the statement was retrieved successfully, and the body of the response contains the bytes of the PDF document. <br><br>HTTP status of 203 means the response contains an MFA challenge in XML or JSON format. 
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: accountID
+          in: path
+          description: ID of Customer account to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: MFA-Session
+          in: header
+          required: true
+          type: string
+          description: Session identifier.Copied directly from the previous response (the value will be different for each HTTP 203 response received)
+          default: MFA_SESSION
+        - name: body
+          in: body
+          required: true
+          description: MFA Challenges Segment
+          schema:
+            $ref: '#/definitions/mfaChallenge'
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: file
+        '203':
+          description: Account Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: Session identifier. Must be copied directly to the subsequent request for Get Bank Statements (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenges'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'  
+  '/decisioning/v1/customers/{customerID}/accounts/{accountID}/owner':
+    get:
+      operationId: Get_Account_Owner
+      summary: Get Account Owner
+      description: >
+        Return the account owner's name and address. This may require connecting to the institution, so MFA challenges may be required. <br><br>HTTP status of 200 means the account owner's name and address were retrieved successfully. <br><br>HTTP status of 203 means the response contains an MFA challenge in XML or JSON format
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The ID of the customer who owns the account
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the account
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Account Owner Details
+          schema:
+            $ref: '#/definitions/AccountOwner'
+        '203':
+          description: Account Owner Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: Session identifier. Must be copied directly to the subsequent request for Get Account Owner (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenges'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/customers/{customerID}/accounts/{accountID}/owner/mfa':
+    post:
+      operationId: Get_Account_Owner_wMFA
+      summary: Get Account Owner wMFA
+      description: >
+        Send MFA answers for an earlier challenge while getting an account statement. <br><br>HTTP status of 200 means the account owner's name and address were retrieved successfully. <br><br>HTTP status of 203 means the response contains another MFA challenge
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: MFA-Session
+          in: header
+          required: true
+          type: string
+          description: Session identifier.Copied directly from the previous response (the value will be different for each HTTP 203 response received)
+          default: MFA_SESSION          
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The ID of the customer who owns the account
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the account
+        - name: body
+          in: body
+          required: true
+          description: MFA Challenges Segment
+          schema:
+            $ref: '#/definitions/mfaChallenge'
+      responses:
+        '200':
+          description: Account Owner Details
+          schema:
+            $ref: '#/definitions/AccountOwner'
+        '203':
+          description: Account Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: Session identifier. Must be copied directly to the subsequent request for Get Account Owner (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenges'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}/details':
+    get:
+      operationId: Get_Customer_Account_Details
+      summary: Get Customer Account Details
+      description: >
+        Connect to the account's financial institution and retrieve the ACH data for the indicated account. This may be an interactive refresh, so MFA challenges may be required. <br><br>HTTP status of 200 means both realAccountNumber and routingNumber were returned successfully in the body of the response. <br><br>HTTP status of 203 means the response contains an MFA challenge in XML or JSON format.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The ID of the customer who owns the account
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the account
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Account Details
+          schema:
+            $ref: '#/definitions/Account'
+        '203':
+          description: Account Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: >-
+                Session identifier. Must be copied directly to the subsequent
+                request for Get Customer Account Details (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenge'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerId}/accounts/{accountId}/details/mfa':
+    post:
+      operationId: Get_Customer_Account_Details_wMFA
+      summary: Get Customer Account Details wMFA
+      description: >
+        Send MFA answers for an earlier challenge while getting account details. <br><br>HTTP status of 200 means both realAccountNumber and routingNumber were returned successfully in the body of the response. <br><br>HTTP status of 203 means the response contains an MFA challenge in XML or JSON format.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: MFA-Session
+          in: header
+          required: true
+          type: string
+          description: >-
+            Session identifier.Copied directly from the previous response (the
+            value will be different for each HTTP 203 response received)
+          default: MFA_SESSION
+        - name: customerId
+          in: path
+          required: true
+          type: integer
+          description: The ID of the customer who owns the account
+        - name: accountId
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the account
+        - name: body
+          in: body
+          required: true          
+          description: MFA Challenges Segment
+          schema:
+            $ref: '#/definitions/mfaChallenges'
+      responses:
+        '200':
+          description: Account Details
+          schema:
+            $ref: '#/definitions/Account'
+        '203':
+          description: Account Details (MFA Challenge)
+          headers:
+            MFA-Session:
+              type: string
+              description: >-
+                Session identifier. Must be copied directly to the subsequent
+                request for Get Customer Account Details (with MFA Answers).
+          schema:
+            $ref: '#/definitions/mfaChallenge'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  #Reports {GET Customer/Consumer Report, GET VOI/VOA, etc.} 
+  '/decisioning/v1/customers/{customerID}/reports':
+    get:
+      operationId: Get_Reports_for_Customer
+      summary: Get Reports for Customer
+      description: >
+        Get a list of Reports that have been generated for the given customer. <br><br>The status fields in the returned list will contain 'inProgress', 'failure', or 'success'. If a status shows 'inProgress', wait 20 seconds and then call again
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ArrayOfCustomerReports'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/consumers/{consumerID}/reports':
+    get:
+      operationId: Get_Reports_for_Consumer
+      summary: Get Reports for Consumer
+      description: Get a list of reports that have been generated for the given consumer.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: consumerID
+          in: path
+          required: true
+          type: string
+          description: ID of the consumer (UUID with max length 32 characters)
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: List of Reports
+          schema:
+            $ref: '#/definitions/ReportList'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v2/customers/{customerID}/voi':
+    post:
+      operationId: Generate_VOI_Report
+      summary: Generate VOI Report
+      description: >
+        Generate a Verification of Income (VOI) report for all checking, savings, and money market accounts for the given customer. <br><br>This service retrieves up to two years of transaction history for each account and uses this information to generate the VOI report.<br><br>Currently fromDate will be ignored.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NullRequest'
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: The Report Listener URL to receive notifications (optional, must be URL-encoded)
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: "The 'fromDate' param is an Epoch Timestamp (in seconds). This is an optional field.  Without this param, the report defaults to 6 months if available. "
+          default: "1494449017"
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/customers/{customerID}/voi':
+    post:
+      operationId: Deprecated_Generate_VOI_Report
+      summary: (Deprecated) Generate VOI Report
+      description: >
+        Generate a Verification of Income (VOI) report for all checking, savings, and money market accounts for the given customer. <br><br>This service retrieves up to two years of transaction history for each account and uses this information to generate the VOI report.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: "The Report Listener URL to receive notifications (optional, must be URL-encoded)"
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: The 'fromDate' param is an Epoch Timestamp (in seconds)
+          default: "1494449017"
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/customers/{customerID}/voa':
+    post:
+      operationId: Generate_VOA_Report
+      summary: Generate VOA Report
+      description: >
+        Generate a Verification of Assets (VOA) report for all checking, savings, money market, and investment accounts for the given customer. <br><br>This service retrieves up to six months of transaction history for each account and uses this information to generate the VOA report.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NullRequest'
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: "The Report Listener URL to receive notifications (optional, must be URL-encoded)"
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: "The 'fromDate' param is an Epoch Timestamp (in seconds). This is an optional field.  Without this param, the report defaults to 6 months if available. "
+          default: "1494449017"
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v2/customers/{customerID}/transactions':
+    post:
+      operationId: Generate_Transactions_Report
+      summary: Generate Transactions Report
+      description: >
+        Finicity will deliver transaction history as a CRA product.These new CRA products will include the exact same data content that is available in the Transaction Aggregation and the Account History Aggregation products - but they will just be packaged as a report with a report id, so they can be supported as CRA products.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/GenerateTransactionsRequest'
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: "The Report Listener URL to receive notifications (optional, must be URL-encoded)"
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: "The 'fromDate' param is an Epoch Timestamp (in seconds). This is an optional field.  Without this param, the report defaults to 6 months if available.By default, this will be up to 24 months. "
+          default: "1494449017"
+        - name: toDate
+          in: query
+          type: string
+          description: "Ending timestamp for the date range (must be greater than fromDate)."
+          default: "1494449017"
+        - name: includePending
+          in: query
+          type: boolean
+          description: "true to include pending transactions if available. By default, this value is false."
+          default: false
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateTransactionsReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/customers/{customerID}/reports/{reportID}':
+    get:
+      operationId: Get_Report_by_Customer
+      summary: Get Report by Customer
+      description: >
+        Get a report that has been generated by calling one of the Generate Report services. <br><br>The report's status field will contain inProgress, failure, or success. If the status shows inProgress, the client app should wait 20 seconds and then call again to see if the report is finished.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: reportID
+          in: path
+          description: ID of Report to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+            - application/pdf
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: purpose
+          in: query
+          type: string
+          required: true
+          description: "2-digit code from Permissible Purpose Codes, specifying the reason for retrieving this report."
+          default: 2k
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/SingleReport'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/consumers/{consumerID}/reports/{reportID}':
+    get:
+      operationId: Get_Report_by_Consumer
+      summary: Get Report by Consumer
+      description: >
+        Get a Report that has been generated by calling one of the Generate Report services. <br><br>The Report's status field will contain inProgress, failure, or success. If the status shows inProgress, the client app should wait 20 seconds and then call again to see if the Report is finished.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: consumerID
+          in: path
+          description: ID of Consumer to fetch
+          required: true
+          type: string
+        - name: reportID
+          in: path
+          description: ID of Report to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+            - application/pdf            
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: purpose
+          in: query
+          type: string
+          required: true
+          description: "2-digit code from Permissible Purpose Codes, specifying the reason for retrieving this report."
+          default: 2k
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/SingleReport'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  #Institution {GET, GET Account}
+  '/aggregation/v1/institutions/{institutionID}':
+    get:
+      operationId: Get_Institution
+      summary: Get Institution
+      description: Get details for the specified institution.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: institutionID
+          in: path
+          description: ID of institution to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/Institution'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/institutions/{institutionID}/accounts':
+    get:
+      operationId: GetCustomerAccounts_by_Institution
+      summary: Get Customer Accounts by Institution
+      description: Get details for all active accounts owned by the specified customer at the specified institution
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: institutionID
+          in: path
+          description: ID of institution to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ArrayOfCustomerAccounts'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  #TXP {DELETE Subscription, ADD Transaction, ENABLE/DISABLE notifications}
+  '/aggregation/v1/customers/{customerID}/subscriptions/{subscriptionId}':
+    delete:
+      operationId: Delete_TxPUSH_Subscription
+      summary: Delete TxPUSH Subscription
+      description: Delete a specific subscription for a class of events (account or transaction events) related to an account. No more notifications will be sent for these events.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: subscriptionId
+          in: path
+          description: ID of Subscription to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}/transactions':
+    post:
+      operationId: Add_Transaction_for_Testing_Account
+      summary: Add Transaction for Testing Account
+      description: >
+        Inject a transaction into the transaction list for a testing account. This allows an app to trigger TxPUSH notifications for the account in order to test the app’s TxPUSH Listener service. <br><br>This causes the platform to send one transaction event and one account event (showing that the account balance has changed). This service is only supported for testing accounts (accounts on institution 101732).
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the customer who owns the account
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: >-
+            The Finicity ID of the account whose events will be sent to the
+            TxPUSH Listener
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true          
+          description: Transaction record
+          schema:
+            $ref: '#/definitions/Transaction'
+      responses:
+        '201':
+          description: Request Created
+          schema:
+            $ref: '#/definitions/TransactionResponseForTesting'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/accounts/{accountID}/txpush':
+    post:
+      operationId: Enable_TxPUSH_Notifications
+      summary: Enable TxPUSH Notifications
+      description: >
+        Register a client app’s TxPUSH Listener to receive TxPUSH notifications related to the given account.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: The Finicity ID of the customer who owns the account
+        - name: accountID
+          in: path
+          required: true
+          type: integer
+          description: >-
+            The Finicity ID of the account whose events will be sent to the
+            TxPUSH Listener
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          description: The TxPUSH Listener URL to receive TxPUSH notifications
+          schema:
+            $ref: '#/definitions/callbackUrl'
+      responses:
+        '201':
+          description: Request Created
+          schema:
+            $ref: '#/definitions/SubscriptionList'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      operationId: Disable_TxPUSH_Notifications
+      summary: Disable TxPUSH Notifications
+      description: Disable all TxPUSH notifications for the indicated account. No more notifications will be sent for account or transaction events.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: customerID
+          in: path
+          description: ID of Customer to fetch
+          required: true
+          type: integer
+        - name: accountID
+          in: path
+          description: ID of Customer account to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  # Partner {Modify Secret, Authenticate}
+  '/aggregation/v2/partners/authentication':
+    put:
+      operationId: Modify_Partner_Secret
+      summary: Modify Partner Secret
+      description: >
+        Change the partner secret that is used to authenticate this partner. The secret does not expire, but can be changed by calling Modify Partner Secret.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input Request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ModifyPartnerRequest'
+      responses:
+        '204':
+          description: The resource was modified successfully.
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/connect/v1/certifiedInstitutions/':
+    get:
+      operationId: Get_Certified_Institutions
+      summary: Get Certified Institutions
+      description: >
+        The Certified Institutions endpoint will return the product certification for each FI. When calling this endpoint, you can either specify a product, or by leaving the product out, a full list of all FI’s and their product certification will be returned. <br><br>Currently the filtering option is not available.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: type
+          in: query
+          type: string
+          description: "This field is optional but if it is included it will filter out the institutions by Institution Type. Valid fields are: voa, voi, ach, agg, aha, state_agg, trans_agg. Currently it is still in progress and not working."
+          default: voa
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Institutions'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'                  
+  '/scores/uf/consumers/{consumerID}/reports/{reportID}':
+    post:
+      operationId: Get_UltraFICO_Report
+      summary: Get UltraFICO Report
+      description: >
+        Get a Report that has been generated by calling one of the Generate Report services. <br><br>The Report's status field will contain inProgress, failure, or success. Please wait at least 2 minutes for Report to finish generating. 
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: consumerID
+          in: path
+          description: ID of Consumer to fetch
+          required: true
+          type: string
+        - name: reportID
+          in: path
+          description: ID of Report to fetch
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept. Only Accepting JSON 
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NullRequest'
+        - name: permissiblePurposeCode
+          in: query
+          type: string
+          required: true
+          description: "Specifies the reason for retrieving this report. For example, if you need an Extension of Credit, then your Permissible Purpose Code would be EXT." 
+          default: PQL
+        - name: marketCode
+          in: query
+          type: string
+          required: true
+          description: "The market or industry you are in. For example if you sell insurance, then your Market Code would be INSR"
+          default: INST          
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/UFReport'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v1/customers/{customerID}/voaHistory':
+    post:
+      operationId: Generate_VOAI_Report
+      summary: Generate VOAI Report
+      description: >
+        Generate a Verification of Assets with GSE Income View (VOAI) report for all checking, savings, money market, and investment accounts for the given customer. This service retrieves up to 24 months of transaction history for each account and uses this information to generate the VOAI report.
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          required: true
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: "The Report Listener URL to receive notifications (optional, must be URL-encoded)"
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: "The 'fromDate' param is an Epoch Timestamp (in seconds). This is an optional field.  Without this param, the report defaults to 6 months if available. "
+          default: "1494449017"
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/decisioning/v2/customers/{customerID}/dcr':
+    post:
+      operationId: Generate_DCR_Report
+      summary: Generate DCR Report
+      description: >
+        Generate a DDA Credit Characteristics Report (DCR) for all checking and savings under the given Customer.  <br><br>This service retrieves up to two years of transaction history for the given account. It then uses this information to generate the DCR. 
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NullRequest'
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: The Report Listener URL to receive notifications (optional, must be URL-encoded)
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: fromDate
+          in: query
+          type: string
+          description: "The 'fromDate' param is an Epoch Timestamp (in seconds). This is an optional field.  Without this param, the report defaults to 6 months if available. "
+          default: "1494449017"
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GenerateReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/connect/v1/send/email':
+    post:
+      operationId: Initiate email request
+      summary: Initiate email Request
+      description: >
+        This endpoint allows the lender to send an email request to the borrower. This email will contain a link that will direct the borrower to Finicity Connect, which will allow the borrower to add their banking accounts so that a verification report can be generated. 
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: body
+          in: body
+          required: true
+          description: Email Request Information
+          schema:
+            $ref: '#/definitions/EmailRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/InitiateEmailResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'          
+  '/partners/{partnerID}/billingdata':
+    post:
+      operationId: Generate_Reseller_Billing_&_Reporting
+      summary: Generate Reseller Billing & Reporting
+      description: >
+        Partners would like the capability to see the Billing records generated for a specific date range as well as the custom fields associated with the report. This will allow partners to determine which branches have generated specific reports to better bill those branches.
+      tags: 
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: partnerID
+          in: path
+          description: ID of the report partner
+          required: true
+          type: integer
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+          default: application/json
+        - name: subcode
+          in: header
+          required: true
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: startDate
+          in: query
+          required: true
+          type: number
+          description: "The earliest date to be analyzed in this report."
+          default: 1459576800
+        - name: endDate
+          in: query
+          required: true
+          type: number
+          description: "The latest date to be analyzed in this report"
+          default: 1502604000
+        - name: page
+          in: query
+          type: integer
+          description: "The page to be viewed."
+          default: 1
+        - name: size
+          in: query
+          type: integer
+          description: "The size of the results returned per page"
+          default: 1
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ExternalResellerRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ExternalResellerResponse' 
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'  
+  '/decisioning/v2/customers/{customerID}/payStatement':
+    post:
+      operationId: Generate_Pay_Statement_Extraction_Report
+      summary: Generate Pay Statement Extraction Report
+      description: >
+        Generate Pay Statement Extraction Report for the given customer. This service accepts asset IDs of the stored pay statements to generate a Pay Statement Extraction Report. Finicity will extract relevant data from each of the pay statements.A report will be built with the data extracted from the pay statements. 
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          required: true
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: callbackUrl
+          in: query
+          type: string
+          description: "The Report Listener URL to receive notifications (optional, must be URL-encoded)"
+          default: 'https://www.mydomain.com/txpush/listener'
+        - name: body
+          in: body
+          required: true
+          description: The constraints object.
+          schema:
+            $ref: '#/definitions/Constraints'
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/GeneratePayStatementReportResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/aggregation/v1/customers/{customerID}/payStatements':
+    post:
+      operationId: Store_Customer_Pay_Statement
+      summary: Store Customer Pay Statement
+      description: >
+        Srore Pay Statements for the given consumer. This service accepts pay statements to be stored. Finicity will extract relevant data from each of the pay statements.A report will be built with the data extracted from the pay statements. 
+      tags:
+        - Consumer
+      security:
+        - OauthSecurity:
+            - user
+      parameters:
+        - name: Accept
+          in: header
+          required: true
+          type: string
+          description: Type of format to Accept
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          description: Input request format
+          enum:
+            - application/json
+            - application/xml
+          default: application/json
+        - name: subcode
+          in: header
+          required: true
+          type: number
+          description: Input Transactional Services subcode assigned 
+          default: 0000000
+        - name: customerID
+          in: path
+          required: true
+          type: integer
+          description: ID of the customer
+        - name: body
+          in: body
+          required: true
+          description: The request with Pay statements.
+          schema:
+            $ref: '#/definitions/StoreCustomerPayStatementRequest'
+      responses:
+        '202':
+          description: Request Accepted
+          schema:
+            $ref: '#/definitions/StoreCustomerPayStatementResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+definitions:
+  #CUSTOMER Requests/Responses {CREATE, GET}
+  UserNameRequest:
+    type: object
+    required: 
+      - username
+    description: 
+      "New Customer's username, assigned by the partner (a unique identifier), following these rules 
+          Minimum 6 characters
+          Maximum 255 characters
+          Any mix of uppercase, lowercase, numeric, and special characters"
+    properties:
+      username:
+        type: string  
+        default: TestUser123
+        description: Username should be unique
+      firstName:
+        type: string
+        default: John
+        description: First name of User
+      lastName:
+        type: string
+        default: Doe
+        description: Last name of User
+  CreateCustomerResponse:
+    type: object
+    description: Response Information pertaining to a new Created Customer
+    properties:
+      id: 
+        type: string
+        description: Generates a unique ID associated with the new Customer which will be used in the endpoint for creating a Consumer
+        default: "11111111"
+      createdDate:
+        type: string
+        description: Indicates the date that the customer was created
+        default: "123456789"
+  CustomerRequest:
+    type: object
+    description: Customer account information 
+    properties:
+      firstName:
+        type: string
+        description: The customer's first name(s) / given name(s) (optional)
+        default: John
+      lastName:
+        type: string
+        description: The customer's last name(s) / surname(s) (optional)
+        default: John
+  Customer:
+    type: object
+    required:
+      - id
+      - username
+      - type
+      - createdDate
+    description: Customer account information for specified customerID
+    properties:
+      id: 
+        type: string
+        description: Returns the unique ID associated with the  Customer
+        default: "11111111"
+      username:
+        type: string  
+        description: |
+          The customer's username, assigned by the partner (a unique identifier), must be a minimum 6 characters, maximum 255 characters, any mix of uppercase, lowercase, numeric, and non-alphabet special characters.
+          The use of email in this field is discouraged and it is recommended to use a unique non-email identifier.
+        default: TestUser123
+      firstName:
+        type: string
+        description: The customer's first name(s) / given name(s) (optional)
+        default: John
+      lastName:
+        type: string
+        description: The customer's last name(s) / surname(s) (optional)
+        default: John
+      type:
+        type: string
+        description: Either testing or active
+        default: active
+        enum:
+          - testing
+          - active
+      createdDate:
+        type: string
+        description: A timestamp showing when the customer was added 
+        default: "123456789"
+  Customers:
+    type: object
+    description: Returns all customers 
+    properties:
+      found:
+        type: number
+        description: Total number of records matching search criteria
+        default: 7
+      displaying:
+        type: number
+        description: Number of records in this response
+        default: 2
+      moreAvailable:
+        type: boolean
+        description: "true if this response does not contain the last record in the result set"
+        default: true
+      customers:
+        type: array
+        description: "An array containing all the Customer Objects which includes id, username, type, createdDate"
+        items:
+          $ref: "#/definitions/Customer"
+  #CONSUMER Request/Responses {CREATE, GET}
+  ConsumerRequest:
+    type: object
+    description: Requires a Customer ID injected into the endpoint   
+    properties:
+      firstName:
+        type: string
+        description: 'The full first name should be entered when available. Blanks and special characters (except dash) are not allowed. Compound names should contain a dash (e.g., Billy-Bob)'
+        default: Joel
+      lastName:
+        type: string
+        description: 'The full last name should be entered when available.  Blanks and special characters are not allowed'
+        default: Embiid
+      address: 
+        type: string
+        description: 'Include the house number, directional, street name, street type, and street suffix data (Apt)'
+        default: "3601 S Broad St"
+      city:
+        type: string
+        description: 'The city should be entered. Cities with numbers should be spelled out (e.g., 29 Palms should be entered as Twenty Nine Palms)'
+        default: Philadelphia
+      state:
+        type: string
+        description: 'The U.S. Postal two-position state code'
+        default: PA
+      zip:
+        type: string
+        description: 'The ZIP code is required. The only exception is on international addresses when the country code should be used. It may be 9 characters and may contain a hyphen to separate the first 5 digits from the last 4 digits. It is required on all current address data.'
+        default: '19148'
+      phone: 
+        type: string
+        description: Best number to reach the Consumer
+        default: "1231231234"
+      ssn:
+        type: string
+        description: 'The full Social Security number should be entered if available. The social may be input with or without hyphens (e.g., 123456789 or 123-45-6789). Omit if no Social Security number is available.'
+        default: '123-45-6789'
+      birthday:
+        $ref: '#/definitions/ConsumerRequestBirthday'
+      email:
+        type: string
+        description: "The associated email for the consumer. Must be a valid email"
+        default: joel.embiid@experian.com
+  ConsumerRequestBirthday:
+    type: object
+    description: Defines the birthday of the created Consumer
+    properties:
+      year:
+        type: string
+        description: Birthday Year of Consumer
+        default: "1994"
+      month:
+        type: string
+        description: Birthday Month of Consumer
+        default: "03"
+      dayOfMonth:
+        type: string
+        description: Birthday Day of consumer
+        default: "16"
+  CreateConsumerResponse:
+    type: object
+    description: Response Information pertaining to a new Created Consumer
+    properties:
+      id: 
+        type: string
+        description: Returns the ID of the new Consumer which will be used to create an iWidget
+        default: "123456789"
+      createdDate:
+        type: string
+        description: The date the Consumer was created at
+        default: "123456789"
+  Consumer:
+    type: object
+    description: Get Consumer Response based on consumerID
+    properties:
+      id:
+        type: string
+        description: ID of the consumer
+        default: 0h7h3r301md83
+      firstName:
+        type: string
+        description: The consumer's first name(s) / given name(s)
+        default: Joel
+      lastName:
+        type: string
+        description: The consumer's last name(s) / surname(s)
+        default: Embiid
+      address:
+        type: string
+        description: The consumer's street address
+        default: 3601 S Broad St
+      city:
+        type: string
+        description: The consumer's city
+        default: Philadelphia
+      state:
+        type: string
+        description: The consumer's state
+        default: PA
+      zip:
+        type: string
+        description: The consumer's ZIP code
+        default: '19148'
+      phone:
+        type: string
+        description: The consumer's phone number
+        default: 888-888-8888
+      ssn:
+        type: string
+        description: Last 4 digits of the consumer's Social Security number
+        default: '5555'
+      birthday:
+        $ref: '#/definitions/ConsumerBirthday'
+      email:
+        type: string
+        description: The consumer's email address
+        default: joel.embiid@experian.com
+      createdDate:
+        type: number
+        description: A timestamp showing when the account was added to the Finicity system
+        default: 1422395818
+  ConsumerBirthday:
+    type: object
+    description: The consumer's birth date
+    properties:
+      year:
+        type: string
+        description: The birthday's 4-digit year
+        default: '1994'
+      month:
+        type: string
+        description: The birthday's 2-digit month (01 is January)
+        default: '01'
+      dayOfMonth:
+        type: string
+        description: The birthday's 2-digit day-of-month
+        default: '16'
+  #Create iFrame Link Request/Response
+  CreateLinkRequest:
+    type: object
+    required: 
+      - type
+      - partnerId
+      - customerId
+      - consumerId
+      - redirectUri
+    description: 
+      Generates the Finicity Connect Link, which is how the users will add their account data to the customer entity you have created. Requires a Partner ID, Customer ID, and Consumer ID  
+    properties:
+      type:
+        type: string
+        description: The Report type you wish to have generated for you. ‘Lite’ will provide just the iframe UI to manage the credentials of the end user.
+        default: voi
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+          - lite
+          - fix
+      partnerId:
+        type: string
+        description: The client_id you can obtain from your Finicity developer dashboard or the OAuth 
+        default: "123456789"
+      customerId:
+        type: string
+        description: Obtained from the CreateCustomer object 
+        default: "123456789"
+      consumerId:
+        type: string
+        description: Obtained from the CreateConsumer object
+        default: "123456789"
+      redirectUri:
+        type: string
+        description: The url that customers will be redirected to after completing Finicity Connect
+        default: "https://www.experian.com/"
+      fromDate:
+        type: string
+        description: "This is an optional field for use of 'voa' and 'voi' Connect types and passed as an Epoch Timestamp (in seconds). Without this param, the report defaults to 6 months if available. fromDate is not used in Connect sessions with 'aggregation' type. If included, the epoch timestamp should be 10 digits long, and be within two years of the present day. Extending the epoch timestamp beyond 10 digits will default back to six months of data "
+        default: "1494449017"
+      webhook:
+        type: string
+        description: The publicly available url you wish to be posted to when the user starts and completes Finicity Connect
+        default: "www.google.com/"
+      webhookContentType:
+        type: string
+        description: The format of the data you wish to be posted to your server. Valid values are 'application/json' and 'application/xml'
+        default: "application/json"
+      webhookData:
+        type: object
+        description: Any additional data you wish to be passed back in the webhook URL. This data can contain sub parameters and multiple sub parameters.
+        properties:
+          value1:
+            type: string
+            description: Additional value1
+            default: "123456789"
+          value2: 
+            type: string
+            description: Additional value2
+            default: "03March2019"          
+      institutionLoginId:
+        type: string
+        description: The institutionId will call connect for the financialinstitution you are requesting example ‘101732’returns connect for Finbank, ‘5’ returns connect for‘Chase’. Only a single institutionId can be passed.
+        default: "9764"
+  CreateiFrameURIResponse:
+    type: object
+    description: Returns the Widget iFrame URL
+    properties:
+      link:
+        type: string
+        description: Generates the Link
+        default: "https://connect.finicity.com"
+  #Used for GET requests {Account, Report}
+  ArrayOfCustomerAccounts:
+    type: array
+    description: An array containing all the Customer Account Objects which includes id, account number, name, balance, etc.
+    items:
+      $ref: "#/definitions/CustomerAccount"
+  CustomerAccount:
+    type: object
+    description: Details for a specific Customer account.
+    properties:
+      id:
+        type: string
+        description: The General Finicity ID of the account
+        default: "1111"
+      number:
+        type: string
+        description: The account number from the institution (all digits except the last four are obfuscated)
+        default: "XXXX-XXXXXX-11111"
+      name:
+        type: string
+        description: The account name from the institution
+        default: "Checking"
+      balance:
+        type: number
+        description: The cleared balance of the account as of balanceDate
+        default: 0.0
+      type:
+        type: string
+        description: "One of the values from Account Types, such as checking or savings"
+        default: "checking"
+      aggregationStatusCode:
+        type: number
+        description: The status of the most recent aggregation attempt
+        default: 0
+      status:
+        type: string
+        description: "pending during account discovery, always active following successful account activation "
+        default: active
+      customerId:
+        type: string
+        description: The Finicity ID of the customer associated with this account
+        default: "11111"
+      institutionId:
+        type: string
+        description: The Finicity ID of the institution for this account
+        default: "111111"
+      balanceDate:
+        type: number
+        description: A timestamp showing when the balance was captured
+        default: 1422421087
+      aggregationSuccessDate:
+        type: number
+        description: A timestamp showing the last successful aggregation of the account
+        default: 1422399293
+      aggregationAttemptDate:
+        type: number
+        description: "A timestamp showing the last aggregation attempt, whether successful or not"
+        default: 1422395888
+      createdDate:
+        type: number
+        description: A timestamp showing when the account was added to the Finicity system
+        default: 1422395818
+      lastUpdatedDate:
+        type: number
+        description: A timestamp showing when the account was last updated to the Finicity system
+        default: 1519404555
+      currency:
+        type: string
+        description: Type of currency used
+        default: "USD"
+      lastTransactionDate:
+        type: number
+        description: A timestamp showing the last transaction date
+        default: 1422421087
+      institutionLoginId:
+        type: number
+        description: The institution login ID
+        default: 9764
+      detail:
+        $ref: '#/definitions/CustomerAccountDetail'
+      displayPosition:
+        type: number
+        description: display Position
+        default: 1
+  CustomerAccountDetail:
+    type: object
+    required: 
+      - availableBalanceAmount
+    description: Defines the details of the account
+    properties:
+      availableBalanceAmount:
+        type: number
+        description: The balance avilable in the account as of balanceDate
+        default: 0.0
+      periodInterestRate:
+        type: string
+        description: The effective interest rate for each compounding period
+        default: "4.5"
+  ArrayOfCustomerReports:
+    type: array
+    description: "An array containing all the Customer Report Objects which includes id, consumerId, consumerSsn, requesterName, etc."
+    items:
+      $ref: "#/definitions/CustomerReportForArray"
+  CustomerReportForArray:
+    type: object
+    description: Details for a Customer Report used for multiple Reports. This contains less properties than the single Customer Report
+    properties:
+      id: 
+        type: string
+        description: Unique Report ID
+        default: "j48rf6h4naw6"
+      consumerId: 
+        type: string
+        description: Unique consumer ID
+        default: "cf4af042ed1e67efbd4c7383403a0bb5"
+      consumerSsn:
+        type: string
+        description: The last 4 digits of the Social Security number.
+        default: "6789"
+      requesterName:
+        type: string
+        description: Finicity account name that the report was generated under (only included when report status is "successful")
+        default: "Experian"
+      type:
+        type: string
+        description: The Report type you wish to have generated for you. Can be a comma delimited list. 
+        default: voi
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+      status:
+        type: string
+        description: Response status
+        default: success
+      createdDate:
+        type: number
+        description: Date format of when the Report was generated
+        default: 1519404563
+      customerId:
+        type: number
+        description: set to 0
+        default: 0
+      institutions:
+        type: array
+        description: "A list of institution records, including information about the individual accounts used in this report"
+        items:
+          $ref: '#/definitions/InstitutionForSingleReport'
+      constraints:
+        type: object
+        description: Specifies use of a fromDate or accountIds included in the call
+        properties:
+          fromDate:
+            type: string
+            description: "This is an optional field for use of 'voa' and 'voi' Connect types and passed as an Epoch Timestamp (in seconds). Without this param, the report defaults to 6 months if available. fromDate is not used in Connect sessions with 'aggregation' type. If included, the epoch timestamp should be 10 digits long, and be within two years of the present day. Extending the epoch timestamp beyond 10 digits will default back to six months of data "
+            default: "1494449017"
+          accountId: 
+            type: number
+            description: Finicity account ID
+            default: 39656346          
+  GenerateReportResponse:
+    type: object
+    description: Generate Report Response
+    properties:
+      id:
+        type: string
+        description: >-
+          The reportId, to be passed to Get Report. (UUID with max length 32
+          characters).
+        default: 2634jhsd823j92812
+      requestId:
+        type: string
+        description: unique requestId for this specific call request
+        default: "0a1b2c3d3"        
+      consumerId:
+        type: string
+        description: ID of the consumer (UUID with max length 32 characters)
+        default: 0h7h3r301md83
+      consumerSsn:
+        type: string
+        description: Last 4 digits of the report consumer's Social Security number
+        default: "1111"
+      constraints:
+        type: object
+        description: Specifies use of a fromDate or accountIds included in the call
+        properties:
+          fromDate:
+            type: string
+            description: "This is an optional field for use of 'voa' and 'voi' Connect types and passed as an Epoch Timestamp (in seconds). Without this param, the report defaults to 6 months if available. fromDate is not used in Connect sessions with 'aggregation' type. If included, the epoch timestamp should be 10 digits long, and be within two years of the present day. Extending the epoch timestamp beyond 10 digits will default back to six months of data "
+            default: "1494449017"
+          accountId: 
+            type: number
+            description: Finicity account ID
+            default: 39656346     
+      type:
+        type: string
+        description: voa, voi, or voa-history
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+        default: voa
+      status:
+        type: string
+        description: inProgress or success or failure
+        default: success
+      portfolioId: 
+        type: string
+        description: Finicity portfolio ID
+        default: "1234abcdef-port"
+  ReportList:
+    type: object
+    description: Reports for Consumer
+    properties:
+      reports:
+        type: array
+        items:
+          $ref: '#/definitions/ReportListPropertyItems'
+  ReportListPropertyItems:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID of the report (UUID with max length 32 characters)
+        default: e8a9c7e185ecd
+      consumerId:
+        type: string
+        description: ID of the consumer (UUID with max length 32 characters)
+        default: 0h7h3r301md83
+      consumerSsn:
+        type: string
+        description: Last 4 digits of the report consumer's Social Security number
+        default: "1111"
+      requesterName:
+        type: string
+        description: Name of the company requesting data
+        default: "Experian"
+      type:
+        type: string
+        description: voa or voi
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+        default: voa
+      status:
+        type: string
+        description: inProgress or success or failure
+        default: success
+      createdDate:
+        type: string
+        description: The date the report was generated
+        default: "1494646441"
+      customerId:
+        type: number
+        description: ID of Customer to fetch
+        default: 0000000
+      institutions:
+        type: array
+        description: "A list of institution records, including information about the individual accounts used in this report"
+        items:
+          $ref: '#/definitions/InstitutionForSingleReport'
+  Account:
+    type: object
+    description: Get Account Details
+    properties:
+      routingNumber:
+        type: string
+        description: The account's 9-digit Routing Transit Number
+        default: "123456789"
+      realAccountNumber:
+        type: string
+        description: 'The full account number, assigned by the institution'
+        default: "002345678901"
+  AccountOwner:
+    type: object
+    description: Get Account Details
+    properties:
+      ownerName: 
+        type: string
+        description: The name(s) of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+        default: "Patrick & Lorraine Purchaser"
+      ownerAddress: 
+        type: string
+        description: The mailing address of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+        default: "7195 Belmont St. Parlin, NJ 08859"
+  mfaChallenge:
+    type: object
+    description: Collection of MFA Questions to be answered
+    properties:
+      questions:
+        type: array
+        description: Multi-Factor Authentication
+        items:
+          $ref: '#/definitions/mfaChallengeQuestionItems'
+  mfaChallengeQuestionItems:
+    type: object
+    description: MFA Question object
+    properties:
+      text:
+        type: string
+        description: MFA Challenge Question
+        default: Enter name of your first pet.
+  mfaChallenges:
+    type: object
+    description: Send Account Details(MFA Challenge)
+    properties:
+      questions:
+        type: array
+        description: Multi-Factor Authentication
+        items:
+          $ref: '#/definitions/mfaChallengesQuestionItems'
+  mfaChallengesQuestionItems:
+    type: object
+    description: Properties of the MFA Challenge
+    properties:
+      text:
+        type: string
+        description: MFA Challenge Question
+        default: Enter name of your first pet.
+      answer:
+        type: string
+        description: MFA Challenge Answer
+        default: Venkt.
+  #Single Report - there's a lot of nested objects/arrays within this so all of the calls are grouped together
+  IncomeStreamForSingleReport:
+    type: object
+    description: One instance for an income stream 
+    properties:
+      id: 
+        type: string
+        description: Finicity income stream ID
+        default: "0vscb36rn3xs1"
+      accountId: 
+        type: number
+        description: Finicity account ID
+        default: 39656346
+      name: 
+        type: string
+        description: A human-readable name for this income stream
+        default: "Withdrawal"
+      type: 
+        type: string
+        description: The type of report such as directDeposit, uncategorized, Paycheck, other, etc.
+        default: "Uncategorized"
+      status: 
+        type: string
+        description: 'active or inactive (active means that the most-recent deposit occurred as expected by the cadence, and the next expected date is still in the future)'
+        default: "inactive"
+      cadence:
+        $ref: '#/definitions/IncomeStreamForSingleReportCadence'
+      netMonthly:
+        type: array
+        description: netMonthly records in an array
+        items:
+          $ref: '#/definitions/IncomeStreamForSingleReportNetMonthly'
+      netAnnual:
+        type: number
+        description: Sum of all values in netMonthly over the previous 12 months
+        default: 975
+      projectedNetAnnual:
+        type: number
+        description: Projected net income over the next 12 months, based on netAnnual
+        default: 0
+      estimatedGrossAnnual:
+        type: number
+        description: Before-tax gross annual income (estimated from netAnnual)
+        default: 1297
+      projectedGrossAnnual:
+        type: number
+        description: Projected gross income over the next 12 months, based on projectedNetAnnual
+        default: 0
+      transactions:
+        type: array
+        description: A list of the transactions that comprise this income stream
+        items:
+          $ref: '#/definitions/IncomeStreamForSingleReportTransactions'
+  IncomeStreamForSingleReportCadence:
+    type: object
+    description: The chronological rhythm discovered for this set of deposits
+    properties:
+      startDate:
+        type: number
+        description: postedDate of the first deposit transaction
+        default: 1459576800
+      stopDate:
+        type: number
+        description: postedDate of the final deposit transaction record (omitted if status is active)
+        default: 1502604000
+      type:
+        type: string
+        description: single / weekly / biweekly / monthly
+        default: "single"
+  IncomeStreamForSingleReportNetMonthly:
+    type: object
+    properties:
+      month: 
+        type: number
+        description: Timestamp for the first day of this month
+        default: 1464760800
+      net:
+        type: number
+        description: Total income during the given month, across all income streams
+        default: 3711.82
+  IncomeStreamForSingleReportTransactions:
+    type: object
+    properties:
+      id: 
+        type: number
+        description: Finicity transaction ID
+        default: 4077516654
+      amount: 
+        type: number
+        description: The total amount of this transactions. Transactions for deposits are positive values; withdrawals and debits are negative values.
+        default: 210.31
+      postedDate: 
+        type: number
+        description: A timestamp showing when the transaction was posted or cleared by the institution
+        default: 1519455600
+      description: 
+        type: string
+        description: The description of the transaction, as provided by the institution (often known as payee)
+        default: "JABERWOCKY CREDIT N.A. JABERWOCKY"
+      memo: 
+        type: string
+        description: The memo field of the transaction, as provided by the institution
+        default: "PPD ID: 1234567893"
+      institutionTransactionId:
+        type: string
+        description: A unique ID of the transaction, as provided by the institution (often known as FITID)
+        default: "0000000000"
+      category: 
+        type: string
+        description: The assigned category for this transaction
+        default: "Income"
+      reportId:
+        type: string
+        description: The specific ID report
+        default: "0vscb36rn3xs"
+  SingleReport:
+    type: object
+    description: Full Details for a specific Customer report given the customerID
+    properties:
+      id: 
+        type: string
+        description: The Finicity report ID (max length 32 characters)
+        default: "j48rf6h4naw6"
+      title:
+        type: string
+        description: "Finicity Verification of Assets or Finicity Verification of Income"
+        default: Finicity Verification of Income
+      requestId:
+        type: string
+        description: unique requestId for this specific call request
+        default: "0a1b2c3d3"
+      consumerId: 
+        type: string
+        description: Finicity report consumer ID (max length 32 characters)
+        default: "cf4af042ed1e67efbd4c7383403a0bb5"
+      consumerSsn:
+        type: string
+        description: Last 4 digits of the report consumer's Social Security number
+        default: "6789"
+      requesterName:
+        type: string
+        description: Name of the company requesting data
+        default: "Experian"
+      type:
+        type: string
+        description: The report type you wish to have generated for you. Can be a comma delimited list. 
+        default: voi
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+      status:
+        type: string
+        description: Response status
+        default: success
+      createdDate:
+        type: number
+        description: Date format of when the report was generated
+        default: 1519404563
+      startDate:
+        type: number
+        description: The postedDate of the earliest transaction analyzed for this report 
+        default: 1456704037
+      endDate:
+        type: number
+        description: The postedDate of the latest transaction analyzed for this report
+        default: 1519862437
+      days:
+        type: number
+        description: Number of days covered by the report
+        default: 731
+      seasoned:
+        type: boolean
+        description: true if the report covers more than 180 days
+        default: true
+      institutions:
+        type: array
+        description: A list of institution records, including information about the individual accounts used in this report
+        items:
+          $ref: '#/definitions/InstitutionForSingleReport'
+      income:
+        $ref: '#/definitions/SingleReportIncome'
+      assets:
+        type: object
+        description: Asset Record. This will only be filled in the report type is VOA
+        properties:
+          currentBalance:
+            type: number
+            description: Current balance of the account
+            default: 340774.6
+          twoMonthAverage:
+            type: number
+            description: Two month average daily balance of the account
+            default: 8805.91
+          sixMonthAverage:
+            type: number
+            description: Six month average daily balance of the account
+            default: 6367.65
+          beginningBalance:
+            type: number
+            description: Beginning balance of account per the time period in the report
+            default: 2821.4
+      consolidatedAvailableBalance:
+        type: number
+        description: This will only be available if the report type is VOA
+        default: 45000
+  SingleReportIncome:
+    type: object
+    description: Income Record. This will only be filled in the report type is VOI
+    properties:
+      confidenceType:
+        type: string
+        description: "Level of confidence of income stream (low, moderate, high)"
+        default: HIGH
+        enum:
+          - HIGH
+          - MODERATE
+          - LOW
+      netMonthly:
+        type: array
+        description: netMonthly records in an array
+        items:
+          $ref: '#/definitions/SingleReportIncomeNetMonthlyProps'
+      incomeEstimate:
+        type: object
+        description: Income Estimates annually
+        properties:
+          netAnnual:
+            type: number
+            description: Sum of all values in netMonthlyIncome over the previous 12 months
+            default: 85163.65
+          projectedNetAnnual:
+            type: number
+            description: "Projected net income over the next 12 months, across all income streams, based on netAnnualIncome"
+            default: 55861
+          estimatedGrossAnnual:
+            type: number
+            description: Before-tax gross annual income (estimated from netAnnual) across all income stream in the past 12 months
+            default: 113496
+          projectedGrossAnnual:
+            type: number
+            description: "Projected gross income over the next 12 months, based on projectedNetAnnual"
+            default: 0
+      incomeStreams:
+        type: array
+        description: A list of income stream records
+        items:
+          $ref: '#/definitions/IncomeStreamForSingleReport'
+  SingleReportIncomeNetMonthlyProps:
+    type: object
+    properties:
+      month: 
+        type: number
+        description: Timestamp for the first day of this month
+        default: 1464760800
+      net:
+        type: number
+        description: "Total income during the given month, across all income streams"
+        default: 3711.82
+  InstitutionForSingleReport:
+    type: object
+    description: Single institution which will be used in an array as part of the Single Customer Report
+    properties: 
+      id: 
+        type: number
+        description: Finicity institution ID
+        default: 102105
+      name:
+        type: string
+        description: Finicity institution name
+        default: "FinBank Profiles - A"
+      accounts:
+        type: array
+        description: A list of account records
+        items:
+          $ref: '#/definitions/InstitutionForSingleReportAccountsProps'
+  InstitutionForSingleReportAccountsProps:
+    type: object
+    properties:
+        id: 
+          type: number
+          description: Finicity account ID
+          default: 39656345
+        number:
+          type: string
+          description: The account number from the institution (obfuscated)
+          default: "XX1111"
+        ownerName: 
+          type: string
+          description: The name(s) of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+          default: "Patrick & Lorraine Purchaser"
+        ownerAddress: 
+          type: string
+          description: The mailing address of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+          default: "7195 Belmont St. Parlin, NJ 08859"
+        name: 
+          type: string
+          description: The account name from the institution.
+          default: Checking
+        type: 
+          type: string
+          description: |
+            For VOA the possibilities are checking / savings / moneyMarket / cd / investment
+            For VOI the options are checking / savings / moneyMarket
+          default: "checking"
+        availableBalance: 
+          type: number
+          description: The available balance of the account.
+          default: 45000
+        aggregationStatusCode: 
+          type: number
+          description: Finicity aggregation status of the most recent aggregation attempt for this account (non-zero means the account was not accessed successfully for this report, and additional fields for this account may not be reliable)
+          default: 0
+        balance: 
+          type: number
+          description: The cleared balance of the account as-of balanceDate.
+          default: 9357.24
+        balanceDate: 
+          type: string
+          description: A timestamp showing when the balance was captured
+          default: "1519282800"
+        averageMonthlyBalance: 
+          type: number
+          description: The average monthly balance of this account
+          default: 9357.24
+        transactions:
+          type: array
+          description: Array of all transaction records
+          items:
+            $ref: '#/definitions/InstitutionForSingleReportAccountsPropsTransactions'
+        asset:
+          type: object
+          description: An asset record for the account (VOA only). This will only be filled in if the report type is VOA.
+          properties:
+            type: 
+              type: string
+              description: checking / savings / moneyMarket / cd / investment 
+              default: checking
+            currentBalance:
+              type: number
+              description: Current balance of the account
+              default: 340774.6
+            twoMonthAverage:
+              type: number
+              description: Two month average daily balance of the account
+              default: 8805.91
+            sixMonthAverage:
+              type: number
+              description: Six month average daily balance of the account
+              default: 6367.65
+            beginningBalance:
+              type: number
+              description: Beginning balance of account per the time period in the report
+              default: 2821.4
+        details:
+          type: object
+          description: Further details related to the account
+          $ref: '#/definitions/InstitutionForSingleReportAccountsPropsDetails'
+  InstitutionForSingleReportAccountsPropsDetails:
+    type: object
+    properties:
+      interestMarginBalance:
+        type: number
+        description: The interest Margin balance of the account - can be null
+        default: 0
+      availableCashBalance:
+        type: number
+        description: The available Cash balance of the account - can be null
+        default: 0
+      vestedBalance:
+        type: number
+        description: The vested balance of the account - can be null
+        default: 0
+      currentLoanBalance:
+        type: number
+        description: The current Loan balance of the account - can be null
+        default: 0
+      availableBalanceAmount:
+        type: number
+        description: The available balance amount of the account - can be null
+        default: 0
+  InstitutionForSingleReportAccountsPropsTransactions:
+    type: object
+    properties: 
+      id: 
+        type: number
+        description: Finicity transaction ID
+        default: 4077516654
+      amount: 
+        type: number
+        description: The total amount of this transactions. Transactions for deposits are positive values; withdrawals and debits are negative values.
+        default: 210.31
+      postedDate: 
+        type: number
+        description: A timestamp showing when the transaction was posted or cleared by the institution
+        default: 1519455600
+      description: 
+        type: string
+        description: The description of the transaction, as provided by the institution (often known as payee)
+        default: "JABERWOCKY CREDIT N.A. JABERWOCKY"
+      institutionTransactionId:
+        type: string
+        description: A unique ID of the transaction, as provided by the institution (often known as FITID)
+        default: "0000000000"
+      category: 
+        type: string
+        description: The assigned category for this transaction
+        default: "Income"
+  #Institution
+  Institution:
+    type: object
+    description: "An institution is a financial institution (FI) such as a bank, investment firm, or other organization, which provides financial accounts for their customers. Finicity's Institution resource includes services for looking up supported financial institutions and for obtaining the login form of a specific institution, in order to discover and activate customer accounts."
+    properties:
+      id:
+        type: number
+        description: The institution ID
+        default: 102105
+      name: 
+        type: string
+        description: The name of the institution
+        default: "Finbank Profiles - A"
+      accountTypeDescription: 
+        type: string
+        description: One of the values Banking, Investments, Credit Cards/Accounts, Workplace Retirement, Mortgages and Loans, Insurance
+        default: "TestFI"
+      phone: 
+        type: string
+        description: The institution's primary phone number
+        default: "5555555555"
+      urlHomeApp:
+        type: string
+        description: The URL of the institution's primary home page
+        default: "http://www.finbank.com"
+      urlLogonApp: 
+        type: string
+        description: The URL of the institution's login page
+        default: "http://www.finbank.com/login"
+      oauthEnabled: 
+        type: boolean
+        description: Whether or not the oAuthenticaiton is enabled
+        default: false
+        enum:
+          - true
+          - false
+      urlForgotPassword:
+        type: string
+        description: The URL to go to for a Forgotten password
+        default: "http://www.finbank.com/forgotPassword"
+      urlOnlineRegistration:
+        type: string
+        description: The URL to register online
+        default: "http://www.finbank.com/register"
+      class: 
+        type: string
+        description: Defines the class of instutition 
+        default: "testfi"
+      specialText: 
+        type: string
+        description: Any special text found on the institution's website
+        default: "Please enter your FinBank Profiles Banking Userid and Banking Password required for login."
+      address: 
+        $ref: '#/definitions/InstitutionAddressProps'
+      currency:
+        type: string
+        description: The institution's primary currency
+        default: "USD"
+      email:
+        type: string
+        description: The institution's primary contact email
+        default: "finbank@finicity.com"
+  InstitutionAddressProps:
+    type: object
+    description: Parent element for the address of the institution's headquarters
+    properties:
+      addressLine1:
+        type: string
+        description: Address information for the institution's 1st headquarters
+        default: "11111 Hospital Lane"
+      addressLine2:
+        type: string
+        description: Address information for the institution's 2nd headquarters
+        default: "11111 Hospital Lane"          
+      city:
+        type: string
+        description: The city of the institution's headquarters
+        default: "Los Angeles"  
+      state:
+        type: string
+        description: Two-letter code for the state of the institution's headquarters
+        default: "CA"  
+      postalCode:
+        type: string
+        description: The postal code of the institution's headquarters
+        default: "94134"
+      country: 
+        type: string
+        description: The country of the institution's headquarters
+        default: "USA"
+  #TxP
+  SubscriptionList:
+    type: object
+    description: List Of Subscription Record
+    properties:
+      subscriptions:
+        type: array
+        items:
+          $ref: '#/definitions/SubscriptionRecord'
+          description: Subscription Record
+  SubscriptionRecord:
+    type: object
+    description: Details for one subscription
+    properties:
+      id:
+        type: string
+        description: The subscription ID
+        default: "7462"
+      accountId:
+        type: string
+        description: The account being monitored by this subscription
+        default: "2055"
+      type:
+        type: string
+        description: account or transaction
+        enum:
+          - account
+          - transaction
+        default: transaction
+      callbackUrl:
+        type: string
+        description: The TxPUSH Listener URL where event notifications will be sent
+        default: 'https://www.mydomain.com/txpush/listener'
+      signingKey:
+        type: string
+        description: >-
+          A signing key that will be used to validate the signature of events
+          received for this subscription
+        default: zg4U0v1IvTzFEHIXzJMxPHnfUwWZAMVpXrUuNuL9IvZI0Qzk
+  Transaction:
+    type: object
+    required:
+      - amount
+      - description
+      - postedDate
+      - transactionDate
+    properties:
+      amount:
+        type: string
+        description: The amount of the transaction
+        default: "-4.25"
+      description:
+        type: string
+        description: The description of the transaction
+        default: Lunch
+      status:
+        type: string
+        description: active or pending (optional)
+        enum:
+          - active
+          - pending
+        default: active
+      postedDate:
+        type: string
+        description: >-
+          An optional timestamp for the transaction's posted date value for this
+          transaction
+        default: "1444253131"
+      transactionDate:
+        type: string
+        description: >-
+          An optional timestamp for the transaction's posted date value for this
+          transaction
+        default: "1444253131"
+  TransactionResponseForTesting:
+    type: object
+    description: Details for the transaction response
+    properties:
+      id:
+        type: string
+        description: The ID of the new transaction record
+      createdDate:
+        type: string
+        description: A timestamp of when the transaction was added
+  callbackUrl:
+    type: object
+    required:
+      - callbackUrl
+    properties:
+      callbackUrl:
+        type: string
+        description: The TxPUSH Listener URL to receive TxPUSH notifications
+        default: 'https://www.mydomain.com/txpush/listener'
+  #Partner
+  ModifyPartnerRequest:
+    type: object
+    description: Requires the current Partner Secret and new Partner Secret
+    properties:
+      partnerId:
+        type: string
+        description: 'Partner ID from Developer Portal'
+        default: '00000000'
+      partnerSecret:
+        type: string
+        description: 'Current value of Partner Secret from Developer Portal'
+        default: '00000000aaaa'
+      newPartnerSecret:
+        type: string
+        description: 'The new value for Partner Secret'
+        default: '00000000bbbbb'
+  Institutions:
+    type: object
+    description: Returns all institutions
+    properties:
+      requestedDate:
+        type: number
+        description: Date of the request
+        default: 1553887091
+      institutions:
+        type: array
+        description: "An array containing all the Customer Objects which includes id, username, type, createdDate"
+        items:
+          $ref: "#/definitions/SingleInstitution"        
+  SingleInstitution:
+    type: object
+    description: Single Institution Object
+    properties:
+      name:
+        type: string
+        description: Name of the institution
+        default: "Chase"
+      id:
+        type: number
+        description: ID of the Institution
+        default: 1
+      trans_agg:
+        type: number
+        description: Count of standard Transaction Aggregation
+        default: 1
+      voa:
+        type: number
+        description: Count of Verification of Asset
+        default: 1     
+      voi:
+        type: number
+        description: Count of Verification of Income
+        default: 1
+      state_agg:
+        type: number
+        description: Count of PDF Statements from financial institution such as bank statement
+        default: 1     
+      ach:
+        type: number
+        description: Count of Account Owner Verification. Contains full account and routing number
+        default: 1
+      aha:
+        type: number
+        description: Count of Account History Aggregation pulled from 24 months of transactions data.
+        default: 1
+  UFReport:
+    type: object
+    description: Full UltraFICO Response 
+    properties:
+      ssn_Variation_Indicator:
+        type: string
+        description: SSN matched to Consumer
+        default: "*6660000"
+      consumerNames:
+        type: array
+        description: A list of consumer names with best names matched
+        items:
+          type: string
+          description: Top Name Matches
+          default: "JOHN DOE"          
+      consumerAddresses:
+        type: array
+        description: A list of consumer address with best addresses matched
+        items:
+          type: string
+          description: Top Address Matches
+          default: "924 GAINSVILLE HIGHWAY SUITE 130 BUFORD, GA 30518"       
+      modelId:
+        type: string
+        description: The Type of Model returned
+        default: "UF"
+      UltraFICO_Score_or_Exclusion:
+        type: string
+        description: UltraFICO_Score_or_Exclusion
+        default: "0000"
+      UltraFICO_Score_Negative_Reason_Code_1:
+        type: string
+        description: UltraFICO_Score_Negative_Reason_Code_1
+        default: "0000"
+      UltraFICO_Score_Negative_Reason_Code_2:
+        type: string
+        description: UltraFICO_Score_Negative_Reason_Code_2
+        default: "0000"
+      UltraFICO_Score_Negative_Reason_Code_3:
+        type: string
+        description: UltraFICO_Score_Negative_Reason_Code_3
+        default: "0000"
+      UltraFICO_Score_Negative_Reason_Code_4:
+        type: string
+        description: UltraFICO_Score_Negative_Reason_Code_4
+        default: "0000"                                        
+      UltraFICO_Score_Negative_FACTA:
+        type: string
+        description: UltraFICO_Score_Negative_FACTA
+        default: "0000"
+      voluntary_BK_Withdrawn:
+        type: string
+        description: Voluntary BK Withdrawn by Consumer
+        default: "0000"
+      chapter_7_BK_Reported:
+        type: string
+        description: Chapter 7 BK Reported
+        default: "0000"                
+      chapter_11_BK_Reported:
+        type: string
+        description: Chapter 11 BK Reported
+        default: "0000"      
+      chapter_12_BK_Reported:
+        type: string
+        description: Chapter 12 BK Reported
+        default: "0000"      
+      chapter_13_BK_Reported:
+        type: string
+        description: Chapter 13 BK Reported
+        default: "0000"      
+      accounts_Closed:
+        type: string
+        description: Accounts Closed by Consumer
+        default: "0000"    
+      account_Disputed:
+        type: string
+        description: Accounts Disputed by Consumer
+        default: "0000"
+      lenderResponse:
+        type: string
+        description: Lenders DDA Characteristics Report
+        properties:
+          id: 
+            type: string
+            description: The Finicity report ID (max length 32 characters)
+            default: "j48rf6h4naw6"
+          title:
+            type: string
+            description: The full name of the report
+            default: Finicity DDA Characteristics Report
+          requestId:
+            type: string
+            description: unique requestId for this specific call request
+            default: "0a1b2c3d3"
+          consumerId: 
+            type: string
+            description: Finicity report consumer ID (max length 32 characters)
+            default: "cf4af042ed1e67efbd4c7383403a0bb5"
+          consumerSsn:
+            type: string
+            description: Last 4 digits of the report consumer's Social Security number
+            default: "6789"
+          type:
+            type: string
+            description: The report type you wish to have generated for you. Can be a comma delimited list. 
+            default: dcr
+          status:
+            type: string
+            description: Response status
+            default: success
+          createdDate:
+            type: number
+            description: Date format of when the report was generated
+            default: 1519404563
+          startDate:
+            type: number
+            description: The postedDate of the earliest transaction analyzed for this report 
+            default: 1456704037
+          endDate:
+            type: number
+            description: The postedDate of the latest transaction analyzed for this report
+            default: 1519862437
+          days:
+            type: number
+            description: Number of days covered by the report
+            default: 731
+          seasoned:
+            type: boolean
+            description: true if the report covers more than 180 days
+            default: true
+          institutions:
+            type: array
+            description: "A list of institution records, including information about the individual accounts used in this report"
+            properties:
+              id: 
+                type: number
+                description: Finicity institution ID
+                default: 102105
+              name:
+                type: string
+                description: Finicity institution name
+                default: "FinBank Profiles - A"
+              accounts:
+                type: array
+                description: A list of account records
+                properties:
+                  id: 
+                    type: number
+                    description: Finicity account ID
+                    default: 39656345
+                  ownerName: 
+                    type: string
+                    description: The name(s) of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+                    default: "Patrick & Lorraine Purchaser"
+                  firstNameConfidence:
+                    type: number
+                    description: Confidence level out of 100 of the first name
+                    default: 0
+                  lastNameConfidence:
+                    type: number
+                    description: Confidence level out of 100 of the last name
+                    default: 0                  
+                  ownerAddress: 
+                    type: string
+                    description: The mailing address of the account owner(s). This field is optional. If no owner information is available, this field will not appear in the report.
+                    default: "7195 Belmont St. Parlin, NJ 08859"
+                  addressConfidence:
+                    type: number
+                    description: Confidence level out of 100 of the address
+                    default: 0                      
+                  name: 
+                    type: string
+                    description: The account name from the institution.
+                    default: Checking
+                  number:
+                    type: string
+                    description: The account number from the institution (obfuscated)
+                    default: "XX1111"                    
+                  type: 
+                    type: string
+                    description: |
+                      For VOA the possibilities are checking / savings / moneyMarket / cd / investment
+                      For VOI the options are checking / savings / moneyMarket
+                    default: "checking"
+                  aggregationStatusCode: 
+                    type: number
+                    description: Finicity aggregation status of the most recent aggregation attempt for this account (non-zero means the account was not accessed successfully for this report, and additional fields for this account may not be reliable)
+                    default: 0
+                  calcStatus:
+                    type: string
+                    description: Status of the calc
+                    default: "excluded"
+                  reason:
+                    type: string
+                    description: Reason for the status
+                    default: "Business Account"               
+          compositionCharacteristics:
+            type: array
+            description: "Composition Characteristics Record. <br><br>NOTE: All characteristics are calculated at the customer level, across all accounts in the report, except where the field name indicates (the field name ends with “account”)."
+            items:
+              $ref: '#/definitions/Characteristics'
+          cashFlowCharacteristics:
+            type: array
+            description: "Cash Flow Characteristics Record. <br><br>NOTE: All characteristics are calculated at the customer level, across all accounts in the report, except where the field name indicates (the field name ends with “account”)."
+            items:
+              $ref: '#/definitions/Characteristics'
+          negativeCharacteristics:
+            type: array
+            description: "Negative Characteristics Record. <br><br>NOTE: All characteristics are calculated at the customer level, across all accounts in the report, except where the field name indicates (the field name ends with “account”)."
+            items:
+              $ref: '#/definitions/Characteristics'
+          transactionCharacteristics:
+            type: array
+            description: "Transaction Characteristics Record. <br><br>NOTE: All characteristics are calculated at the customer level, across all accounts in the report, except where the field name indicates (the field name ends with “account”). <br><br>There are only six examples of this, found in the Transactions Characteristics Record."
+            items:
+              $ref: '#/definitions/Characteristics'
+          activityCharacteristics:
+            type: array
+            description: "Activity Characteristics Record. <br><br>NOTE: All characteristics are calculated at the customer level, across all accounts in the report, except where the field name indicates (the field name ends with “account”)."
+            items:
+              $ref: '#/definitions/Characteristics'
+          portfolioId:
+            type: string
+            description: Portfolio ID
+            default: "abcdef12345-port"
+      transactionId:
+        type: number
+        description: transactionId
+        default: 00000
+      message_Text:
+        type: string
+        description: message_Text
+        default: "0000"        
+      message_Code:
+        type: string
+        description: message_Code
+        default: "0000"              
+      statement_Text:
+        type: string
+        description: statement_Text
+        default: "0000"        
+  Characteristics:
+    type: object
+    description: Describes the fields within the Specific Characteristic
+    properties:
+      name: 
+        type: string
+        description: Describes the type of Characteristic
+        default: "avgDailyBalanceOver1Month"
+      access:
+        type: array
+        description: Defines which of the 3 possible Report types (Model, Lender, or Consumer) are included
+        items:
+          type: string
+          description: "An abbrevation for the possible Report types: M = Model, L = Lender, C = Consumer"
+          default: M
+      value:
+        type: number
+        description: Defines the quantity of the specified Characteristic field 
+        default: 0
+  #Initiate Email
+  EmailRequest:
+    type: object
+    description: Describes the fields within the Initiate Email request.
+    properties:
+      partnerId:
+        type: string
+        description: The partner id you can obtain from your Finicity developer dashboard
+        default: "123456789"
+      consumerId:
+        type: string
+        description: ID of the consumer
+        default: "123456789"
+      customerId:
+        type: string
+        description: ID of the customer
+        default: "123456789"
+      redirectUri:
+        type: string
+        description: The url that customers will be redirected to after completing Finicity Connect.
+        default: "https://www.experian.com/"
+      type:
+        type: string
+        description: The report type you wish to have generated for you. Valid types include ‘voa’, ‘voi’, and ‘aggregation’.
+        default: voa
+        enum:
+          - voa
+          - voi
+          - aggregation
+      fromDate:
+        type: string
+        description: "This is an optional field for use with only 'voa' Connect type. The fromDate param should not be used with the 'voi' Connect type.The `fromDate` param is an Epoch Timestamp (in seconds), such as “1494449017”. Without this param, the report defaults to 6 months if available. If included, the epoch timestamp should be 10 digits long, and be within two years of the present day. Extending the epoch timestamp beyond 10 digits will default back to six months of data."
+        default: "1494449017"
+      webhook:
+        type: string
+        description: The publicly available url you wish to be posted to when the user starts and completes Finicity Connect
+        default: "www.google.com/"
+      webhookContentType:
+        type: string
+        description: The format of the data you wish to be posted to your server. Valid values are 'application/json' and 'application/xml'
+        default: "application/json"
+      webhookData:
+        $ref: '#/definitions/WebHookData'
+      analytics:
+        type: string
+        description: Google Analytics can be used with Connect to provide an additional layer of transparency of end user engagement
+        default: "google:UA-123456789-1"      
+      email:
+        $ref: '#/definitions/Email'
+    required:
+      - partnerId
+      - customerId
+      - redirectUri
+      - type
+  WebHookData:
+    type: object
+    description: Allows additional identifiable information to be inserted into webhooks (value1, value2, etc.). Alternative naming conventions may be desired in place of value1, value2 for specific values (e.g. loanNumber, currentDate, etc.)
+    properties:
+      value1:
+        type: string
+        description: Additional value1
+        default: "123456789"
+      value2: 
+        type: string
+        description: Additional value2
+        default: "01Mar19"
+  Email:
+    type: object
+    description: All details of email
+    properties:
+          to:
+            type: string
+            description: The email address you wish to receive the email
+            default: "consumer-bob@gmail.com"
+          from:
+            type: string
+            description: The “from” address that will appear in user’s inboxes. 
+            default: "lender-john@acme-lending.com"
+          subject:
+            type: string
+            description: The “subject” line that will appear in user’s inboxes. Defaults to ‘Verify your Financial Information’
+            default: "Verify your income"
+          firstName:
+            type: string
+            description: The name of the customer that will appear in the email.
+            default: "Bob"
+          brandColor:
+            type: string
+            description: The header color in the email. Defaults to dark blue
+            default: "#000"
+          brandLogo:
+            type: string
+            description: A valid url that points to the logo you want to appear in the email. For optimal display, should have dimensions no greater than 110 pixels tall and 300 pixels wide
+            default: "https://acme-lending.com/logo.png"
+          institutionName:
+            type: string
+            description: The name of your company that will appear in the email
+            default: "Acme Lending"
+          institutionAddress:
+            type: string
+            description: Address that will appear in the footer of the email
+            default: "222 Winipeg Drive SLC UT, 84109"
+          supportPhone:
+            type: string
+            description: Phone number that will be listed for support in the email.
+            default: "800-555-5555"
+          signature:
+            type: array
+            description: Signature can be applied. In xml a separate line in signature is delineated by each <signature> tag. In json this is simply an array.
+            items:
+              type: string
+              default: "Cindy Mayfield"
+    required:
+          - to
+          - from
+          - brandLogo
+          - institutionName
+  EmailConfig:
+    type: object
+    description: All details of email
+    properties:
+      link:
+        type: string
+        description: Generates the Link
+        default: "https://connect.finicity.com"
+      type:
+        type: string
+        description: The report type you wish to have generated for you. Valid types include ‘voa’, ‘voi’, and ‘aggregation’.
+        default: voa
+        enum:
+          - voa
+          - voi
+          - aggregation
+      subject:
+        type: string
+        description: The “subject” line that will appear in user’s inboxes. Defaults to ‘Verify your Financial Information’
+        default: "Verify your income"
+      brandColor:
+        type: string
+        description: The header color in the email. Defaults to dark blue
+        default: "#000"
+      brandLogo:
+        type: string
+        description: A valid url that points to the logo you want to appear in the email. For optimal display, should have dimensions no greater than 110 pixels tall and 300 pixels wide
+        default: "https://acme-lending.com/logo.png"
+      institutionName:
+        type: string
+        description: The name of your company that will appear in the email
+        default: "Acme Lending"
+      institutionAddress:
+        type: string
+        description: Address that will appear in the footer of the email
+        default: "222 Winipeg Drive SLC UT, 84109"
+      supportPhone:
+        type: number
+        description: Phone number that will be listed for support in the email.
+        default: "800-555-5555"
+      from:
+        type: string
+        description: The “from” address that will appear in user’s inboxes. 
+        default: "lender-john@acme-lending.com"
+      signature:
+        type: array
+        description: Signature can be applied. In xml a separate line in signature is delineated by each <signature> tag. In json this is simply an array.
+        items:
+          type: string
+          default: "Cindy Mayfield"
+      partnerId:
+        type: string
+        description: The partner id you can obtain from your Finicity developer dashboard
+        default: "123456789"
+      to:
+        type: string
+        description: The email address you wish to receive the email
+        default: "consumer-bob@gmail.com"
+      firstName:
+        type: string
+        description: The name of the customer that will appear in the email.
+        default: "Bob"
+  InitiateEmailResponse:
+    type: object
+    description: Describes the fields within the Initiate Email responce.
+    properties:
+      link:
+        type: string
+        description: Generates the Link
+        default: "https://connect.finicity.com"
+      emailConfig:
+        $ref: '#/definitions/EmailConfig'
+  Constraints:
+    type: object
+    description: Describes the fields within the Generate Pay Statement Extraction Report.
+    properties:
+      payStatementReport:
+        $ref: '#/definitions/PayStatementReport'
+    required:
+      - paystatementReport
+  PayStatementReport:
+    type: object
+    description: The object that contains the information required for the Pay Statement Extraction Report to generate.
+    properties:
+      assetIds:
+            type: array
+            description: The list of pay statement asset IDs. 
+            items:
+              type: string
+              default: "d50ed92f-543b-431c-8286-c8b8f6556679"
+  GeneratePayStatementReportResponse:
+    type: object
+    description: GeneratePayStatementReportResponse
+    properties:
+      id:
+        type: string
+        description: >-
+          The reportId, to be passed to Get Report. (UUID with max length 32
+          characters).
+        default: "2634jhsd823j92812"
+      requestId:
+        type: string
+        description: unique requestId for this specific call request
+        default: "0a1b2c3d3"        
+      consumerId:
+        type: string
+        description: ID of the consumer (UUID with max length 32 characters)
+        default: 0h7h3r301md83
+      consumerSsn:
+        type: string
+        description: Last 4 digits of the report consumer's Social Security number
+        default: "1111"
+      constraints:
+        type: object
+        description: Returns the Constraints object.
+        properties:
+          payStatementReport:
+            $ref: '#/definitions/PayStatementReport'
+      type:
+        type: string
+        description: paystatement
+        enum:
+          - paystatement
+        default: paystatement
+      reportStyle:
+        type: string
+        description: paystatement
+        enum:
+          - paystatement
+        default: paystatement
+      status:
+        type: string
+        description: The status of the report.This will return as inProgress or success or failure
+        default: success
+      title: 
+        type: string
+        description: Finicity report title
+        default: “Finicity Pay Statement Extraction Report”
+  StoreCustomerPayStatementRequest:
+    type: object
+    description: Describes the fields within the Store Customer Pay Statement.
+    properties:
+       label:
+        type: string
+        description: Statement label
+        default: "2019"
+       statement: 
+        type: object
+        description:  base64 encode value of pay statement.
+        default: ""
+    required:
+      - label
+      - statement
+  StoreCustomerPayStatementResponse:
+    type: object
+    description: StoreCustomerPayStatementResponse
+    properties:
+      assetid:
+        type: string
+        description: Stored Pay statement asset ID
+        default: "6b599a7e-236f-4a25-b070-425b52b9c1fe"
+  #ExternalReseller
+  ExternalResellerRequest:
+    type: object
+    description: Describes the fields within the External Reseller request.
+    properties:
+      ewacsuserid:
+        type: string
+        description: ewacs userid
+        default: "kg_A1234"
+    required:
+      - ewacsuserid
+  ExternalResellerResponse:
+    type: object
+    description: ExternalResellerResponse
+    properties:
+      data:
+        type: array
+        description: Array of Billing Data
+        items:
+          $ref: "#/definitions/BillData"
+      message:
+        type: string
+        description: message Text
+        default: "External reseller billing details successfully retrieved"
+      status:
+        type: string
+        description: Response status
+        default: success
+  BillData:
+    type: object
+    description: ExternalResellerResponse
+    properties:
+      billDate:
+        type: string
+        description: Experian generated billing record date
+        default: "2019-10-16T04:56:03.970+0000"
+      billedTransaction:
+        type: string
+        description: Y / N
+        default: "N"
+      platformProvider:
+        type: string
+        description: Name of platform provider associated with the
+                      report
+        default: "PTEST"
+      createdDate:
+        type: string
+        description: The created date of the report
+        default: "2019-10-09T21:27:56.000+0000"
+      customerId: 
+        type: string
+        description: ID of Customer
+        default: "11111111"
+      consumerId:
+        type: string
+        description: ID of Consumer
+        default: "0h7h3r301md83"
+      firstname:
+        type: string
+        description: The first name of the consumer record. This will
+          display null if no consumer is associated with the
+          report listed.
+        default: "John"
+      lastName:
+        type: string
+        description: The last name of the consumer record.
+        default: "Doe"
+      consumerSSN:
+        type: string
+        description: The last four digits of the consumer’s SSN.
+        default: "6789"
+      reportType:
+        type: string
+        description: The type of report that was generated.
+        default: voa
+        enum:
+          - voa
+          - voi
+          - voa-history
+          - dcr
+          - lite
+          - fix
+      status:
+        type: string
+        description: Response status
+        default: success
+      loanId:
+        type: string
+        description: loan number
+        default: "gjhorjeoijl12"
+      lastFourReportid:
+        type: string
+        description: The last four characters of the report ID before the “-[report type]” suffix associated with the consumer.
+        default: "8907"
+      reseller:
+        type: string
+        description: The name of the reseller associated with the report.This will be null if there is no reseller associated with the report.
+        default: "Experian"
+      resellerProvider: 
+        type: string
+        description: The name of the second level reseller associated with the report. This will be null if there is no second level reseller associated with the report.
+        default: "experian"
+      lenderName:
+        type: string
+        description: Friendly name of the lender (Partner id)
+        default: "abc"
+      partnerId:
+        type: string
+        description: ID of the report partner
+        default: "2445582773174"
+      totalRemainingPages:
+        type: integer
+        description: Returns total number of pages remaining to retrieve
+        default: "2"
+  GenerateTransactionsRequest:
+    type: object
+    description: GenerateTransactionsRequest
+    properties:
+      accountIds:
+        type: string
+        description: Specify accounts to display in the report.
+        default: "12345 5555"
+      reportCustomFields:
+        type: array
+        description: Designate up to 5 custom fields that you would like associated with the report upon generation by providing a label for the field and a value for the field. Set the shown variable to true if you want the custom field to display in the PDF report.
+        items:
+          $ref: "#/definitions/ReportCustomField"
+  ReportCustomField:
+    type: object
+    description: ReportCustomField  
+    properties:
+      label:
+        type: string
+        description: label for the field
+        default: "loanID"
+      value:
+        type: string
+        description: value for the field
+        default: "12345"
+      shown:
+        type: boolean
+        description: Set the shown variable to false if you do not wish to see this field in the PDF report. Note:- By default, the shown variable is set to true.
+        default: true
+  GenerateTransactionsReportResponse:
+    type: object
+    description: GenerateTransactionsReportResponse
+    properties:
+      id:
+        type: string
+        description: >-
+          The reportId, to be passed to Get Report. (UUID with max length 32 characters).
+        default: "38dknche83oh-transactions"
+      customerType:
+        type: string
+        description: active or testing
+        default: "testing"
+      requestId:
+        type: string
+        description: unique requestId for this specific call request
+        default: "0a1b2c3d3"        
+      requesterName:
+        type: string
+        description: Finicity’s name for the requester
+        default: "Demo"
+      consumerId:
+        type: string
+        description: ID of the consumer (UUID with max length 32 characters)
+        default: "0h7h3r301md83"
+      consumerSsn:
+        type: string
+        description: Last 4 digits of the report consumer's Social Security number
+        default: "1111"
+      constraints:
+        type: object
+        description: Specifies use of accountIds,reportCustomFields,includePending,fromDate,and toDate when creating the report.
+        properties:
+          fromDate:
+            type: string
+            description: "This is an optional field . Connect types and passed as an Epoch Timestamp (in seconds). Without this param, the report defaults to 6 months if available. If included, the epoch timestamp should be 10 digits long, and be within two years of the present day. Extending the epoch timestamp beyond 10 digits will default back to six months of data "
+            default: "1494449017"
+          toDate:
+            type: string
+            description: Ending timestamp for the date range
+            default: "1494449017"
+          includePending:
+            type: boolean
+            description: true to include pending transactions if available. By default, this value is false.
+            default: false
+          accountIds: 
+            type: string
+            description: Finicity account IDs
+            default: "12345 5555"  
+          reportCustomFields:
+            type: array
+            description: Designate up to 5 custom fields that you would like associated with the report upon generation by providing a label for the field and a value for the field. Set the shown variable to true if you want the custom field to display in the PDF report.
+            items:
+              $ref: '#/definitions/ReportCustomField'
+      type:
+        type: string
+        description: type of report
+        enum:
+          - transactions
+        default: transactions
+      status:
+        type: string
+        description: inProgress or success or failure
+        default: success
+      title: 
+        type: string
+        description: Title of Report
+        default: "Finicity Transactions Report"
+  NullRequest:
+    type: object
+    description: Empty Request Object
+  #Error Responses
+  ErrorResponse:
+    type: object
+    description: Error Response Object
+    properties:
+      errors:
+        type: array
+        minLength: 1
+        items:
+          $ref: '#/definitions/Error'
+        description: Array of Error responses.
+      success:
+        type: string
+        enum:
+          - true
+          - false
+        description: If successful returns true else false.
+  Error:
+    type: object
+    description: Error Response
+    properties:
+      errorCode:
+        type: string
+        description: Error code
+      errorType:
+        type: string
+        description: Type of Error
+      message:
+        type: string
+        description: Error message

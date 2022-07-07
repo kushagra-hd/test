@@ -1,0 +1,3515 @@
+swagger: '2.0'
+info:
+  description: >-
+    Open API Spec of Apigee APIs. You can find more about Open API Spec here
+    (https://openapis.org/)
+  version: 1.0.0
+  title: Open API Apigee API Program
+  termsOfService: 'https://exp-global-nonprod-exp-dev.apigee.net/terms-of-service'
+  contact:
+    name: API Team
+    url: 'https://exp-global-nonprod-exp-dev.apigee.net/contact'
+    email: apiteam@apigee.net
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: sandbox-us-api.experian.com
+basePath: /automotive/accuselect
+schemes:
+  - https
+securityDefinitions:
+  OauthSecurity:
+    type: oauth2
+    flow: password
+    tokenUrl: 'https://sandbox-us-api.experian.com/oauth2/v1/token'
+    scopes:
+      admin: admin scope
+paths:
+  /v1/vinspecifications:
+    get:
+      operationId: Vin Specifications
+      description: >-
+        Vin Specification API provides the vehicle descriptions of a vehicle
+        such as year, make, model, class, country, body and other specification
+        details along with the total event count.<br>Here are sample VINS you
+        can use for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX,
+        JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/vinSpecifications'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/analyticsindicators:
+    get:
+      operationId: Analytics Indicators
+      description: >-
+        Analytics Indicators API combines the power of both the AutoCheck Score
+        and the Assured Indicators so you can quickly assess the vehicle.
+        AutoCheck Score enables you to understand a vehicle's past quickly and
+        easily, compare it to other similar makes and models vehicles to see how
+        it measures up.  The score ranges between 1- 100. Couple with the
+        insight of the Assured Indicator which lets you know whether a vehicle
+        is assured or not. A vehicle is considered assured if it has no major
+        title brands and problems such as odometers, accidents, grey market and
+        many others.  Leveraging this knowledge will lower the risk of buying,
+        financing, insuring or taking trade in of a vehicle with undetected
+        problems.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/analyticsIndicators'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/conditionindicators:
+    get:
+      operationId: Condition Indicators
+      description: >-
+        Condition Indicator API flags the usage of the vehicle as commercial,
+        taxi or fleet. It also includes the total number of owners and average
+        mile details for the vehicle.<br>Here are sample VINS you can use for
+        testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/conditionIndicators'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/financialindicators:
+    get:
+      operationId: Financial Indicators
+      description: >-
+        Financial indicator API provides the financial information such as lease
+        and lien flag and corresponding dates.  These indicators assess vehicle
+        value to determine loan amount/rate through automated loan origination
+        flows and risk mitigation.<br>Here are sample VINS you can use for
+        testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/financialIndicators'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/ownershiphistory:
+    get:
+      operationId: Ownership History
+      description: >-
+        Ownership API provides the total number of owners on a vehicle, first
+        and last title or registration date, and last title number. <br>Here are
+        sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ownershipHistory'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/accident:
+    get:
+      operationId: Accident
+      description: >-
+        Accident API provides the total number of accident events on a vehicle
+        along with details of the last reported accident such as dates, location
+        and accident details if any such as airbag deployment or severity and
+        location of damage.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/accident'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/mileage:
+    get:
+      operationId: Mileage
+      description: >-
+        Mileage API provides the last odometer date and reading, estimated
+        average miles (current mileage based on estimated average miles) and
+        indicator whether there is an odometer rollback.<br>Here are sample VINS
+        you can use for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX,
+        JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/mileage'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/recall:
+    get:
+      operationId: Recall
+      description: >-
+        Recall API indicates whether a vehicle had a recall and provides an
+        array of all the recall information if available.<br>Here are sample
+        VINS you can use for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX,
+        JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/recall'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/titleproblem:
+    get:
+      operationId: Title Problem
+      description: >-
+        Title/Problem API helps you determine whether a vehicle has major issues
+        by checking all title/problem issues from state, auction, salvage
+        auction and other sources for problem such as Junked or salvaged;
+        dismantled, rebuilt or reconstructed, flood damaged, fire damaged, hail
+        damaged, insurance loss, manufacturer buyback ("Lemon Law" vehicle),
+        odometer issues, accident,  etc. and returning a Y/N indicator. 
+        Additionally, if there are information whether an airbag is deployed or
+        if there was frame or structural damage reported to AutoCheck, you will
+        also get that information . Whether you are a vehicle seller who wants
+        to increase the confidence in buyers, a financial institution or
+        insurance who wants to have transparency of the vehicle’s value or risk,
+        this API will give you instant identification of vehicle’s past
+        problems.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/titleProblem'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/assuredIndicator:
+    get:
+      operationId: Assured Indicator
+      description: >-
+        Assured Indicator API lets you know whether a vehicle is assured or not.
+        A vehicle is considered assured if it has no major title brands and
+        problems such as odometers, accidents, grey market and many others. 
+        Leveraging this knowledge will lower the risk of buying, financing,
+        insuring or taking trade in of a vehicle with undetected
+        problems.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/assuredIndicator'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/autoscore:
+    get:
+      operationId: AutoScore
+      description: >-
+        Autoscore API provides the vehicles AutoCheck score, factors and high
+        and low compare scores. AutoCheck Score is an easy to understand number
+        that allows you to compare vehicles of similar makes and models to see
+        how they measure up. AutoCheck score ranges between 1- 100.<br>Here are
+        sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/autoScore'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/floodRiskIndicators:
+    get:
+      operationId: Flood Risk Indicators
+      description: >-
+        Flood Risk Indicators API helps to mitigate potential flood risk
+        vehicles due to the impact of hurricanes and other major disaster and
+        provide customers more transparency in business decision.  It will let
+        you know whether a flood damage or flood or other related branded titles
+        exist on that specific vehicle if it was reported to our database. 
+        Additionally, a FEMA data flag has been created to indicate if a vehicle
+        has been titled/registered 12 months prior in a county that has been
+        identified as requiring Public & Individual assistance (FEMA Category
+        A&B) for a FEMA-declared major disaster.  This flag should not be
+        interpreted as confirmation of flood-damage or even possible flood
+        damage.  It is merely provided as information regarding the
+        registration/title history.  With the use of this API, you can make more
+        informative business decision in mitigating flood risk vehicles from all
+        information that are available to us. This is available for FREE in our
+        effort of helping identifying flood risk vehicles that are on the
+        market. <br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX 
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/floodRiskIndicators'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/titlebrand:
+    get:
+      operationId: TitleBrand
+      description: >-
+        Title Brand Flag API checks our data if there are any reported title
+        brands from all US jurisdictions such as Junked or Salvaged; Dismantled;
+        Rebuilt or Reconstructed, Flood Damaged; Fire Damaged; Hail Damaged;
+        Manufacturer Buyback ("Lemon Law" vehicle); Odometer (EML, NAM or
+        similar odometer wordings. If there are any titles as described, the
+        flag will return as Y to signify a title issue. However, this pack do
+        not give details as to which one.<br>Here are sample VINS you can use
+        for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/titleBrand'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/ownershippremium:
+    get:
+      operationId: Ownership Premium
+      description: >-
+        Ownership Premium API provides the total number of owners on a vehicle,
+        all ownership dates, and other ownership details. This pack gives more
+        than the regular Ownership API as it includes ALL owners and not just
+        first and last.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ownershipPremium'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/accidentplus:
+    get:
+      operationId: Accident Plus
+      description: >-
+        This pack provides the total number of accident events on a vehicle
+        along all the dates and city and state of every accidents on the
+        vehicle. Accident Plus gives more than the Accident API as that one only
+        gives the last reported accident.<br>Here are sample VINS you can use
+        for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/accidentPlus'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/salvage:
+    get:
+      operationId: Salvage
+      description: >-
+        API checks our data from salvage title brands that are reported by the
+        Division of Motor Vehicles, any vehicles that are at a salvage auctions
+        or if any auctions announced as salvage, the salvage flag would be set
+        to Y.<br>Here are sample VINS you can use for testing:
+        KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX,
+        3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/salvage'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/accidentpremium:
+    get:
+      operationId: Accident Premium
+      description: >-
+        This is our total comprehensive package capturing all police accidents. 
+        It provides the total number of accident events on a vehicle along with
+        details of every accidents on the vehicle such as dates, city and state,
+        location and accident details if any such as airbag deployment or
+        severity and location of damage.  Accident Premium gives more than the
+        Accident Plus API as pack do not give the details of the accidents
+        location of damage and airbag information if available.<br>Here are
+        sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/accidentPremium'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/mileagepremium:
+    get:
+      operationId: Mileage Premium
+      description: >-
+        This pack not only gives everything in our regular Mileage Pack which
+        consists of number of history events, rollback Flag Y/N, estimated
+        average miles which estimate the current odometer reading, but instead
+        of just the last odometer reading and date, it provides every single
+        odometer reading and dates that are reported to Experian. <br>Here are
+        sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/mileagePremium'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/bbp:
+    get:
+      operationId: BBP
+      description: >-
+        BBP API checks our data from 50 state jurisdictions (not US territories
+        or any other) to see if there are any reported title brands such as
+        Junked or Salvaged; Dismantled; Rebuilt or Reconstructed, Flood Damaged;
+        Fire Damaged; Hail Damaged; Manufacturer Buyback ("Lemon Law" vehicle);
+        Odometer (EML, NAM or similar odometer wordings).  These are the same
+        brands that feeds the Experian AutoCheck Buyback Protection Plan.  If
+        there are any titles as described, the flag will return as Y for the
+        respective brands and the corresponding dates of brands and city and
+        location where the brands were issued if available.<br>Here are sample
+        VINS you can use for testing: KL1TD526X5B4XXXXX, 1GNFC130X8R2XXXXX,
+        JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX, 1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/bbp'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  '/v1/recallplus/plate/{plate}/state/{state}':
+    get:
+      operationId: RecallPlus
+      description: >-
+        Recall Plus API provides a plate entry access to get information on
+        whether a vehicle had an open recall and an array of all the recall
+        information if available. This option also allows ability to translate a
+        plate to a VIN.<br>Here are sample plates and corresponding plate/state
+        you can use for testing: HJXXXX/IA , BEAXXXX/IL, JHXXXX/IA, C5XXXX/NJ,
+        388XXXX/NH
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: plate
+          in: path
+          description: license plate.
+          required: true
+          type: string
+          default: HJXXXX
+        - name: state
+          in: path
+          description: license plate state.
+          required: true
+          type: string
+          default: IA
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/recallPlus'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  '/v1/recallpremium/plate/{plate}/state/{state}':
+    get:
+      operationId: RecallPremium
+      description: >-
+        Recall Premium API is geared toward aftermarket. It provides a plate
+        entry access to get information on whether a vehicle had an open recall
+        and an array of all the recall information if available.  This option
+        also allows ability to translate a plate to a VIN, vehicle
+        specifications, and ACES codes for correct parts ordering.<br>Here are
+        sample plates and corresponding plate/state you can use for testing:
+        HJXXXX/IA , BEAXXXX/IL, JHXXXX/IA, C5XXXX/NJ, 388XXXX/NH
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: plate
+          in: path
+          description: license plate.
+          required: true
+          type: string
+          default: b12XXX
+        - name: state
+          in: path
+          description: license plate state.
+          required: true
+          type: string
+          default: XX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/recallPremium'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/recallvintoplate:
+    get:
+      operationId: RecallVinToPlate
+      description: >-
+        VIN to Plate Recall API provides VIN entry access to get information on
+        whether a vehicle had an open recall and an array of all the recall
+        information if available. This option also allows the ability to
+        translate the input VIN to the matched plate, if available. <br>Here are
+        sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/recallVinToPlate'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+  /v1/quickcheck:
+    get:
+      operationId: QuickCheck
+      description: >-
+        The Quick Check API provides attributes that show a basic preview of a
+        vehicles full history report with an accident check, title brand check,
+        and one owner check. This API is meant to be a supplement for the full
+        report via FastLink and may require an AutoCheck subscription. <br>Here
+        are sample VINS you can use for testing: KL1TD526X5B4XXXXX,
+        1GNFC130X8R2XXXXX, JA7FJ23E5JJ0XXXXX, 3C3EL55H0TT2XXXXX,
+        1FACP41E1LF1XXXXX
+      security:
+        - OauthSecurity:
+            - admin
+      tags:
+        - Automotive
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: Accept
+          in: header
+          description: Expected response content type.
+          required: true
+          type: string
+          default: application/json
+        - name: vinlist
+          in: query
+          description: VIN to retreive.
+          required: true
+          type: string
+          default: KL1TD526X5B4XXXXX
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/quickCheck'
+        '400':
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '429':
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '502':
+          description: BadGateway
+          schema:
+            $ref: '#/definitions/errorResponse'
+        '503':
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/errorResponse'
+definitions:
+  vinSpecifications:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - year
+            - make
+            - model
+            - class
+            - trim
+            - country
+            - bodyStyle
+            - doors
+            - drivetrain
+            - transmissionType
+            - wheelSize
+            - engineSize
+            - cylinders
+            - horsepower
+            - eventCount
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            year:
+              type: number
+              description: Vehicle Year.
+            make:
+              type: string
+              minLength: 1
+              description: Vehicle Make.
+            model:
+              type: string
+              minLength: 1
+              description: Vehicle Model.
+            class:
+              type: string
+              minLength: 1
+              description: Vehicle Class.
+            trim:
+              type: string
+              minLength: 1
+              description: Vehicle trim.
+            country:
+              type: string
+              minLength: 1
+              description: Country.
+            bodyStyle:
+              type: string
+              minLength: 1
+              description: Vehicle Body style.
+            doors:
+              type: string
+              minLength: 1
+              description: Number of doors.
+            drivetrain:
+              type: string
+              minLength: 1
+              description: Vehicle drivetrain.
+            transmissionType:
+              type: string
+              minLength: 1
+              description: Vehicle transmission type.
+            wheelSize:
+              type: string
+              minLength: 1
+              description: Vehicle wheel size in inches.
+            engineSize:
+              type: string
+              minLength: 1
+              description: Vehicle engine size.
+            cylinders:
+              type: string
+              minLength: 1
+              description: Number of cylinders.
+            horsepower:
+              type: string
+              minLength: 1
+              description: 'max horsepower, min horsepower'
+            eventCount:
+              type: number
+              description: Total vehicle history event count.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  analyticsIndicators:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - autocheckScore
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            autocheckScore:
+              type: number
+              description: AutoCheck Score.
+            scoreRangeLow:
+              type: number
+              description: Compare score range low.
+            scoreRangeHigh:
+              type: number
+              description: Compare score range high.
+            autocheckPosScoreFactor1:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor1.
+            autocheckPosScoreFactor2:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor2.
+            autocheckPosScoreFactor3:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor3.
+            autocheckNegScoreFactor1:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor1.
+            autocheckNegScoreFactor2:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor2.
+            autocheckNegScoreFactor3:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor3.
+            assured:
+              type: string
+              minLength: 1
+              description: AutoCheck Assured flag Y/N.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  conditionIndicators:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - commercialVehicle
+            - taxiVehicle
+            - fleetVehicle
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            commercialVehicle:
+              type: string
+              minLength: 1
+              description: Commercial use vehicle flag Y/N.
+            taxiVehicle:
+              type: string
+              minLength: 1
+              description: Taxi use vehicle flag Y/N.
+            fleetVehicle:
+              type: string
+              minLength: 1
+              description: Fleet use vehicle flag Y/N.
+            averageMiles:
+              type: number
+              description: Average estimated miles.
+            ownerCount:
+              type: number
+              description: Total Number of owners.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  financialIndicators:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - lease
+            - lien
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            lease:
+              type: string
+              minLength: 1
+              description: Lease flag Y/N.
+            leaseDate:
+              type: string
+              minLength: 1
+              description: Lease date.
+            lien:
+              type: string
+              minLength: 1
+              description: Lien flag Y/N.
+            lienDate:
+              type: string
+              minLength: 1
+              description: Lien date.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  ownershipHistory:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            ownerCount:
+              type: number
+              description: Total Number of owners.
+            currentOwnerStartDt:
+              type: string
+              minLength: 1
+              description: Current Owner Start Date.
+            firstTitleRegDate:
+              type: string
+              minLength: 1
+              description: First Title/Registration Date.
+            lastTitleRegDate:
+              type: string
+              minLength: 1
+              description: Last Title/Registration Date.
+            lastTitleNumber:
+              type: string
+              minLength: 1
+              description: Last Title Number.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  accident:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            accidentCount:
+              type: number
+              description: Total number of accidents.
+            lastReportedAccidentEventCode:
+              type: number
+              description: Last report accident event activity Code.
+            lastReportedAccidentEvent:
+              type: string
+              minLength: 1
+              description: Last report accident event detail.
+            lastReportedAccidentDate:
+              type: string
+              minLength: 1
+              description: Last reported Accident Date.
+            city:
+              type: string
+              minLength: 1
+              description: Last reported accident city.
+            state:
+              type: string
+              minLength: 1
+              description: Last reported accident state.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  mileage:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            eventCount:
+              type: number
+              description: Total number of history events.
+            rollback:
+              type: string
+              minLength: 1
+              description: Odometer rollback flag Y/N.
+            lastOdometer:
+              type: number
+              description: Last Odometer reading.
+            lastOdometerDate:
+              type: string
+              minLength: 1
+              description: Last Odometer Date.
+            estimatedAverageMiles:
+              type: number
+              description: Estimated average miles.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  recall:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - vinspec
+            - recall
+            - serviceBulletin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            vinspec:
+              $ref: '#/definitions/recallplusvinspec'
+            recall:
+              type: string
+              minLength: 1
+              description: Recall flag Y/N.
+            recallCount:
+              type: number
+              description: Total recall count.
+            serviceBulletin:
+              type: string
+              minLength: 1
+              description: Service bulletin recall flag Y/N.
+            serviceBulletinCount:
+              type: number
+              description: Total service bulletin recall count.
+            recallEvents:
+              type: object
+              description: Array of recall events.
+              properties:
+                event:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - code
+                      - text
+                      - date
+                    properties:
+                      code:
+                        type: string
+                        minLength: 1
+                        description: Recall code.
+                      text:
+                        type: string
+                        minLength: 1
+                        description: Recall text.
+                      type:
+                        type: string
+                        minLength: 1
+                        description: Recall type.
+                      date:
+                        type: string
+                        minLength: 1
+                        description: Recall date.
+              required:
+                - event
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  recallPlus:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - vinspec
+            - recall
+            - serviceBulletin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            vinspec:
+              $ref: '#/definitions/recallplusvinspec'
+            recall:
+              type: string
+              minLength: 1
+              description: Recall flag Y/N.
+            recallCount:
+              type: number
+              description: Total recall count.
+            serviceBulletin:
+              type: string
+              minLength: 1
+              description: Service bulletin recall flag Y/N.
+            serviceBulletinCount:
+              type: number
+              description: Total service bulletin recall count.
+            recallEvents:
+              type: object
+              description: Array of recall events.
+              properties:
+                event:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - code
+                      - text
+                      - date
+                    properties:
+                      code:
+                        type: string
+                        minLength: 1
+                        description: Recall code.
+                      text:
+                        type: string
+                        minLength: 1
+                        description: Recall text.
+                      type:
+                        type: string
+                        minLength: 1
+                        description: Recall type.
+                      date:
+                        type: string
+                        minLength: 1
+                        description: Recall date.
+              required:
+                - event
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  recallPremium:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - vinspec
+            - recall
+            - serviceBulletin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            vinspec:
+              $ref: '#/definitions/recallpremiumvinspec'
+            recall:
+              type: string
+              minLength: 1
+              description: Recall flag Y/N.
+            recallCount:
+              type: number
+              description: Total recall count.
+            serviceBulletin:
+              type: string
+              minLength: 1
+              description: Service bulletin recall flag Y/N.
+            serviceBulletinCount:
+              type: number
+              description: Total service bulletin recall count.
+            recallEvents:
+              type: object
+              description: Array of recall events.
+              properties:
+                event:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - code
+                      - text
+                      - type
+                      - date
+                    properties:
+                      code:
+                        type: string
+                        minLength: 1
+                        description: Recall code.
+                      text:
+                        type: string
+                        minLength: 1
+                        description: Recall text.
+                      type:
+                        type: string
+                        minLength: 1
+                        description: Recall type.
+                      date:
+                        type: string
+                        minLength: 1
+                        description: Recall date.
+              required:
+                - event
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  recallVinToPlate:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - plateNumber
+            - plateState
+            - plateTypeCode
+            - vinspec
+            - recall
+            - serviceBulletin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            plateNumber:
+              type: string
+              minLength: 1
+              description: >-
+                Vehicle License Plate, if not available then "No match" is
+                returned.
+            plateState:
+              type: string
+              minLength: 1
+              description: >-
+                Vehicle License Plate State, if not available then "No match" is
+                returned.
+            plateTypeCode:
+              type: string
+              minLength: 1
+              description: >-
+                Vehicle License Plate Type Code, if not available then "No
+                match" is returned.
+            vinspec:
+              $ref: '#/definitions/recallplusvinspec'
+            recall:
+              type: string
+              minLength: 1
+              description: Recall flag Y/N.
+            recallCount:
+              type: number
+              description: Total recall count.
+            serviceBulletin:
+              type: string
+              minLength: 1
+              description: Service bulletin recall flag Y/N.
+            serviceBulletinCount:
+              type: number
+              description: Total service bulletin recall count.
+            recallEvents:
+              type: object
+              description: Array of recall events.
+              properties:
+                event:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - code
+                      - text
+                      - date
+                    properties:
+                      code:
+                        type: string
+                        minLength: 1
+                        description: Recall code.
+                      text:
+                        type: string
+                        minLength: 1
+                        description: Recall text.
+                      type:
+                        type: string
+                        minLength: 1
+                        description: Recall type.
+                      date:
+                        type: string
+                        minLength: 1
+                        description: Recall date.
+              required:
+                - event
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  titleProblem:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - titleProblemCheck
+            - damageCheck
+            - structuralDamage
+            - insuranceLoss
+            - titledToInsurance
+            - airbagDeployed
+            - greyMarket
+            - accidentCheck
+            - accidentCount
+            - odometerRollback
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            titleProblemCheck:
+              type: string
+              minLength: 1
+              description: Title problem flag Y/N.
+            damageCheck:
+              type: string
+              minLength: 1
+              description: Damage flag Y/N.
+            structuralDamage:
+              type: string
+              minLength: 1
+              description: Structural damage flag Y/N.
+            insuranceLoss:
+              type: string
+              minLength: 1
+              description: Insurance loss flag Y/N.
+            titledToInsurance:
+              type: string
+              minLength: 1
+              description: Titled to insurance flag Y/N.
+            airbagDeployed:
+              type: string
+              minLength: 1
+              description: Airbag deplpoyed flag Y/N.
+            greyMarket:
+              type: string
+              minLength: 1
+              description: Grey market flag Y/N.
+            accidentCheck:
+              type: string
+              minLength: 1
+              description: Accident check flag Y/N.
+            accidentCount:
+              type: number
+              description: Total accident count.
+            odometerRollback:
+              type: string
+              minLength: 1
+              description: Odometer rollback flag Y/N.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  assuredIndicator:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            assured:
+              type: string
+              minLength: 1
+              description: Vehicle assured flag Y/N.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  autoScore:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - autocheckScore
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            autocheckScore:
+              type: number
+              description: AutoCheck Score.
+            scoreRangeLow:
+              type: number
+              description: Compare score range low.
+            scoreRangeHigh:
+              type: number
+              description: Compare score range high.
+            autocheckPosScoreFactor1:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor1.
+            autocheckPosScoreFactor2:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor2.
+            autocheckPosScoreFactor3:
+              type: string
+              minLength: 1
+              description: AutoCheck Positive  Score factor3.
+            autocheckNegScoreFactor1:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor1.
+            autocheckNegScoreFactor2:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor2.
+            autocheckNegScoreFactor3:
+              type: string
+              minLength: 1
+              description: AutoCheck Negative  Score factor3.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  floodRiskIndicators:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            regTitleInFemaDisasterZone:
+              type: string
+              description: Registration/Title in FEMA disaster zone flag Y/N.
+            city:
+              type: string
+              description: Disaster zone city.
+            state:
+              type: string
+              description: Disaster zone state.
+            floodTitleAndProblemCheck:
+              type: string
+              description: Flood Title and Problem check flag Y/N.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  titleBrand:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            titleBrandCheck:
+              type: string
+              description: Title Brand check flag Y/N.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  quickCheck:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            accidentDamageCheck:
+              type: string
+              description: Accident Damage check flag Y/N.
+            oneOwner:
+              type: string
+              description: One Owner check flag Y/N.
+            titleBrandCheck:
+              type: string
+              description: Title Brand check flag Y/N.
+            usageType:
+              type: string
+              description: >-
+                Returns single or multiple vehicle usage types.(usage type
+                values- Personal, Fleet, Rental, Lease, Taxi, Livery, Police,
+                Government, Driver’s Ed, Commercial)
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  ownershipPremium:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            ownerCount:
+              type: number
+              description: Total Number of owners.
+            currentOwnerStartDt:
+              type: string
+              minLength: 1
+              description: Current Owner Start Date.
+            firstTitleRegDate:
+              type: string
+              minLength: 1
+              description: First Title/Registration Date.
+            lastTitleRegDate:
+              type: string
+              minLength: 1
+              description: Last Title/Registration Date.
+            ownershipDetails:
+              type: array
+              description: Array of ownership details.
+              uniqueItems: true
+              minItems: 1
+              items:
+                required:
+                  - ownerSeqNum
+                properties:
+                  ownerSeqNum:
+                    type: string
+                    minLength: 1
+                    description: owner sequence number.
+                  startDate:
+                    type: string
+                    minLength: 1
+                    description: owner start date.
+                  endDate:
+                    type: string
+                    minLength: 1
+                    description: owner end date.
+                  state:
+                    type: string
+                    minLength: 1
+                    description: owner state.
+                  lastTitleNumber:
+                    type: string
+                    minLength: 1
+                    description: Last Title Number displayed for current owner only.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  accidentPlus:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            accidentCount:
+              type: number
+              description: Total number of accidents.
+            lastReportedAccidentEventCode:
+              type: number
+              description: Last report accident event activity Code.
+            lastReportedAccidentEvent:
+              type: string
+              minLength: 1
+              description: Last report accident event detail.
+            lastReportedAccidentDate:
+              type: string
+              minLength: 1
+              description: Last reported Accident Date.
+            city:
+              type: string
+              minLength: 1
+              description: Last reported accident city.
+            state:
+              type: string
+              minLength: 1
+              description: Last reported accident state.
+            reportedAccidents:
+              type: array
+              description: Array of reported accidents.
+              uniqueItems: true
+              minItems: 1
+              items:
+                required:
+                  - accidentSeqNum
+                  - reportedDate
+                properties:
+                  accidentSeqNum:
+                    type: string
+                    minLength: 1
+                    description: Accident sequence number.
+                  reportedDate:
+                    type: string
+                    minLength: 1
+                    description: Accident reported date.
+                  city:
+                    type: string
+                    minLength: 1
+                    description: Accident reported city.
+                  state:
+                    type: string
+                    minLength: 1
+                    description: Accident reported state.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  salvage:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - salvageCheck
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            salvageCheck:
+              type: string
+              description: Salvage check flag Y/N..
+            reportedSalvages:
+              type: array
+              description: Array of reported salavages.
+              uniqueItems: true
+              minItems: 1
+              items:
+                properties:
+                  fileSource:
+                    type: string
+                    minLength: 1
+                    description: Salvage reported source.
+                  type:
+                    type: string
+                    minLength: 1
+                    description: Salvage reported type.
+                  date:
+                    type: string
+                    minLength: 1
+                    description: Salvage reported date.
+                  city:
+                    type: string
+                    minLength: 1
+                    description: Salvage reported city.
+                  state:
+                    type: string
+                    minLength: 1
+                    description: Salvage reported state.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  accidentPremium:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - accidentCount
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            accidentCount:
+              type: number
+              description: Total number of accidents.
+            lastReportedAccidentEventCode:
+              type: number
+              description: Last report accident event activity Code.
+            lastReportedAccidentEvent:
+              type: string
+              minLength: 1
+              description: Last report accident event detail.
+            lastReportedAccidentDate:
+              type: string
+              minLength: 1
+              description: Last reported Accident Date.
+            city:
+              type: string
+              minLength: 1
+              description: Last reported accident city.
+            state:
+              type: string
+              minLength: 1
+              description: Last reported accident state.
+            reportedAccidents:
+              type: array
+              description: Array of reported accidents.
+              uniqueItems: true
+              minItems: 1
+              items:
+                required:
+                  - accidentSeqNum
+                  - reportedDate
+                properties:
+                  accidentSeqNum:
+                    type: string
+                    minLength: 1
+                    description: Accident sequence number.
+                  reportedDate:
+                    type: string
+                    minLength: 1
+                    description: Accident reported date.
+                  type:
+                    type: string
+                    minLength: 1
+                    description: Accident reported type.
+                  city:
+                    type: string
+                    minLength: 1
+                    description: Accident reported city.
+                  state:
+                    type: string
+                    minLength: 1
+                    description: Accident reported state.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  mileagePremium:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            eventCount:
+              type: number
+              description: Total number of history events.
+            rollback:
+              type: string
+              minLength: 1
+              description: Odometer rollback flag Y/N.
+            lastOdometer:
+              type: number
+              description: Last Odometer reading.
+            lastOdometerDate:
+              type: string
+              minLength: 1
+              description: Last Odometer Date.
+            estimatedAverageMiles:
+              type: number
+              description: Estimated average miles.
+            reportedOdometerReadings:
+              type: array
+              description: Array of reported Odometer Readings.
+              uniqueItems: true
+              minItems: 1
+              items:
+                required:
+                  - odometer
+                properties:
+                  odometer:
+                    type: string
+                    minLength: 1
+                    description: Odometer reading.
+                  date:
+                    type: string
+                    minLength: 1
+                    description: Odometer reported date.
+                  type:
+                    type: string
+                    minLength: 1
+                    description: Odometer reported type.
+                  city:
+                    type: string
+                    minLength: 1
+                    description: Odometer reported city.
+                  state:
+                    type: string
+                    minLength: 1
+                    description: Odometer reported state.
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  bbp:
+    type: object
+    properties:
+      vehicleCount:
+        type: number
+        description: Number of Vins in the request.
+      vehicle:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          required:
+            - vin
+            - resultCode
+            - resultMessage
+          properties:
+            vin:
+              type: string
+              minLength: 1
+              description: Vehicle Identification Number.
+            bbpCheck:
+              type: number
+              description: Total number of history events.
+            salvage:
+              $ref: '#/definitions/salvagebbp'
+            rebuilt:
+              $ref: '#/definitions/rebuiltbbp'
+            flood:
+              $ref: '#/definitions/floodbbp'
+            fire:
+              $ref: '#/definitions/firebbp'
+            hail:
+              $ref: '#/definitions/hailbbp'
+            manufacturerBuyback:
+              $ref: '#/definitions/manufacturerBuybackbbp'
+            odometer:
+              $ref: '#/definitions/odometerbbp'
+            resultCode:
+              type: number
+              description: Return code (0- success/1-failure).
+            resultMessage:
+              type: string
+              minLength: 1
+              description: Return Message.
+    required:
+      - vehicleCount
+      - vehicle
+  salvagebbp:
+    type: object
+    properties:
+      salvageCheck:
+        type: string
+        description: Salvage check flag Y/N.
+      details:
+        type: array
+        description: Array of reported salvage details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Salvage reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Salvage reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Salvage reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Salvage reported state.
+  rebuiltbbp:
+    type: object
+    properties:
+      rebuiltCheck:
+        type: string
+        description: Rebuilt check flag Y/N.
+      details:
+        type: array
+        description: Array of reported rebuilt details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Rebuilt reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Rebuilt reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Rebuilt reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Rebuilt reported state.
+  floodbbp:
+    type: object
+    properties:
+      floodCheck:
+        type: string
+        description: Flood check flag Y/N.
+      details:
+        type: array
+        description: Array of reported flood details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Flood reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Flood reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Flood reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Flood reported state.
+  firebbp:
+    type: object
+    properties:
+      fireCheck:
+        type: string
+        description: Fire check flag Y/N.
+      details:
+        type: array
+        description: Array of reported fire details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Fire reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Fire reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Fire reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Fire reported state.
+  hailbbp:
+    type: object
+    properties:
+      hailCheck:
+        type: string
+        description: Hail check flag Y/N.
+      details:
+        type: array
+        description: Array of reported hail details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Hail reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Hail reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Hail reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Hail reported state.
+  manufacturerBuybackbbp:
+    type: object
+    properties:
+      manufacturerBuybackCheck:
+        type: string
+        description: Manufacturer Buyback check flag Y/N.
+      details:
+        type: array
+        description: Array of reported manufacturer buyback details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Manufacturer Buyback reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Manufacturer Buyback reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Manufacturer Buyback reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Manufacturer Buyback reported state.
+  odometerbbp:
+    type: object
+    properties:
+      odometerCheck:
+        type: string
+        description: Odometer check flag Y/N.
+      details:
+        type: array
+        description: Array of reported odometer details.
+        uniqueItems: true
+        minItems: 1
+        items:
+          properties:
+            date:
+              type: string
+              minLength: 1
+              description: Odometer reported date.
+            type:
+              type: string
+              minLength: 1
+              description: Odometer reported type.
+            city:
+              type: string
+              minLength: 1
+              description: Odometer reported city.
+            state:
+              type: string
+              minLength: 1
+              description: Odometer reported state.
+  recallplusvinspec:
+    type: object
+    properties:
+      year:
+        type: number
+        description: Vehicle year.
+      make:
+        type: string
+        minLength: 1
+        description: Vehicle make.
+      model:
+        type: string
+        minLength: 1
+        description: Vehicle model.
+      class:
+        type: string
+        minLength: 1
+        description: Vehicle class.
+      country:
+        type: string
+        minLength: 1
+        description: Country.
+      body:
+        type: string
+        minLength: 1
+        description: Vehicle body.
+      engine:
+        type: string
+        minLength: 1
+        description: Vehicle engine.
+  recallpremiumvinspec:
+    type: object
+    properties:
+      country:
+        type: string
+        description: Country of assembly.
+      make:
+        type: string
+        minLength: 1
+        description: Vehicle make.
+      vehicleType:
+        type: string
+        minLength: 1
+        description: Vehicle type.
+      gVWRClass:
+        type: string
+        minLength: 1
+        description: Gross vehicle weight rating.
+      restraintSystem:
+        type: string
+        minLength: 1
+        description: Safety system.
+      identification:
+        type: string
+        minLength: 1
+        description: Identification.
+      model:
+        type: string
+        minLength: 1
+        description: Vehicle model.
+      bodyType:
+        type: string
+        minLength: 1
+        description: Vehicle body style.
+      brakeSystem:
+        type: string
+        minLength: 1
+        description: Vehicle brake system.
+      engineType:
+        type: string
+        minLength: 1
+        description: Vehicle engine type.
+      checkDigit:
+        type: string
+        minLength: 1
+        description: check digit in the VIN.
+      modelYear:
+        type: number
+        minLength: 1
+        description: Vehicle model year.
+      assyPlant:
+        type: string
+        minLength: 1
+        description: Vehicle assembly plant.
+      productionSeqNumber:
+        type: number
+        minLength: 1
+        description: Manufacturer’s production sequence number.
+      trimLevel:
+        type: string
+        minLength: 1
+        description: Vehicle trim level.
+      driveLineType:
+        type: string
+        minLength: 1
+        description: Vehicle drive line type.
+      fuelType:
+        type: string
+        minLength: 1
+        description: Vehicle fuel type.
+      series:
+        type: string
+        minLength: 1
+        description: Vehicle series.
+      vehicleClass:
+        type: string
+        minLength: 1
+        description: Vehicle class.
+      tonnage:
+        type: string
+        minLength: 1
+        description: Vehicle tonnage capacity.
+      salesName:
+        type: string
+        minLength: 1
+        description: Sales Name.
+      mobile6Class:
+        type: string
+        minLength: 1
+        description: Mobile6Class.
+      engineSeriesCode:
+        type: string
+        minLength: 1
+        description: Vehicle engine series code.
+      manufacturer:
+        type: string
+        minLength: 1
+        description: Vehicle manufacturer.
+      engineCode:
+        type: string
+        minLength: 1
+        description: Vehicle engine code.
+      transmissionMfgCode:
+        type: string
+        minLength: 1
+        description: Vehicle transmission manufacturing code.
+      jato:
+        type: string
+        minLength: 1
+        description: Jato code.
+      aces:
+        type: string
+        minLength: 1
+        description: Primary identifier to link to AutoCare Data.
+      acesEng:
+        type: string
+        minLength: 1
+        description: AutoCare ACES Engine code.
+      aaiaLegacy:
+        type: string
+        minLength: 1
+        description: Original AAIA code.
+      acesTransmission:
+        type: string
+        minLength: 1
+        description: AutoCare ACES transmission code.
+      mpg:
+        type: string
+        minLength: 1
+        description: Mileage per gallon.
+  errorResponse:
+    type: object
+    description: Error response object
+    properties:
+      errors:
+        type: array
+        minLength: 1
+        items:
+          $ref: '#/definitions/error'
+      success:
+        type: string
+        enum:
+          - true
+          - false
+  error:
+    type: object
+    properties:
+      errorCode:
+        type: string
+        description: HTTP status code.
+      errorType:
+        type: string
+        description: Type of error encountered.
+      message:
+        type: string
+        description: Description of the error.

@@ -1,0 +1,273 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    Credit Monitoring APIs
+    # Getting started
+    1. Browse the specifications & evaluate against the Sandbox using our Postman collections.
+    2. When you are ready for your own Test/UAT environment, initiate an Onboarding Request as explained in the Consumer Data Suite User Guide.
+    3. Following the Security Standards and Authentication, you will get an Access Token from our OAuth endpoint using the JWT you created.
+    4. Then enroll your consumer in the Consumer Data Suite platform and add product features to the enrollee identifier.
+    5.  Finally, access the product APIs, fulfilling and delivering data to your consumers.
+    
+          Read more in our Consumer Data Suite User Guide under Additional API Docs.
+  version: v1
+  title: Equifax Credit Monitoring API
+  contact:
+    name: Equifax API Support
+    email: gcs.professionalservices@equifax.com
+servers:
+  - url: https://api.equifax.com/personal/consumer-data-suite
+    description: Saas server
+tags:
+  - name: creditMonitoring
+paths:
+  /v1/creditMonitoring:
+    get:
+      tags:
+        - creditMonitoring
+      summary: Returns the alert abstracts associated to the context
+      description: 'Alert type includes: ADDRESS, BALANCEAMOUNT, BALANCEPERCENT, BANKRUPTCY, COLLECTION, DORMANTMONTHS, GARNISHMENT, INQUIRY, LEGALITEM, NAME, TAXLIEN, TRADELINE, CRCSTATEFREEZE, CRCACCESSWITHINVALIDPIN, SCORECHANGE, TARGETSCORE, MINIUMLEVELSCORE, CHANGEVALUESCORE, ACCOUNTNUMBERCHANGE'
+      operationId: getAlerts
+      parameters:
+        - name: from
+          in: query
+          description: from date (yyyy-MM-dd) defaulted to 4 years ago.
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: to date (yyyy-MM-dd) defaulted to current date.
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Returns the alert abstracts associated to the context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditMonitoringAlertAbstract'
+        '404':
+          description: No alerts found
+        '500':
+          description: System Error
+  '/v1/creditMonitoring/history/{deliveryType}':
+    get:
+      tags:
+        - creditMonitoring
+      summary: Returns the alert history delivered that are associated to the context
+      description: 'Alert type includes: ADDRESS, BALANCEAMOUNT, BALANCEPERCENT, BANKRUPTCY, COLLECTION, DORMANTMONTHS, GARNISHMENT, INQUIRY, LEGALITEM, NAME, TAXLIEN, TRADELINE, CRCSTATEFREEZE, CRCACCESSWITHINVALIDPIN, SCORECHANGE, TARGETSCORE, MINIUMLEVELSCORE, CHANGEVALUESCORE, ACCOUNTNUMBERCHANGE'
+      operationId: getAlertDeliveryHistory
+      parameters:
+        - name: deliveryType
+          in: path
+          description: Method of delivery of the report
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: from date (yyyy-MM-dd) defaulted to 2 years ago.
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: to date (yyyy-MM-dd) defaulted to current date.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the alert history delivered that are associated to the context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditMonitoringAlertDeliveryHistory'
+            
+        '404':
+          description: No alerts found
+        '500':
+          description: System Error
+  '/v1/creditMonitoring/{alertId}':
+    get:
+      tags:
+        - creditMonitoring
+      summary: Returns the specified alert
+      description: ''
+      operationId: getAlert
+      parameters:
+        - name: alertId
+          in: path
+          description: ID of the alert to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the specified alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditMonitoringAlert'
+        '404':
+          description: No alert found
+        '500':
+          description: System Error
+  '/v1/creditMonitoring/{alertId}/redeliver':
+    post:
+      tags:
+        - creditMonitoring
+      summary: Process the reprint of the request alert
+      description: ''
+      operationId: postCreditMonitoringAlertReDelivery
+      parameters:
+        - name: alertId
+          in: path
+          description: ID of the alert to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the specified alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditMonitoringAlert'
+        '404':
+          description: No alert found
+        '500':
+          description: System Error
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+
+  schemas:
+    CreditMonitoringAlert:
+      properties:
+        description:
+          type: string
+          description: _Optional_
+        provider:
+          type: string
+          description: 'A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - EXP
+            - TU
+            - UNKNOWN
+        id:
+          type: string
+          description: ' : Alert ID. _Optional_'
+        reportedDate:
+          type: string
+          description: '_Optional_'
+        postedDuringMaintenancePeriod:
+          type: boolean
+          description: 'If this flag is present, it indicates that this alert was created during a maintenance period, so there may be a delay before this alert is reflected on the customer''s credit report. _Optional_'
+          example: false
+        changeAlert:
+          type: boolean
+          description: 'If it''s a change alert. the value is true; if it''s a new alert, the value is false. _Optional_'
+        
+    CreditMonitoringAlertAbstract:
+      properties:
+        id:
+          type: string
+          description: _Optional_
+        type:
+          type: string
+          description: _Optional_
+          enum:
+            - ACCOUNTNUMBERCHANGE
+            - ADDRESS
+            - BALANCEAMOUNT
+            - BALANCEPERCENT
+            - BANKRUPTCY
+            - CHANGEVALUESCORE
+            - COLLECTION
+            - CRCACCESSWITHINVALIDPIN
+            - CRCSTATEFREEZE
+            - DORMANTMONTHS
+            - GARNISHMENT
+            - INQUIRY
+            - LEGALITEM
+            - MINIMUNLEVELSCORE
+            - NAME
+            - SCORECHANGE
+            - TARGETSCORE
+            - TAXLIEN
+            - TRADELINE
+            - BLOCKEDINQUIRY
+            - HARDINQUIRY
+            - UNKNOWN
+        category:
+          type: string
+          description: _Optional_
+        name:
+          type: string
+          description: _Optional_
+        description:
+          type: string
+          description: _Optional_
+        dateReported:
+          type: string
+          description: _Optional_
+          format: date-time
+        provider:
+          type: string
+          description: _Optional_
+          enum:
+            - EFX
+            - EXP
+            - TU
+            - UNKNOWN
+        postedDuringMaintenancePeriod:
+          type: boolean
+          description: _Optional_
+          example: false
+      xml:
+        name: creditMonitoringAlertAbstract
+    CreditMonitoringAlertDeliveryHistory:
+      properties:
+        creditMonitoringAbstract:
+          allOf:
+            - description: ' : Abstract of the credit monitoring alert. _Optional_'
+            - $ref: '#/components/schemas/CreditMonitoringAlertAbstract'
+        id:
+          type: string
+          description: ' : Id for the delivery History table. _Optional_'
+        deliveryStatus:
+          type: string
+          description: ' : Alert  Delivery Status of the credit report. _Optional_'
+          enum:
+            - REPRINT
+            - SENT
+            - RESENT
+            - MAILED
+            - REMAILED
+            - ORDER_FAILED
+            - RETURN_MAIL
+            - EXCEPTION_LETTER_MAILED
+            - ADDRESS_CHANGE
+            - NOT_MAILED
+        creationDate:
+          type: string
+          description: ' : Date the Alert was produced for delivery. _Optional_'
+        modifiedDate:
+          type: string
+          description: ' : Date the Alert was  modified for re delivery. _Optional_'
+        methodOfDelivery:
+          type: string
+          description: ' : Method of delivery the Alert was delivered. _Optional_'
+          enum:
+            - POST_MAIL
+      xml:
+        name: creditMonitoringAlertDeliveryHistory

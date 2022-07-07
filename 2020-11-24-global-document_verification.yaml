@@ -1,0 +1,1163 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    This API can be used for document verification 
+  version: 'v1'
+  title: Global Document Verification
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+    
+paths:
+  /initiate:
+    post:
+      tags:
+        - Document Verification initiate
+      description: This API sends a One-Time-URL-Hyperlink to the consumer's device to initiate the document/biometric capture process.
+      operationId: Document verification initiate
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/doc-verification"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, All requests must include the correlationId.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocVerifyInitiateRequest"
+            examples:
+              OTH Request:
+                $ref: "#/components/examples/DocVerifyInitiateRequest"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocVerifyInitiateResponse"
+              examples:
+                Document Verification Initiate Response:
+                  $ref: "#/components/examples/DocVerifyInitiateResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiateBusinessErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /status :
+    post:
+      tags:
+        - Document Verification Status
+      description: The driving license verification API will give status of uploaded images.
+      operationId: Document verification status
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/document-verify"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, All requests must include the correlationId.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocVerifyStatusRequest"
+            examples:
+              Document Verification Status Request:
+                $ref: "#/components/examples/DocVerifyStatusRequest"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DocVerifyStatusResponse"
+                  - $ref: "#/components/schemas/DocVerifyStatusPendingResponse"
+              examples:
+                Document Verification Status Response:
+                  $ref: "#/components/examples/DocVerifyStatusResponse"
+                Document Verification Status Pending Response:
+                  $ref: "#/components/examples/DocVerifyStatusPendingResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusBusinessErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /image-requests :
+    post:
+      tags:
+        - Document Verification Images
+      description: Retrieve driving license verification images.
+      operationId: Document verification Images
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/document-verify"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, All requests must include the correlationId.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocVerifyImageRequest"
+            examples:
+              Document Verification Status Request:
+                $ref: "#/components/examples/DocVerifyImageRequest"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: Image will be returned
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+              examples:
+                Document Verification Initiate Response:
+                  description: Image will be returned
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusBusinessErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+  /initiate-token:
+    post:
+      tags:
+        - Document Verification initiate token
+      description: For managing session time in customer's web application. A request to it is generating a new token that represents TTL for particular session. It helps to check within each request whether the session is still valid or not.
+      operationId: Document verification initiate token
+      security:
+        - OAuth 2.0: ["scopes: https://api.equifax.com/business/doc-verification"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, All requests must include the correlationId.
+          schema:
+            type: string
+        - name: Content-Type
+          in: header
+          required: true
+          x-example: application/json
+          description: Describes the format in which request body will be sent from Tenant.
+          schema:
+            type: string
+        - name: Accept
+          in: header
+          required: true
+          x-example: application/json
+          description: Describes the format in which response body will be sent to Tenant.
+          schema:
+            type: string    
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocVerifyTokenRequest"
+            examples:
+              Initiate Token Request:
+                $ref: "#/components/examples/DocVerifyTokenRequest"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocVerifyTokenResponse"
+              examples:
+                Document Verification Initiate Token Response:
+                  $ref: "#/components/examples/DocVerifyTokenResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiateBusinessErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+servers:
+  - url: https://api.sandbox.equifax.com/business/global-docs-verfication/v1
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+  schemas:
+    Contact:
+      type: object
+      required:
+        - countryCode
+        - phone
+      properties:
+        countryCode:
+          type: number
+          description: 'Country code'
+          example: "1"
+          maxLength: 3
+        phone:
+          type: number
+          description: 'Mobile Number'
+          example: "1231231234"
+          maxLength: 10
+    ErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+    InitiateBusinessErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+          example: '422'
+        description:
+          type: string
+          example: "Please refer to additionalErrorDetails"
+        additionalErrorDetails:
+          $ref: "#/components/schemas/InitiateAdditionalErrorDetails"
+    StatusBusinessErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+          example: '500'
+        description:
+          type: string
+          example: "Please refer to additionalErrorDetails"
+        additionalErrorDetails:
+          $ref: "#/components/schemas/StatusAdditionalErrorDetails"  
+    InitiateAdditionalErrorDetails:
+      type: object
+      properties:
+        erroCode:
+          type: string
+          description: 'Error code.'
+          maxLength: 10
+          example: 'TFA_VALIDATION_ERROR'
+        developerMessage:
+          type: string
+          description: 'Error code.'
+          maxLength: 50
+          example: 'BAD Request'
+        errorType:
+          type: string
+          description: 'Error code.'
+          maxLength: 100
+          example: "The field 'consumerID' should satisfy the condition: must not be null"
+    StatusAdditionalErrorDetails:
+      type: object
+      properties:
+        erroCode:
+          type: string
+          description: 'Error code.'
+          maxLength: 10
+          example: 'CONSUMER NOT FOUND'
+        developerMessage:
+          type: string
+          description: 'Error code.'
+          maxLength: 50
+          example: 'Consumer results not available yet'
+        detailedMessage:
+          type: string
+          description: 'Error code.'
+          maxLength: 100
+          example: 'Consumer Id Not Found'        
+    DocVerifyStatusRequest:
+      type: object
+      required:
+        - tenantId
+        - applicationId
+        - referenceTransactionId
+        - consumerId
+      properties:
+        tenantId:
+          type: string
+          description: 'The number used to identify the customer.'
+          maxLength: 16
+          example: "equfiaxTest"
+        applicationId:
+          type: string
+          description: 'Application Id used to identify the customer.'
+          maxLength: 80
+          example: 'rome'
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each idvidual customer. Like email address'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'Unique id for each request'
+          maxLength: 80
+          example: 're555-899-aeb0373-54kgfgk'          
+    DocVerifyTokenRequest:
+      type: object
+      required:
+        - tenantId
+        - applicationId
+        - referenceTransactionId
+        - consumerId
+      properties:
+        tenantId:
+          type: string
+          description: 'The number used to identify the customer.'
+          maxLength: 16
+          example: "equfiaxTest"
+        applicationId:
+          type: string
+          description: 'Application Id used to identify the customer.'
+          maxLength: 80
+          example: 'rome'
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each idvidual customer. Like email address'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'Unique id for each request'
+          maxLength: 80
+          example: 're555-899-aeb0373-54kgfgk'          
+    DocVerifyImageRequest:
+      type: object
+      required:
+        - tenantId
+        - applicationId
+        - referenceTransactionId
+        - consumerId
+        - imageType
+      properties:
+        tenantId:
+          type: string
+          description: 'The number used to identify the customer.'
+          maxLength: 16
+          example: "equfiaxTest"
+        applicationId:
+          type: string
+          description: 'Application Id used to identify the customer.'
+          maxLength: 80
+          example: 'rome'
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each idvidual customer. Like email address'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'Unique id for each request'
+          maxLength: 80
+          example: 're555-899-aeb0373-54kgfgk'
+        imageType:
+          type: string
+          description: 'Type of image the request is trying to retrieve'
+          enum: 
+            - croppedFace
+            - front
+            - back
+            - selfie
+          maxLength: 16
+          example: 'front'
+        transactionId:
+          type: string
+          description: 'Unique transaction Id generated in the service that is firing the event'
+          maxLength: 80
+          example: '9921981bcaeb03e29'  
+    DocVerifyInitiateResponse:
+      type: object
+      required:
+        - consumerId
+        - referenceTransactionId
+      properties:
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each idvidual customer. Like email address'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'Unique id used to identify request'
+          maxLength: 80
+          example: 'fdkjs543-asdf23wdfs-asdf23'
+        result:
+          $ref: "#/components/schemas/Result"
+    DocVerifyTokenResponse:
+      type: object
+      required:
+        - consumerId
+        - referenceTransactionId
+      properties:
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each idvidual customer. Like email address'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'Unique id used to identify request'
+          maxLength: 80
+          example: 'fdkjs543-asdf23wdfs-asdf23'
+        result:
+          $ref: "#/components/schemas/ResultToken"
+    ResultToken:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: 'Token'
+          example: 'a3649f1b-178a-4f5b-92e4-b0c1f14ef72f'
+          maxLength: 36
+    Result:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: 'Request Status'
+          example: DELIVERED
+          maxLength: 50
+    DocVerifyInitiateRequest:
+      type: object
+      required:
+        - identity
+        - tenantId
+        - applicationId
+        - referenceTransactionId 
+        - consumerId
+      properties:
+        tenantId:
+          type: string
+          description: 'The number used to identify the customer.'
+          maxLength: 16
+          example: 'Equifax'
+        applicationId:
+          type: string
+          description: 'Application Id used to identify the customer.'
+          maxLength: 80
+          example: 'Equifax'
+        consumerId:
+          type: string
+          description: 'Unique id used to identify each indvidual customer a hash value that is uniquely generated for each consumer'
+          maxLength: 80
+          example: '3e14c589921981bcaeb03e29a97a1023'
+        referenceTransactionId:
+          type: string
+          description: 'The number used to identify the transaction. It should be unique every time'
+          maxLength: 80
+          example: 'fdkjs543-asdf23wdfs-asdf2'  
+        identity:
+          $ref: "#/components/schemas/Identity"
+    Identity:
+      type: object
+      required:
+        - contact
+      properties:
+        contact:
+          $ref: "#/components/schemas/Contact"
+    DocumentDetails:
+      type: object
+      required:
+        - identifyingNumber
+        - issuer
+        - issuedDate
+        - expirationDate
+        - firstname
+        - lastname
+        - addressLine1
+        - city
+        - state
+        - dob
+        - zipCode
+      properties:
+        identifyingNumber:
+          type: string
+          description: Unique identifier for each transaction request.
+          example: 123456789
+          maxLength: 36
+        issuer:
+          type: string
+          description: State Code
+          example: GA
+          maxLength: 2
+        issuedDate: 
+          type: string
+          description: Issuer Date. MM/DD/YYYY
+          example: 12/01/2016
+          maxLength: 10
+        expirationDate: 
+          type: string
+          description: Expiration Date. MM/DD/YYYY
+          example: 12/01/2022
+          maxLength: 10
+        firstName: 
+          type: string
+          description: Driving license owner first name
+          example: driverFirstName
+          maxLength: 100
+        middleName: 
+          type: string
+          description: Driving license owner last name
+          example: driverMiddleName
+          maxLength: 100
+        lastName: 
+          type: string
+          description: Driving license owner last name
+          example: driverLastName
+          maxLength: 100
+        addressLine1: 
+          type: string
+          description: Driving license owner address
+          example: 123 Main St
+          maxLength: 100
+        city:
+          type: string
+          description: City
+          example: Atlanta
+          maxLength: 100
+        state:
+          type: string
+          description: State
+          example: GA
+          maxLength: 2
+        zipCode: 
+          type: string
+          description: Zip code
+          example: 30004
+          maxLength: 100
+        dob: 
+          type: string
+          description: "DOB. MM/DD/YYYY format."
+          example: 01012000
+          maxLength: 10
+        sex: 
+          type: string
+          description: "A person's gender"
+          example: "F"
+          maxLength: 2
+        eyeColor: 
+          type: string
+          description: "The eye color of the bearer"
+          example: "BLUE"
+          maxLength: 10
+        height: 
+          type: string
+          description: "A measurement of a person's height"
+          example: 5'7\
+          maxLength: 10
+        weight: 
+          type: string
+          description: "A measurement of a person's weight."
+          example: 135
+          maxLength: 10
+        endorsements:
+          type: string
+          description: "endorsements"
+          example: "xx"
+        restrictions:
+          type: string
+          description: "restrictions"
+          example: "xx"
+    Status:
+      type: object
+      required:
+        - code
+        - msg
+        - detailedMsg
+      properties:
+        code:
+          type: string
+          description: Decision code.
+          example: PENDING_DECISION
+        msg:
+          type: string
+          description: Decision Message.
+          example: Pending Decision
+        detailedMsg:
+          type: string
+          description: Decision reason
+          example: Consumer Results not available yet. $orchId=deviceChar
+     
+    Details:
+      type: array
+      items: 
+        type: object
+        properties:
+          key:
+            type: string
+            example: 'documentTrust'
+          value:
+            type: string  
+            example: 'Y'
+    DocVerifyStatusResponse:
+      type: object
+      required:
+        - consumerId
+        - referenceTransactionId
+        - results
+      properties:
+        consumerId:
+          type: string
+          description: Unique identifier for each consumer.
+          example: 3e14c589921981bcaeb03e29a97a1023
+          maxLength: 80
+        referenceTransactionId:
+          type: string
+          description: Unique identifier for each transaction request.
+          example: fdkjs543-asdf23wdfs-asdf2
+          maxLength: 80
+        details:
+          $ref: "#/components/schemas/Details"
+        documentDetails:
+          $ref: "#/components/schemas/DocumentDetails"   
+    DocVerifyStatusPendingResponse:
+      type: object
+      required:
+        - consumerId
+        - transactionId
+        - referenceTransactionId
+        - status
+      properties:
+        consumerId:
+          type: string
+          description: Unique identifier for each consumer.
+          example: "3e14c589921981bcaeb03e29a97a1023"
+          maxLength: 80
+        transactionId:
+          type: string
+          description: Unique identifier for each consumer.
+          example: "3e14c589921981bcaeb03e29a97a1023"
+          maxLength: 80
+        referenceTransactionId:
+          type: string
+          description: Unique identifier for each transaction request.
+          example: "fdkjs543-asdf23wdfs-asdf2"
+          maxLength: 80
+        status:
+          $ref: "#/components/schemas/Status"  
+  examples:
+    '400.01':
+      value:   
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+    '401.03':
+      value:   
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+    '403.01':
+      value:   
+        efxErrorCode: '403.01'
+        description: Access Denied.
+    '404.01':
+      value:   
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+    '415.01':
+      value:   
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+    '422.01':
+      value:   
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails:
+            errorCode: 422
+            developerMessage: Required field referenceTransactionId is missing
+            detailMessage: Required field referenceTransactionId is missing
+    '429.01':
+      value:   
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+    '500.01':
+      value:   
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+    '501.01':
+      value:   
+        efxErrorCode: '500.01'
+        description: Not-implemented - Specified resource is not implemented.
+    '503.01':
+      value:   
+        efxErrorCode: '503.01'
+        description: Service is un-available.  
+    '504.01':
+      value:   
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+    DocVerifyInitiateResponse:
+      value:
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "2fdkjs543-asdf23wdfs-asdf2"
+        result:       
+          message: DELIVERED
+    DocVerifyStatusRequest:
+      value:
+        tenantId: "companyCustomer"
+        applicationId: "demoApp"
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "2fdkjs543-asdf23wdfs-asdf2"
+    DocVerifyStatusResponse:
+      value:
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        details:
+          - key: "documentFrontScan"
+            value: "Y"
+          - key: "documentFrontScanReasons"
+            value: "documentScanned"
+          - key: "documentFrontVerification"
+            value: "Y"
+          - key: "documentFrontTrust"
+            value: "N"
+          - key: "documentBackScan"
+            value: "Y"
+          - key: "documentBackScanReasons"
+            value: "documentBadImageQuality"
+          - key: "documentBackVerification"
+            value: "N"
+          - key: "documentBackVerification"
+            value: "documentImageNotVerifiable"
+          - key: "documentBackVerificationReasons"
+            value: "documentImageNotVerifiable"
+          - key: "documentVerificationDecision"
+            value: "N"
+          - key: "facialScanMatch"
+            value: "Y"
+          - key: "facialScanMatchReason"
+            value: ""
+          - key: "deviceTrust"
+            value: "Y"
+          - key: "documentVerificationDecision"
+            value: "Y"
+          - key: "deviceTrustReason"
+            value: "DeviceLowRisk"
+        documentDetails:
+          identifyingNumber: 123456789
+          issuer: GA
+          issuedDate: 12/01/2016
+          expirationDate: 12/01/2020
+          firstname: driveFirstName
+          lastname: driverLastName
+          addressLine1: 123 Main St
+          city: Atlanta
+          state: GA
+          zip: 30005
+          dob: 12/02/2000
+          sex: F
+          eyeColor: BLUE
+          height: 510
+          weight: 135
+          endorsements: xx
+          restrictions: xx
+    DocVerifyStatusPendingResponse:
+      value:
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+        transactionId: "fdkjs543-asdf23wdfs-asdf2-123dsa"
+        status:       
+          code: PENDING_DECISION
+          msg: Consumer Results not available yet
+          deatiledMsg: Consumer Results not available yet
+    DocVerifyInitiateRequest:
+      value:
+        tenantId: "companyCustomer"
+        applicationId: "rome"
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+        identity:
+          contact:
+            countryCode: 61
+            phone: 1231231234
+    DocVerifyTokenRequest:
+      value:
+        tenantId: "companyCustomer"
+        applicationId: "demoApp"
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+    DocVerifyTokenResponse:
+      value:
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+        result: 
+          token: "a3649f1b-178a-4f5b-92e4-b0c1f14ef72f"
+    DocVerifyImageRequest:
+      value:
+        tenantId: "companyCustomer"
+        applicationId: "demoApp"
+        consumerId: "3e14c589921981bcaeb03e29a97a1023"
+        referenceTransactionId: "fdkjs543-asdf23wdfs-asdf2"
+        imageType: "front"
+        transactionId: "fdkjs543-asdf23wdfs-asdf2-123dsa"

@@ -1,0 +1,1862 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    Credit Report API returns the latest credit report
+    # Getting started
+    1. Browse the specifications & evaluate against the Sandbox using our Postman collections.
+    2. When you are ready for your own Test/UAT environment, initiate an Onboarding Request as explained in the Consumer Data Suite User Guide.
+    3. Following the Security Standards and Authentication, you will get an Access Token from our OAuth endpoint using the JWT you created.
+    4. Then enroll your consumer in the Consumer Data Suite platform and add product features to the enrollee identifier.
+    5.  Finally, access the product APIs, fulfilling and delivering data to your consumers.
+    
+          Read more in our Consumer Data Suite User Guide under Additional API Docs.
+  version: v1
+  title: Equifax Credit Report API
+  contact:
+    name: Equifax API Support
+    email: gcs.professionalservices@equifax.com
+servers:
+  - url: https://api.equifax.com/personal/consumer-data-suite
+    description: Saas server
+tags:
+  - name: creditReport
+paths:
+  /v1/creditReport:
+    get:
+      tags:
+        - creditReport
+      summary: List the credit reports that are avaiable to the context user
+      description: ''
+      operationId: listCreditReportAbstracts
+      responses:
+        '200':
+          description: List of credit reports that can be viewed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAbstract'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: No credit reports found
+        '500':
+          description: System Error
+  '/v1/creditReport/history/{deliveryType}':
+    get:
+      tags:
+        - creditReport
+      summary: List the credit reports that were sent via print mail to the context user
+      description: ''
+      operationId: listOfCreditReportDeliveryHistory
+      parameters:
+        - name: deliveryType
+          in: path
+          description: Method of delivery of the report
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of credit reports that were sent via print mail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAbstract'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: 'No report history found '
+        '500':
+          description: System Error
+  /v1/creditReport/latest:
+    get:
+      tags:
+        - creditReport
+      summary: Returns the latest credit report regardless of type
+      description: ''
+      operationId: getLatestCreditReport
+      responses:
+        '200':
+          description: Returns the latest credit report regardless of type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReport'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/latest/{reportType}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the latest credit report by the supplied report type
+      description: ''
+      operationId: getLatestCreditReportByType
+      parameters:
+        - name: reportType
+          in: path
+          description: Report Type to filter by
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the latest credit report by the supplied report type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReport'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the specified credit report
+      description: ''
+      operationId: getCreditReport
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReport'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/collections':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the collections section of the specified credit report
+      description: ''
+      operationId: getCreditReportCollections
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the collections section of the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionItem'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/consumerStatements':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the consumer statement section of the specified credit report
+      description: ''
+      operationId: getCreditReportConsumerStatements
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the consumer staements section of the specified credit report
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/inquiries':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the inquiries ssection of the specified credit report
+      description: ''
+      operationId: getCreditReportInquiries
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the inquiries section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Inquiry'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/installmentAccounts':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the installment accounts section of the specified credit report
+      description: ''
+      operationId: getCreditReportInstallmentAccounts
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the installment accounts section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportAccount'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/installmentAccounts/{accountId}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns a specific installment account from the specified credit report
+      description: ''
+      operationId: getCreditReportInstallmentAccount
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+        - name: accountId
+          in: path
+          description: ID of the account to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a specific installment account from the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportAccount'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/mortgageAccounts':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the mortgage accounts section of the specified credit report
+      description: ''
+      operationId: getCreditReportMortgageAccounts
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the summary section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportAccount'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/mortgageAccounts/{accountId}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns a specific mortgage account from the specified credit report
+      description: ''
+      operationId: getCreditReportMortgageAccount
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+        - name: accountId
+          in: path
+          description: ID of the account to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a specific mortgage account from the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAccount'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/otherAccounts':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the other accounts section of the specified credit report
+      description: ''
+      operationId: getCreditReportOtherAccounts
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the other accounts section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportAccount'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/otherAccounts/{accountId}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns a specific other account from the specified credit report
+      description: ''
+      operationId: getCreditReportOtherAccount
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+        - name: accountId
+          in: path
+          description: ID of the account to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a specific other account from the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAccount'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/personalInformation':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the personal information section of the specified credit report
+      description: ''
+      operationId: getCreditReportPersonalInformation
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the personal information section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/PersonSubject'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/print':
+    get:
+      tags:
+        - creditReport
+      summary: Returns a printable version of the specified credit report
+      description: ''
+      operationId: printCreditReport
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+        - name: outputType
+          in: query
+          description: Output type of the printed report. If not supplied assumes PDF
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a printable version of the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReport'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/publicRecords':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the public records section of the specified credit report
+      description: ''
+      operationId: getCreditReportPublicRecords
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the Public Records section of the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicRecords'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/redeliver':
+    post:
+      tags:
+        - creditReport
+      summary: Returns the id for the currently processed of re delivery of Credit Report
+      description: ''
+      operationId: requestCreditReportReDelivery
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to re Delivery
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the id for the currently processed of redelivery of Credit Report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportDeliveryHistory'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/revolvingAccounts':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the revolving accounts section of the specified credit report
+      description: ''
+      operationId: getCreditReportRevolvingAccounts
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the summary section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportAccount'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/revolvingAccounts/{accountId}':
+    get:
+      tags:
+        - creditReport
+      summary: Returns a specific revolving account from the specified credit report
+      description: ''
+      operationId: getCreditReportRevolvingAccount
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+        - name: accountId
+          in: path
+          description: ID of the account to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a specific revolving account from the specified credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAccount'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportId}/summary':
+    get:
+      tags:
+        - creditReport
+      summary: Returns the summary section of the specified credit report
+      description: ''
+      operationId: getCreditReportSummary
+      parameters:
+        - name: creditReportId
+          in: path
+          description: ID of the Credit Report to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the summary section of the specified credit report
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CreditReportSummary'
+        '204':
+          description: Credit Report/Report Detail not found
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+  '/v1/creditReport/{creditReportType}':
+    post:
+      tags:
+        - creditReport
+      summary: Returns the id to the newly requested credit report
+      description: ''
+      operationId: requestNewCreditReport
+      parameters:
+        - name: creditReportType
+          in: path
+          description: Report type to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the id to the newly requested credit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditReportAbstract'
+        '401':
+          description: 'Unauthorized: Access is denied due to invalid credentials'
+        '404':
+          description: Credit Report/Report Detail not found
+        '500':
+          description: System Error
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Bankruptcy:
+      properties:
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        filedDate:
+          type: string
+          format: date-time
+          description: ' : Date item was filed with the courts. _Optional_'
+        reportedDate:
+          type: string
+          format: date-time
+          description: _Optional_
+        referenceNumber:
+          type: string
+          description: ' : Case Number. _Optional_'
+        dispositionStatus:
+          allOf:
+            - description: ' : Indicates the chapter type and the current status of the bankruptcy (i.e. chapter 13 filed, chapter 13 dismissed, and chapter 13 discharged). _Optional_'
+            - $ref: '#/components/schemas/CodeDescription'
+        courtName:
+          type: string
+          description: ' : Name of the court handling the case. _Optional_'
+        liability:
+          allOf:
+            - description: ' : Liability amount. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        exemptAmount:
+          allOf:
+            - description: ' : Exempt amount. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        assetAmount:
+          allOf:
+            - description: ' : Asset amount. _Optional_'
+            - $ref: '#/components/schemas/Money'
+    CodeDescription:
+      properties:
+        code:
+          type: string
+          description: _Optional_
+        description:
+          type: string
+          description: _Optional_
+      xml:
+        name: codeDescription
+    CollectionItem:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Date the collection was reported to Equifax. _Optional_'
+        assignedDate:
+          type: string
+          format: date-time
+          description: ' : Date the account was assigned to collection status. _Optional_'
+        agencyClient:
+          type: string
+          description: ' : Collection agency name. _Optional_'
+        orginalAmountOwed:
+          allOf:
+            - description: ' : Amount under collection. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        accountNumber:
+          type: string
+          description: ' : Account number under collection. _Optional_'
+        accountDesignatorCode:
+          type: string
+          description: ' : Designation by a lender of an individual responsible for payment of an account. _Optional_'
+          enum:
+            - AUTHORIZED_USER
+            - CO_MAKER
+            - DECEASED
+            - INDIVIDUAL_ACCOUNT
+            - JOINT_ACCOUNT
+            - MAKER
+            - ON_BEHALF_OF_ANOTHER_PERSON
+            - SHARED
+            - TERMINATED
+            - UNDESIGNATED
+        balanceDate:
+          type: string
+          format: date-time
+          description: ' : Date associated with the current balance. _Optional_'
+        statusDate:
+          type: string
+          format: date-time
+          description: ' : Date associated with the current status. _Optional_'
+        status:
+          type: string
+          description: ' : Current status. _Optional_'
+          enum:
+            - CLOSED
+            - FROZEN
+            - OPEN
+            - REFINANCED
+            - TRANSFERRED
+            - ACCOUNT_DISPUTED
+            - ADJUSTMENT
+            - CHECKED
+            - FINANCIAL_COUNSELOR
+            - IN_BANKRUPTCY
+            - NEW_LISTING
+            - OTHER
+            - PAID
+            - PAYMENT
+            - SETTLED
+            - STATUS_UNKNOWN
+            - SUPPRESS_COLLECTION
+            - UNPAID
+            - UNSETTLED
+            - WAGE_EARNER
+        amount:
+          allOf:
+            - description: ' : Current balance of the collection. _Optional_'
+            - $ref: '#/components/schemas/Money'
+    ConsumerStatement:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Date the consumer statement was reported to Equifax. _Optional_'
+        statement:
+          type: string
+          description: ' : Consumer statement text. _Optional_'
+    ContactInformation:
+      properties:
+        contactName:
+          type: string
+          description: ' : Name of contact. _Optional_'
+        address:
+          allOf:
+            - description: ' : address of contact. _Optional_'
+            - $ref: '#/components/schemas/InternationalAddress'
+        phone:
+          allOf:
+            - description: ' : phone number of contact. _Optional_'
+            - $ref: '#/components/schemas/InternationalPhone'
+      xml:
+        name: contactInformation
+    Country:
+      properties:
+        code:
+          type: string
+          description: ' : Country Code. _Optional_'
+        name:
+          type: string
+          description: ' : Country name. _Optional_'
+      xml:
+        name: country
+    CreditReport:
+      properties:
+        providerViews:
+          type: array
+          description: ' : Collection of report views by provider (EFX, EXP, TU). _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditReportProviderView'
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        reportType:
+          type: string
+          description: ' : Type of report (1B vs. 3B). _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        generatedDate:
+          type: string
+          format: date-time
+          description: ' : Date the report is generated. _Optional_'
+      xml:
+        name: creditReport
+    CreditReportAbstract:
+      properties:
+        generatedDate:
+          type: string
+          format: date-time
+          description: ' : Date the report is generated. _Optional_'
+        reportType:
+          type: string
+          description: ' : Type of report (1B vs. 3B). _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        scoreId:
+          type: string
+          description: ' : The id of the score associated with this report. _Optional_'
+      xml:
+        name: creditReportAbstract
+    CreditReportAccount:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        id:
+          type: string
+          description: ' : ID indicates an object ID used in the scenario that there are multiples of the object in question. _Optional_'
+        accountOpen:
+          type: boolean
+          description: ' : Indicates whether the account is open or closed. _Optional_'
+          default: false
+        accountName:
+          type: string
+          description: ' : Name of the creditor. _Optional_'
+        contactInformation:
+          allOf:
+            - description: ' : Creditor contact information. _Optional_'
+            - $ref: '#/components/schemas/ContactInformation'
+        accountNumber:
+          type: string
+          description: ' : Account number. _Optional_'
+        accountStatus:
+          type: string
+          description: ' : Shows the status that identifies the current condition of the account as of the Date Reported. For example, Pays as agreed, 60 - 90 days late this month, or Account included in bankruptcy. _Optional_'
+          enum:
+            - BANKRUPTCY_OR_WAGE_EARNER_PLAN
+            - COLLECTION_OR_CHARGEOFF
+            - FORECLOSURE
+            - FORECLOSURE_OR_REPOSSESSION
+            - LATE_30_DAYS
+            - LATE_60_DAYS
+            - LATE_90_DAYS
+            - WAGE_EARNER_PLAN
+            - TOO_NEW_TO_RATE
+            - PAYS_AS_AGREED
+            - NOT_MORE_THAN_TWO_PAYMENTS_PAST_DUE
+            - NOT_MORE_THAN_THREE_PAYMENTS_PAST_DUE
+            - NOT_MORE_THAN_FOUR_PAYMENTS_PAST_DUE
+            - OVER_120_DAYS_PAST_DUE
+            - COLLECTION
+            - INCLUDED_IN_CHAPTER_13
+            - REPOSSESSION
+            - CHARGE_OFF
+            - ZERO_BALANCE_AND_CURRENT_ACCOUNT
+            - NO_RATE_REPORTED
+            - ACCOUNT_INACTIVE
+            - LOST_OR_STOLEN_CARD
+            - CONTACT_MEMBER_FOR_STATUS
+            - REFINANCED_OR_RENEWED
+            - CONSUMER_DECEASED
+            - IN_FINANCIAL_COUNSELING
+            - FORECLOSURE_PROCESS_STARTED
+            - IN_WEP
+            - ADJUSTMENT_PENDING
+            - DISPUTE_RESOLUTION_PENDING
+            - INCLUDED_IN_BANKRUPTCY
+            - IN_BK
+            - ASSIGNED_TO_US_DEPT_OF_ED
+            - UNAVAILABLE
+        paymentResponsibility:
+          type: string
+          description: ' : Designation by a lender of an individual responsible for payment of an account. _Optional_'
+          enum:
+            - INDIVIDUAL
+            - JOINT_CONTRACTUAL_LIABILITY
+            - SHARED
+            - UNDESIGNATED
+        highCreditAmount:
+          allOf:
+            - description: ' : The highest amount charged to this account. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        accountType:
+          type: string
+          description: ' : Describes the payment arrangement of the account (revolving, installment, mortgage or other). _Optional_'
+          enum:
+            - REVOLVING
+            - MORTGAGE
+            - INSTALLMENT
+            - OTHER
+        creditLimitAmount:
+          allOf:
+            - description: ' : Credit limit. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        termDurationMonths:
+          type: integer
+          format: int32
+          description: ' : The amount of time to repay the loan. _Optional_'
+        termFrequency:
+          type: string
+          description: ' : How often the payments are due. _Optional_'
+        dateOpened:
+          type: string
+          format: date-time
+          description: ' : Date the account was originally opened. _Optional_'
+        balanceAmount:
+          allOf:
+            - description: ' : Amount due to the creditor at the time account. information was last reported _Optional_'
+            - $ref: '#/components/schemas/Money'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Represents the ''as of'' date of the most recent update received from the data furnisher. Accounts may continue to be updated by the data furnisher even after they are closed, paid out or become severely delinquent (charge off, repossession, etc.). _Optional_'
+        pastDueAmount:
+          allOf:
+            - description: ' : Amount currently past due, which can include late charges and fees. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        lastPaymentDate:
+          type: string
+          format: date-time
+          description: ' : Date of the most recent payment. _Optional_'
+        actualPayment:
+          allOf:
+            - description: ' : The payment actually received for a reporting period. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        monthlyPayment:
+          allOf:
+            - description: " : The contractual amount due for a payment period. (the monthly amount due regardless of\tthe actual payment frequency.). _Optional_"
+            - $ref: '#/components/schemas/Money'
+        lastActivityDate:
+          type: string
+          format: date-time
+          description: ' : * For paid as agreed accounts with a zero balance, the DLA contains the Date of Last Payment on the account. * For paid as agreed accounts with a balance greater than zero, the DLA contains the most recent date associated with the account. * For delinquent accounts and accounts included in bankruptcy, the DLA contains the date the first delinquency occurred leading to the Status being reported on the account. _Optional_'
+        majorDelinquencyFirstReportedDate:
+          type: string
+          format: date-time
+          description: ' : The first date the major delinquency status was reported for this account. A major delinquency is considered to be a collection, repossession, charge-off, foreclosure or account included in bankruptcy. _Optional_'
+        monthsReviewed:
+          type: integer
+          format: int32
+          description: ' : How many months the account has been reviewed. _Optional_'
+        creditorClassification:
+          type: string
+          description: ' : A general type of business for the original creditor. _Optional_'
+          enum:
+            - ADVERTISING
+            - CLOTHING
+            - COLLECTION_SERVICES
+            - CONTRACTORS
+            - DEPARTMENT_AND_MAIL_ORDER
+            - EMPLOYMENT
+            - FARM_AND_GARDEN_SUPPLIES
+            - FINANCE
+            - GROCERY
+            - HOME_FURNISHING
+            - JEWELRY_AND_CAMERA
+            - LUMBER_AND_HARDWARE
+            - MEDICAL_AND_HEALTH
+            - MISCELLANEOUS_AND_PUBLIC_RECORD
+            - OIL_AND_NATIONAL_CREDIT_CARDS
+            - PERSONAL_SERVICES_NOT_MEDICAL
+            - REAL_ESTATE_AND_PUBLIC_ACCOMMODATION
+            - SPORTING_GOODS
+            - UTILITIES_AND_FUEL
+            - WHOLESALE
+            - AUTOMOTIVE
+            - BANKING
+            - CABLE_OR_CELLULAR
+            - CHECK_GUARANTEE
+            - CREDIT_UNION
+            - EDUCATIONAL
+            - FINANCIAL
+            - GOVERNMENT
+            - INSURANCE
+            - MEDICAL_OR_HEALTH_CARE
+            - OIL_COMPANY
+            - PERSONAL_SERVICES
+            - RENTAL_OR_LEASING
+            - RETAIL
+            - UTILITIES
+            - UNKNOWN
+        activityDesignator:
+          type: string
+          description: ' : Describes the final state of the account. _Optional_'
+          enum:
+            - CLOSED
+            - DEFAULT
+            - FROZEN
+            - LOST_OR_STOLEN
+            - OPEN
+            - PAID
+            - PAID_AND_CLOSED
+            - REFINANCED
+            - TRANSFER_OR_SOLD
+            - TRANSFER_OR_SOLD_OR_PAID
+            - TRANSFERRED
+            - UNKNOWN
+        chargeOffAmount:
+          allOf:
+            - description: ' : The amount charged to loss by creditor. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        deferredPaymentStartDate:
+          type: string
+          format: date-time
+          description: ' : Contains the date the first payment is due for deferred loans. _Optional_'
+        balloonPaymentAmount:
+          allOf:
+            - description: ' : The amount of the balloon payment. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        balloonPaymentDate:
+          type: string
+          format: date-time
+          description: ' : The date the balloon payment is due. _Optional_'
+        dateClosed:
+          type: string
+          format: date-time
+          description: ' : Date the account was closed to further purchases or paid in full. _Optional_'
+        loanType:
+          allOf:
+            - description: ' : Contains a code that describes the kind of loan (for example: auto, home improvement, credit card, etc.). _Optional_'
+            - $ref: '#/components/schemas/CodeDescription'
+        firstDelinquencyDate:
+          type: string
+          format: date-time
+          description: " : Contains the date of the first\tdelinquency that led to the Rate/Status being reported greater than or equal to current Rate/Status 2. _Optional_"
+        comments:
+          type: array
+          description: ' : Any comments a creditor reports regarding account. _Optional_'
+          items:
+            $ref: '#/components/schemas/CodeDescription'
+        paymentHistory:
+          type: array
+          description: ' : Payment history for this account for up to the past 81 months. _Optional_'
+          items:
+            $ref: '#/components/schemas/PaymentHistoryYear'
+        trendedDataHistory:
+          allOf:
+            - description: ' : Trended Data History for this account going back 24 months. _Optional_'
+            - $ref: '#/components/schemas/TrendedDataHistory'
+        isNegative:
+          type: boolean
+          description: ' : A boolean where true indicates that the account has a negative impact on credit. _Optional_'
+          default: false
+      xml:
+        name: creditReportAccount
+    CreditReportDeliveryHistory:
+      properties:
+        creditReportAbstract:
+          allOf:
+            - description: ' : Abstract of the credit report. _Optional_'
+            - $ref: '#/components/schemas/CreditReportAbstract'
+        id:
+          type: string
+          description: ' : Id for the delivery History table. _Optional_'
+        deliveryStatus:
+          type: string
+          description: ' : Reported  Delivery Status of the credit report. _Optional_'
+          enum:
+            - REPRINT
+            - SENT
+            - RESENT
+            - MAILED
+            - REMAILED
+            - ORDER_FAILED
+            - RETURN_MAIL
+            - EXCEPTION_LETTER_MAILED
+            - ADDRESS_CHANGE
+            - NOT_MAILED
+        creationDate:
+          type: string
+          format: date-time
+          description: ' : Date the report was produced for delivery. _Optional_'
+        modifiedDate:
+          type: string
+          format: date-time
+          description: ' : Date the report was  modified for re delivery. _Optional_'
+        methodOfDelivery:
+          type: string
+          description: ' : Method of delivery the report was delivered. _Optional_'
+          enum:
+            - POST_MAIL
+      xml:
+        name: creditReportDeliveryHistory
+    CreditReportProviderDisputeInformation:
+      properties:
+        contactName:
+          type: string
+          description: ' : Name of contact. _Optional_'
+        address:
+          allOf:
+            - description: ' : address of contact. _Optional_'
+            - $ref: '#/components/schemas/InternationalAddress'
+        phone:
+          allOf:
+            - description: ' : phone number of contact. _Optional_'
+            - $ref: '#/components/schemas/InternationalPhone'
+      xml:
+        name: creditReportProviderDisputeInformation
+    CreditReportProviderView:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        summary:
+          allOf:
+            - description: ' : The summary portion of the credit report. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummary'
+        revolvingAccounts:
+          type: array
+          description: ' : List of all the accounts on the report of type Revolving. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditReportAccount'
+        mortgageAccounts:
+          type: array
+          description: ' : List of all the accounts on the report of type Mortgage. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditReportAccount'
+        installmentAccounts:
+          type: array
+          description: ' : List of all the accounts on the report of type Installmnet. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditReportAccount'
+        otherAccounts:
+          type: array
+          description: ' : List of all the accounts on the report of type Other. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditReportAccount'
+        inquiries:
+          type: array
+          description: ' : List of inquiries on the report. _Optional_'
+          items:
+            $ref: '#/components/schemas/Inquiry'
+        consumerStatements:
+          type: array
+          description: ' : List of consumer statements on the report. _Optional_'
+          items:
+            $ref: '#/components/schemas/ConsumerStatement'
+        publicRecords:
+          allOf:
+            - description: ' : List of public records on the report. _Optional_'
+            - $ref: '#/components/schemas/PublicRecords'
+        collections:
+          type: array
+          description: ' : List of collections on the report. _Optional_'
+          items:
+            $ref: '#/components/schemas/CollectionItem'
+      xml:
+        name: creditReportProviderView
+    CreditReportSummary:
+      properties:
+        id:
+          type: string
+          description: _Optional_
+        reportGenerated:
+          type: string
+          format: date-time
+          description: ' : Date the report is generated. _Optional_'
+        creditFileSecurityFreezeFlag:
+          type: boolean
+          description: ' : A flag indicating whether the consumer has a Security Freeze on the report. In certain states a consumer is entitled by state law to place a security freeze upon his/ her credit file. Credit grantors and service providers will not be able to access the consumer''s credit file without his/her permission (with the exception of companies with which the consumer has already established credit; with the exception of collection agencies which need access to the file for collection of a debt owed by that consumer; and with a few other state-specific exceptions). _Optional_'
+          default: false
+        reportType:
+          type: string
+          description: ' : Report type. _Optional_'
+          enum:
+            - US_EFX
+            - US_3B
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        subject:
+          allOf:
+            - description: ' : PII for the consumer. _Optional_'
+            - $ref: '#/components/schemas/PersonSubject'
+        creditScore:
+          allOf:
+            - description: ' : A score compiled based upon variables in a consumer''s credit file that is indicative of the consumer''s creditworthiness. _Optional_'
+            - $ref: '#/components/schemas/CreditScore'
+        revolvingAccounts:
+          allOf:
+            - description: ' : Credit summary information for Revolving accounts. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummaryAccounts'
+        mortgageAccounts:
+          allOf:
+            - description: ' : Credit summary information for Mortgage accounts. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummaryAccounts'
+        installmentAccounts:
+          allOf:
+            - description: ' : Credit summary information for Installment accounts. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummaryAccounts'
+        otherAccounts:
+          allOf:
+            - description: ' : Credit summary information for Other accounts. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummaryAccounts'
+        totalOpenAccounts:
+          allOf:
+            - description: ' : Total number of open accounts on the report. _Optional_'
+            - $ref: '#/components/schemas/CreditReportSummaryAccounts'
+        lengthOfCreditHistoryMonths:
+          type: integer
+          format: int32
+          description: ' : Total length of consumer''s credit history, in months. _Optional_'
+        totalNegativeAccounts:
+          type: integer
+          format: int32
+          description: ' : Count of negative accounts. _Optional_'
+        averageAccountAgeMonths:
+          type: integer
+          format: int32
+          description: ' : Total age of all the open acocunts divided by the number of open accounts. _Optional_'
+        oldestAccountOpenDate:
+          type: string
+          format: date-time
+          description: ' : The date the oldest account on the report was opened. _Optional_'
+        oldestAccountName:
+          type: string
+          description: ' : The name of the oldest account on the report. _Optional_'
+        mostRecentAccountOpenDate:
+          type: string
+          format: date-time
+          description: ' : The date the most recent account on the report was opened. _Optional_'
+        mostRecentAccountName:
+          type: string
+          description: ' : The name of the most recent account on the report. _Optional_'
+        totalConsumerStatements:
+          type: integer
+          format: int32
+          description: ' : Total count of consumer statements on the report. _Optional_'
+        mostRecentInquiryDate:
+          type: string
+          format: date-time
+          description: ' : The date the most recent inquiry reported. _Optional_'
+        mostRecentInquiryName:
+          type: string
+          description: ' : The name of the most recent inquiry reported. _Optional_'
+        totalPersonalInformation:
+          type: integer
+          format: int32
+          description: ' : Total count of personal information records on the report, including the person subject, address, and employment records. _Optional_'
+        totalInquires:
+          type: integer
+          format: int32
+          description: ' : Total count of inquiries on the report. _Optional_'
+        totalPublicRecords:
+          type: integer
+          format: int32
+          description: ' : Total count of public records on the report. _Optional_'
+        totalCollections:
+          type: integer
+          format: int32
+          description: ' : Total count of collections on the report. _Optional_'
+        disputeInformation:
+          allOf:
+            - description: ' : Bureau dispute information. _Optional_'
+            - $ref: '#/components/schemas/CreditReportProviderDisputeInformation'
+      xml:
+        name: creditReportSummary
+    CreditReportSummaryAccounts:
+      properties:
+        balance:
+          allOf:
+            - description: ' : Total balance across all the open accounts of a given type. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        creditLimit:
+          allOf:
+            - description: ' : Total credit limit across all the open accounts of a given type. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        available:
+          allOf:
+            - description: ' : Total available credit across all the open accounts of a given type. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        monthlyPaymentAmount:
+          allOf:
+            - description: ' : Sum of the scheduled monthly payment amount across all the open accounts of a given type. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        debtToCreditRatio:
+          type: number
+          format: double
+          description: ' : Total debt-to-credit ratio (balance divided by credit limit) across all the open accounts of a given type. _Optional_'
+        totalAccounts:
+          type: integer
+          format: int32
+          description: ' : Count of open accounts by a given type. _Optional_'
+        totalNegativeAccounts:
+          type: integer
+          format: int32
+          description: ' : Count of negative accounts by a given type. _Optional_'
+        totalAccountsWithBalance:
+          type: integer
+          format: int32
+          description: ' : Total count of the accounts of the given type that are open and have a balance. _Optional_'
+      xml:
+        name: creditReportSummaryAccounts
+    CreditScore:
+      properties:
+        score:
+          type: integer
+          format: int32
+          description: ' : A score compiled based upon variables in a consumer''s credit file that is indicative of the consumer''s creditworthiness. _Optional_'
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        scoreRanges:
+          type: array
+          description: ' : The list of the credit score ranges and the corresponding score rating for each range associated with the particular score model. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreRange'
+        loanRiskRanges:
+          type: array
+          description: ' : The list of loan risk ranges and the corresponding risk rating for each range associated with a particular score model. The Loan Risk Rating describes how lenders may view the consumer''s level of credit risk based on the consumer''s score. People with higher credit scores have a greater likelihood to repay loans on time, over time. People with lower scores have a higher risk of becoming delinquent on loan payments. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreLoanRiskRange'
+        scoreReasons:
+          type: array
+          description: ' : A list of codes returned based on the Vantage 3.0 method of scoring that are either positive or negative adverse actions. _Optional_'
+          items:
+            $ref: '#/components/schemas/CreditScoreReason'
+      xml:
+        name: creditScore
+    CreditScoreLoanRiskRange:
+      properties:
+        low:
+          type: integer
+          format: int32
+          description: _Optional_
+        high:
+          type: integer
+          format: int32
+          description: _Optional_
+        name:
+          type: string
+          description: _Optional_
+      xml:
+        name: creditScoreLoanRiskRange
+    CreditScoreRange:
+      properties:
+        low:
+          type: integer
+          format: int32
+          description: _Optional_
+        high:
+          type: integer
+          format: int32
+          description: _Optional_
+        name:
+          type: string
+          description: _Optional_
+      xml:
+        name: creditScoreRange
+    CreditScoreReason:
+      properties:
+        code:
+          type: string
+          description: _Optional_
+        description:
+          type: string
+          description: _Optional_
+        creditScoreFactorEffect:
+          type: string
+          enum:
+            - HELPING
+            - HURTING
+            - NEUTRAL
+          description: _Optional_
+    Employer:
+      properties:
+        employerName:
+          type: string
+          description: ' : Employer Name. _Optional_'
+        employeeTitle:
+          type: string
+          description: ' : Occupation. _Optional_'
+        currentEmployer:
+          type: boolean
+          description: ' : Use this to determine the order in which to display the employment records. If no employment dates are returned with the record, this field will be set false by default. _Optional_'
+          default: false
+        ordinal:
+          type: integer
+          format: int32
+          description: ' : The order in which the employment records should be displayed (i.e. the most recent record is #1, the next recent is #2, etc.). If no employment dates are returned with the record, this field will be set to -1. _Optional_'
+        dateOfEmployment:
+          type: string
+          format: date-time
+          description: ' : Date employment began. _Optional_'
+        address:
+          allOf:
+            - description: ' : Employment address. _Optional_'
+            - $ref: '#/components/schemas/InternationalAddress'
+    Inquiry:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        id:
+          type: string
+          description: _Optional_
+        type:
+          type: string
+          description: ' : Hard inquiries are visible to anyone that obtains a copy of the credit report. Soft inquiries are only visible to the owner of the credit report. _Optional_'
+          enum:
+            - HARD
+            - SOFT
+            - OTHER
+        prefix:
+          allOf:
+            - description: ' : Inquiry intent. _Optional_'
+            - $ref: '#/components/schemas/CodeDescription'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Date the inquiry was reported to Equifax. _Optional_'
+        contactInformation:
+          allOf:
+            - description: ' : Contact information for the party that initiated the inquiry. _Optional_'
+            - $ref: '#/components/schemas/ContactInformation'
+    InternationalAddress:
+      properties:
+        country:
+          allOf:
+            - description: _Optional_
+            - $ref: '#/components/schemas/Country'
+        line1:
+          type: string
+          description: ' : Address line 1. _Optional_'
+        line2:
+          type: string
+          description: ' : Address line 2. _Optional_'
+        line3:
+          type: string
+          description: ' : City. _Optional_'
+        line4:
+          type: string
+          description: ' : State. _Optional_'
+        line5:
+          type: string
+          description: ' : Zip. _Optional_'
+        firstReportedDate:
+          type: string
+          format: date-time
+          description: ' : Date address first reported. _Optional_'
+        lastReportedDate:
+          type: string
+          format: date-time
+          description: ' : Date address last reported. _Optional_'
+        phone:
+          allOf:
+            - description: ' : Phone. _Optional_'
+            - $ref: '#/components/schemas/InternationalPhone'
+      xml:
+        name: internationalAddress
+    InternationalPhone:
+      properties:
+        countryCode:
+          type: string
+          description: ' : Country Code of phone. _Optional_'
+        areaCode:
+          type: string
+          description: ' : area Code of Phone. _Optional_'
+        exchange:
+          type: string
+          description: _Optional_
+        extension:
+          type: string
+          description: _Optional_
+      xml:
+        name: StringernationalPhone
+    Judgment:
+      properties:
+        id:
+          type: string
+          description: _Optional_
+        filedDate:
+          type: string
+          format: date-time
+          description: ' : Date item was filed with the courts. _Optional_'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Date the <item> was reported to Equifax. _Optional_'
+        courtName:
+          type: string
+          description: ' : Name of the court handling the case. _Optional_'
+        defendant:
+          type: string
+          description: ' : The person against whom the lawsuit is filed and from whom relief is sought. _Optional_'
+        amount:
+          allOf:
+            - description: ' : The actual amount of the last payment. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        caseDocumentNumber:
+          type: string
+          description: ' : The court docket number assigned to a case by the Clerk. _Optional_'
+        plaintiff:
+          type: string
+          description: ' : The person who begins the lawsuit because he/she believes they have suffered some injury or injustice. _Optional_'
+        verifiedDate:
+          type: string
+          format: date-time
+          description: ' : Date the court record <item> was re-checked and verified. _Optional_'
+        status:
+          allOf:
+            - description: ' : Used as in current status - how an account is currently being paid, either paid on time or paid late. _Optional_'
+            - $ref: '#/components/schemas/CodeDescription'
+        satisfiedDate:
+          type: string
+          format: date-time
+          description: ' : Date the <item> was satisfied. _Optional_'
+    Lien:
+      properties:
+        id:
+          type: string
+          description: _Optional_
+        filedDate:
+          type: string
+          format: date-time
+          description: ' : Date item was filed with the courts. _Optional_'
+        reportedDate:
+          type: string
+          format: date-time
+          description: ' : Date the lien was reported to Equifax. _Optional_'
+        courtName:
+          type: string
+          description: ' : Name of the court handling the case. _Optional_'
+        caseDocumentNumber:
+          type: string
+          description: ' : The court docket number assigned to a case by the Clerk. _Optional_'
+        lienAmount:
+          allOf:
+            - description: ' : The monetary amount for any given lien. _Optional_'
+            - $ref: '#/components/schemas/Money'
+        verifiedDate:
+          type: string
+          format: date-time
+          description: ' : Date the court record <item> was re-checked and verified. _Optional_'
+        status:
+          type: string
+          description: ' : Used as in current status- how an account is currently being paid, either paid on time or paid late. _Optional_'
+    Money:
+      properties:
+        amount:
+          type: number
+          format: double
+          description: _Optional_
+        currency:
+          type: string
+          description: _Optional_
+          enum:
+            - USD
+            - CAD
+            - GBP
+      xml:
+        name: money
+    PaymentHistoryMonth:
+      properties:
+        monthType:
+          type: string
+          description: _Optional_
+          enum:
+            - NO_DATA
+            - NEGATIVE
+            - POSITIVE
+            - COLLECTION
+            - NEW_ACCOUNT
+            - BANKRUPTCY
+            - FORECLOSURE
+            - VOLUNTARY_SURRENDER
+            - REPOSSESSION
+            - CHARGE_OFF
+            - COLLECTION_CHARGEOFF
+        value:
+          type: string
+          description: ' : The payment status for a given month/year. _Optional_'
+          enum:
+            - PAYS_AS_AGREED
+            - DAYSLATE_30
+            - DAYSLATE_60
+            - DAYSLATE_90
+            - DAYSLATE_120
+            - DAYSLATE_150
+            - DAYSLATE_180
+            - TOO_NEW_TO_RATE
+            - BANKRUPTCY
+            - COLLECTION
+            - FORECLOSURE
+            - VOLUNTARY_SURRENDER
+            - REPOSSESSION
+            - CHARGE_OFF
+            - COLLECTION_CHARGEOFF
+            - ZERO_BAL_AND_CURR_ACCT
+            - NOT_REPORTED
+            - UNAVAILABLE
+    PaymentHistoryYear:
+      properties:
+        year:
+          type: integer
+          format: int32
+          description: ' : The year associated with the payment history element. _Optional_'
+        january:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        february:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        march:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        april:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        may:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        june:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        july:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        august:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        september:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        october:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        november:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+        december:
+          allOf:
+            - description: ' : The month associated with the payment history element. _Optional_'
+            - $ref: '#/components/schemas/PaymentHistoryMonth'
+      xml:
+        name: paymentHistoryYear
+    PersonName:
+      properties:
+        lastName:
+          type: string
+          description: ' : The individual''s Last Name. _Optional_'
+        firstName:
+          type: string
+          description: ' : The individual''s First Name. _Optional_'
+        middleName:
+          type: string
+          description: ' : The individual''s Middle Name. _Optional_'
+        suffix:
+          type: string
+          description: ' : The individual''s suffix. _Optional_'
+      xml:
+        name: personName
+    PersonSubject:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        currentName:
+          allOf:
+            - description: ' : Name. _Optional_'
+            - $ref: '#/components/schemas/PersonName'
+        aliases:
+          type: array
+          description: ' : Alias of individual. _Optional_'
+          items:
+            $ref: '#/components/schemas/PersonName'
+        currentAddress:
+          allOf:
+            - description: ' : Currrent address of individual. _Optional_'
+            - $ref: '#/components/schemas/InternationalAddress'
+        previousAddresses:
+          type: array
+          description: ' : Previous address of individual. _Optional_'
+          items:
+            $ref: '#/components/schemas/InternationalAddress'
+        homePhone:
+          allOf:
+            - description: ' : Home phone of the individual. _Optional_'
+            - $ref: '#/components/schemas/InternationalPhone'
+        mobilePhone:
+          allOf:
+            - description: ' : Mobile phone of the individual. _Optional_'
+            - $ref: '#/components/schemas/InternationalPhone'
+        nationalIdentifier:
+          type: string
+          description: ' : National Identifier of the individual. _Optional_'
+        dateOfBirth:
+          type: string
+          format: date-time
+          description: ' : Date of Birth of the individual. _Optional_'
+        dateOfDeath:
+          type: string
+          format: date-time
+          description: ' : Date of Death of the individual. _Optional_'
+        employmentHistory:
+          type: array
+          description: ' : Employment History of the individual. _Optional_'
+          items:
+            $ref: '#/components/schemas/Employer'
+      xml:
+        name: personSubject
+    PublicRecords:
+      properties:
+        provider:
+          type: string
+          description: ' : A firm which receives, maintains, and provides information about consumer''s credit history. There are three national credit reporting agencies (Equifax, Experian and TransUnion). There are many smaller agencies, but almost all of them get information from one or more of the three major agencies. National credit reporting agencies adhere to the requirements of the Fair Credit Reporting Act (FCRA). _Optional_'
+          enum:
+            - EFX
+            - TU
+            - EXP
+            - UNKNOWN
+        bankruptcies:
+          type: array
+          description: ' : A proceeding in federal court whereby a person who is unable to pay his debts in full may be discharged from the legal obligation to do so. Three types apply to consumers: 1. Chapter 7 refers to a court proceeding where one''s unprotected assets are sold and disbursed to pay creditors. 2. Chapter 13 allows the debtor an extended time to repay all or part of his/her debts. The debtor is allowed to keep his/her assets. 3. Chapter 12 refers to a court proceeding where financial obligations are released due to the inability of a family farm to pay their debts. _Optional_'
+          items:
+            $ref: '#/components/schemas/Bankruptcy'
+        judgments:
+          type: array
+          description: ' : A determination by a court of law that, in the case of credit, may require a person to fulfill an obligation-to pay a debt, for example. When a judgement has been satisfied (i.e, the debit has been paid or settled), the consumer has fulfilled their requirements and is no longer liable. Information about judgments is recorded in the public records section of a credit report. _Optional_'
+          items:
+            $ref: '#/components/schemas/Judgment'
+        liens:
+          type: array
+          description: ' : A legal claim upon the property of another as security to ensure that a debt will be paid. A tax lien is a lien filed by a state government or by the Federal government. The Federal Government''s Internal Revenue Service, which collects income taxes from consumers may place notices of liens in county courts, listing the consumer''s unpaid federal income taxes. Lien Released - Means that the lien is paid. _Optional_'
+          items:
+            $ref: '#/components/schemas/Lien'
+    TrendedData:
+      properties:
+        name:
+          type: string
+          description: ' : The name of trended data in this element. _Optional_'
+        years:
+          type: array
+          description: ' : The list of trended data years per element. _Optional_'
+          items:
+            $ref: '#/components/schemas/TrendedDataYear'
+        labels:
+          type: array
+          description: ' : The list of trended data labels per element. _Optional_'
+          items:
+            type: string
+      xml:
+        name: trendedData
+    TrendedDataHistory:
+      properties:
+        name:
+          type: string
+          description: ' : The name of the trended data history element. _Optional_'
+        trendedDataList:
+          type: array
+          description: ' : The list of the trended data for the element type. _Optional_'
+          items:
+            $ref: '#/components/schemas/TrendedData'
+    TrendedDataYear:
+      properties:
+        year:
+          type: string
+          description: ' : The string year label of the TrendedDataYear element. _Optional_'
+        monthData:
+          type: array
+          description: ' : The list of month values for the TrendedDataYear element starting with January for a 12 month period. _Optional_'
+          items:
+            type: string

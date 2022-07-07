@@ -1,0 +1,975 @@
+openapi: 3.0.0
+info:
+  title: Kount-Command
+  description: "# Introduction\n  This is OPENAPI 3.0 specification for Kount Command\n\
+    \  \n  Kount Command API enables Payment Transaction Decision requests that return\
+    \ an Approve, Review or Decline\n  decision based on risk evaluations.\n\n  A\
+    \ server-side API request is invoked to the Risk Inquiry Decision (RIS) endpoint.\
+    \ The\n  response to this API call will include the decision and metadata about\
+    \ the payment event. There are companion\n  API calls for Kount Command to be\
+    \ used to update the status of a transaction and to report chargeback\n  information.\
+    \ Kount Command works in concert with the Device Data Collection (DDC) which is\
+    \ a JavaScript snippet\n  placed within the browser page, or within a native iOS/Android\
+    \ SDK mobile application.\n  \nGetting Started\n1. **<a href=\"/user/applications\"\
+    \ target=\"_blank\">Subscribe</a>** to a Kount Command product to get API\ncredentials.\n\
+    \n2.  **<a href=\"/oauth\" target=\"_blank\">Get an\naccess token</a>** using\
+    \ the credentials.\n"
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: 1.0.0
+servers:
+- url: https://api.sandbox.equifax.com/business/kcommand
+  description: sandbox environment
+security:
+- BearerAuth: []
+paths:
+  /kountrisk:
+    post:
+      tags:
+      - Kount Command RIS
+      description: RIS standard Q Mode POST call.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RISRequestBody'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RISResponse'
+        "401":
+          description: 401.04 Token expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorCode'
+        "501":
+          description: 501.01 Not-implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501ErrorCode'
+  /orders/status:
+    post:
+      tags:
+      - Update Status
+      description: set the status asynchronously for a given order.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AsyncStatusRequestBody'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncStatusResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400UpdateOrderStatusErrorCode'
+        "401":
+          description: 401.04 Token expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorCode'
+        "404":
+          description: 404 Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404UpdateChargeBackErrorCode'
+        "501":
+          description: 501.01 Not-implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501ErrorCode'
+  /orders/rfcb:
+    post:
+      tags:
+      - Update Chargeback status
+      description: Set the refund/chargeback status for a given order.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateRefundRequestBody'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateRefundResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400UpdateChargeBackErrorCode'
+        "401":
+          description: 401.04 Token expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorCode'
+        "404":
+          description: 404 Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404UpdateChargeBackErrorCode'
+        "501":
+          description: 501.01 Not-implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/501ErrorCode'
+components:
+  schemas:
+    RISRequestBody:
+      required:
+      - CURR
+      - IPAD
+      - MACK
+      - MERC
+      - MODE
+      - PROD_ITEM[0]
+      - PROD_PRICE[0]
+      - PROD_QUANT[0]
+      - PROD_TYPE[0]
+      - PTYP
+      - SESS
+      - SITE
+      - TOTL
+      - VERS
+      type: object
+      properties:
+        VERS:
+          $ref: '#/components/schemas/VERS'
+        MODE:
+          $ref: '#/components/schemas/MODE'
+        FRMT:
+          $ref: '#/components/schemas/FRMT'
+        MERC:
+          $ref: '#/components/schemas/MERC'
+        SITE:
+          $ref: '#/components/schemas/SITE'
+        SESS:
+          $ref: '#/components/schemas/SESS'
+        ORDR:
+          $ref: '#/components/schemas/ORDR'
+        MACK:
+          $ref: '#/components/schemas/MACK'
+        IPAD:
+          $ref: '#/components/schemas/IPAD'
+        CURR:
+          $ref: '#/components/schemas/CURR'
+        TOTL:
+          $ref: '#/components/schemas/TOTL'
+        EMAL:
+          $ref: '#/components/schemas/EMAL'
+        PTYP:
+          $ref: '#/components/schemas/PTYP'
+        PENC:
+          $ref: '#/components/schemas/PENC'
+        PTOK:
+          $ref: '#/components/schemas/PTOK'
+        LAST4:
+          $ref: '#/components/schemas/LAST4'
+        PROD_TYPE[0]:
+          $ref: '#/components/schemas/PROD_TYPE%5B0%5D'
+        PROD_DESC[0]:
+          $ref: '#/components/schemas/PROD_DESC%5B0%5D'
+        PROD_QUANT[0]:
+          $ref: '#/components/schemas/PROD_QUANT%5B0%5D'
+        PROD_PRICE[0]:
+          $ref: '#/components/schemas/PROD_PRICE%5B0%5D'
+        PROD_ITEM[0]:
+          $ref: '#/components/schemas/PROD_ITEM%5B0%5D'
+        B2A1:
+          $ref: '#/components/schemas/B2A1'
+        B2CI:
+          $ref: '#/components/schemas/B2CI'
+        B2ST:
+          $ref: '#/components/schemas/B2ST'
+        B2PC:
+          $ref: '#/components/schemas/B2PC'
+        B2CC:
+          $ref: '#/components/schemas/B2CC'
+        S2A1:
+          $ref: '#/components/schemas/S2A1'
+        S2CI:
+          $ref: '#/components/schemas/S2CI'
+        S2ST:
+          $ref: '#/components/schemas/S2ST'
+        S2PC:
+          $ref: '#/components/schemas/S2PC'
+        S2CC:
+          $ref: '#/components/schemas/S2CC'
+        UDF[PARTICIPANT_ID]:
+          $ref: '#/components/schemas/UDF%5BPARTICIPANT_ID%5D'
+      description: RIS standard Q Mode request body
+    RISResponse:
+      type: object
+      properties:
+        VERS:
+          $ref: '#/components/schemas/VERS'
+        MODE:
+          $ref: '#/components/schemas/MODE'
+        TRAN:
+          $ref: '#/components/schemas/TRAN'
+        MERC:
+          $ref: '#/components/schemas/MERC'
+        SESS:
+          $ref: '#/components/schemas/SESS'
+        ORDR:
+          $ref: '#/components/schemas/ORDR'
+        AUTO:
+          $ref: '#/components/schemas/AUTO'
+        SCOR:
+          $ref: '#/components/schemas/SCOR'
+        GEOX:
+          $ref: '#/components/schemas/GEOX'
+        BRND:
+          $ref: '#/components/schemas/BRND'
+        REGN:
+          $ref: '#/components/schemas/REGN'
+        NETW:
+          $ref: '#/components/schemas/NETW'
+        KAPT:
+          $ref: '#/components/schemas/KAPT'
+        CARDS:
+          $ref: '#/components/schemas/CARDS'
+        DEVICES:
+          $ref: '#/components/schemas/DEVICES'
+        EMAILS:
+          $ref: '#/components/schemas/EMAILS'
+        VELO:
+          $ref: '#/components/schemas/VELO'
+        VMAX:
+          $ref: '#/components/schemas/VMAX'
+        SITE:
+          $ref: '#/components/schemas/SITE'
+        DEVICE_LAYERS:
+          $ref: '#/components/schemas/DEVICE_LAYERS'
+        FINGERPRINT:
+          $ref: '#/components/schemas/FINGERPRINT'
+        TIMEZONE:
+          $ref: '#/components/schemas/TIMEZONE'
+        LOCALTIME:
+          $ref: '#/components/schemas/LOCALTIME'
+        REGION:
+          $ref: '#/components/schemas/REGION'
+        COUNTRY:
+          $ref: '#/components/schemas/COUNTRY'
+        PROXY:
+          $ref: '#/components/schemas/PROXY'
+        JAVASCRIPT:
+          $ref: '#/components/schemas/JAVASCRIPT'
+        FLASH:
+          $ref: '#/components/schemas/FLASH'
+        COOKIES:
+          $ref: '#/components/schemas/COOKIES'
+        HTTP_COUNTRY:
+          $ref: '#/components/schemas/HTTP_COUNTRY'
+        LANGUAGE:
+          $ref: '#/components/schemas/LANGUAGE'
+        MOBILE_DEVICE:
+          $ref: '#/components/schemas/MOBILE_DEVICE'
+        MOBILE_TYPE:
+          $ref: '#/components/schemas/MOBILE_TYPE'
+        MOBILE_FORWARDER:
+          $ref: '#/components/schemas/MOBILE_FORWARDER'
+        VOICE_DEVICE:
+          $ref: '#/components/schemas/VOICE_DEVICE'
+        PC_REMOTE:
+          $ref: '#/components/schemas/PC_REMOTE'
+        RULES_TRIGGERED:
+          $ref: '#/components/schemas/RULES_TRIGGERED'
+        COUNTERS_TRIGGERED:
+          $ref: '#/components/schemas/COUNTERS_TRIGGERED'
+        REASON_CODE:
+          $ref: '#/components/schemas/REASON_CODE'
+        DDFS:
+          $ref: '#/components/schemas/DDFS'
+        DSR:
+          $ref: '#/components/schemas/DSR'
+        UAS:
+          $ref: '#/components/schemas/UAS'
+        BROWSER:
+          $ref: '#/components/schemas/BROWSER'
+        OS:
+          $ref: '#/components/schemas/OS'
+        PIP_IPAD:
+          $ref: '#/components/schemas/PIP_IPAD'
+        PIP_LAT:
+          $ref: '#/components/schemas/PIP_LAT'
+        PIP_LON:
+          $ref: '#/components/schemas/PIP_LON'
+        PIP_COUNTRY:
+          $ref: '#/components/schemas/PIP_COUNTRY'
+        PIP_REGION:
+          $ref: '#/components/schemas/PIP_REGION'
+        PIP_CITY:
+          $ref: '#/components/schemas/PIP_CITY'
+        PIP_ORG:
+          $ref: '#/components/schemas/PIP_ORG'
+        IP_IPAD:
+          $ref: '#/components/schemas/IP_IPAD'
+        IP_LAT:
+          $ref: '#/components/schemas/IP_LAT'
+        IP_LON:
+          $ref: '#/components/schemas/IP_LON'
+        IP_COUNTRY:
+          $ref: '#/components/schemas/IP_COUNTRY'
+        IP_REGION:
+          $ref: '#/components/schemas/IP_REGION'
+        IP_CITY:
+          $ref: '#/components/schemas/IP_CITY'
+        IP_ORG:
+          $ref: '#/components/schemas/IP_ORG'
+        OMNISCORE:
+          $ref: '#/components/schemas/OMNISCORE'
+        WARNING_COUNT:
+          $ref: '#/components/schemas/WARNING_COUNT'
+      description: RIS Post Q Mode standard response from kount test endpoint.
+    AsyncStatusRequestBody:
+      required:
+      - status[DCZY0S2HY8XB]
+      type: object
+      properties:
+        status[DCZY0S2HY8XB]:
+          $ref: '#/components/schemas/status%5BDCZY0S2HY8XB%5D'
+      description: Async Status call requestBody
+    AsyncStatusResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/status'
+        count:
+          $ref: '#/components/schemas/count'
+        errors:
+          $ref: '#/components/schemas/errors'
+        results:
+          $ref: '#/components/schemas/results'
+      description: Async status call return
+    UpdateRefundRequestBody:
+      required:
+      - rfcb[DCZY0S2HY8XB]
+      type: object
+      properties:
+        rfcb[DCZY0S2HY8XB]:
+          $ref: '#/components/schemas/rfcb%5BDCZY0S2HY8XB%5D'
+      description: Update Refund call requestBody
+    UpdateRefundResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/status'
+        count:
+          $ref: '#/components/schemas/count'
+        errors:
+          $ref: '#/components/schemas/errors'
+        results:
+          $ref: '#/components/schemas/results'
+      description: Update Refund Response
+    "401ErrorCode":
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+          example: "401.04"
+        description:
+          type: string
+          example: Token expired.
+      description: 401 Error
+    "501ErrorCode":
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+          example: "501.01"
+        description:
+          type: string
+          example: Not-implemented - Specified resource is not implemented
+      description: 501.01 Error
+    "400UpdateOrderStatusErrorCode":
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+          example: "400"
+        description:
+          type: string
+          example: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          $ref: '#/components/schemas/400UpdateOrderStatusErrorCode_additionalErrorDetails'
+      description: 400 Error
+    "400UpdateChargeBackErrorCode":
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+          example: "400"
+        description:
+          type: string
+          example: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          $ref: '#/components/schemas/400UpdateChargeBackErrorCode_additionalErrorDetails'
+      description: 400 Error
+    "404UpdateChargeBackErrorCode":
+      type: object
+      properties:
+        efxErrorCode:
+          type: string
+          example: "404"
+        description:
+          type: string
+          example: Please refer to additionalErrorDetails
+        additionalErrorDetails:
+          $ref: '#/components/schemas/404UpdateChargeBackErrorCode_additionalErrorDetails'
+      description: 404 Error
+    X-Correlation-ID:
+      pattern: ^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$
+      type: string
+      description: Unique event identifier throughout Kount systems
+      format: uuid
+      example: 2438ac3c-37eb-4902-adef-ed16b4431030
+    X-Kount-Api-Key:
+      type: string
+      description: Kount API Key
+      example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4ODg4ODUiLCJhdWQiOiJLb3VudC4xIiwiaWF0IjoxNjAyODgzMjI1LCJzY3AiOnsia2EiOnRydWUsImtjIjpudWxsLCJhcGkiOnRydWUsInJpcyI6dHJ1ZX19.TfkO99F-60_5C7sNRJZ1wEaMCImC0Z2N3H5n3HdEpFA
+    rfcb[DCZY0S2HY8XB]:
+      type: String
+      description: Set the refund/chargeback status for a given order. Can also optionally
+        set the chargeback code. Key Name values must be lower case. TRANSACTION_ID
+        (i.e. 79700W3CKRDD) and Flag (C or R) values must be upper case
+      example: R
+    status[DCZY0S2HY8XB]:
+      type: string
+      description: Set the status asynchronously for a given order. Can be submitted
+        any time after the initial RIS call is completed. status[TRANSACTION_ID] the
+        TRANSACTION_ID need to be set to a valid id, such as DCZY0S2HY8XB
+      example: A
+    status:
+      type: string
+      description: ok or fail response
+      example: ok
+    success:
+      type: number
+      description: number of success
+      example: 1
+    failure:
+      type: number
+      description: number of failure
+      example: 0
+    count:
+      type: object
+      properties:
+        success:
+          $ref: '#/components/schemas/success'
+        failure:
+          $ref: '#/components/schemas/failure'
+      description: number of success or failure
+    errors:
+      type: array
+      description: array of errors that will be display should failure rise above
+        1
+      example: []
+      items:
+        type: string
+    results:
+      type: array
+      description: list of responses
+      example:
+      - Status for transaction [DCZY0S2HY8XB] successfully changed to [A]
+      items:
+        type: string
+    VERS:
+      type: string
+      description: The Kount API RIS version, use 0695 for the latest
+      example: "0700"
+    MODE:
+      type: string
+      description: The Mode of the RIS call, Q for the basic inquiry
+      example: Q
+      enum:
+      - Q
+      - P
+      - U
+      - X
+    FRMT:
+      type: string
+      description: The format of the response, JSON or XML
+      example: JSON
+      enum:
+      - JSON
+      - XML
+    MERC:
+      type: string
+      description: The Kount provided merchant ID
+      example: "888885"
+    SITE:
+      type: string
+      description: Website identifier of where order originated.
+      example: DEFAULT
+    SESS:
+      type: string
+      description: Unique Session ID. Must be unique over a 30-day span. SESS is used
+        to join the customer device data with the order data sent with the RIS request.
+      example: 255be9c39bce405cbe3f10d1c442f764
+    ORDR:
+      type: string
+      description: Merchant’s Order Number. 64 characters alpha-numeric
+      example: ORDR-1624882095
+    MACK:
+      type: string
+      description: The Merchant Acknowledgement, always set to "Y"
+      example: "Y"
+    IPAD:
+      type: string
+      description: The IP Address of the transaction
+      example: 10.0.0.1
+    CURR:
+      type: string
+      description: The currency used for this transaction
+      example: USD
+    TOTL:
+      type: string
+      description: The total amount of the transaction in the given currency (CURR)
+      example: "99499"
+    EMAL:
+      type: string
+      description: The email address used for the transaction
+      example: bob@bob.com
+    PTYP:
+      type: string
+      description: The Payment type used in the transaction
+      example: CARD
+    PENC:
+      type: string
+      description: The payment encription method
+      example: KHASH
+    PTOK:
+      type: string
+      description: The KHASH'ed version of the test card
+      example: 411111WMS5YA6FUZA1KC
+    LAST4:
+      type: number
+      description: The Last4 digits of the Credit Card
+      example: 1111
+    ANID:
+      type: string
+      description: Automatic Number Identification (Caller ID) submitted with order.
+        If the ANI cannot be determined, merchant must pass 0123456789 as the ANID.
+        This field is only valid for MODE=P RIS submissions.
+      example: "4403137784"
+    PROD_TYPE[0]:
+      type: string
+      description: The Product Type - Cart Item 1
+      example: Fishing Rod
+    PROD_DESC[0]:
+      type: string
+      description: The Product Description - Cart Item 1
+      example: G.Loomis® NRX Light-Presentation Fly Rod
+    PROD_QUANT[0]:
+      type: string
+      description: The Product Quantity - Cart Item 1
+      example: "1"
+    PROD_PRICE[0]:
+      type: number
+      description: The Product Price per unit item, displayed in lowest currency factor
+        - Cart Item 1
+      example: 75500
+    PROD_ITEM[0]:
+      type: string
+      description: The Product SKU - Cart Item 1
+      example: IK - 326013
+    B2A1:
+      type: string
+      description: Billing Street Address - Line 1
+      example: 917 S Lusk St
+    B2CI:
+      type: string
+      description: Billing City
+      example: Boise
+    B2ST:
+      type: string
+      description: Billing State
+      example: ID
+    B2PC:
+      type: string
+      description: Billing Postal Code
+      example: "83706"
+    B2CC:
+      type: string
+      description: Billing Country Code
+      example: US
+    S2A1:
+      type: string
+      description: Shipping Street Address - Line 1
+      example: 917 S Lusk St
+    S2CI:
+      type: string
+      description: Shipping City
+      example: Boise
+    S2ST:
+      type: string
+      description: Shipping State
+      example: ID
+    S2PC:
+      type: string
+      description: Shipping Postal Code
+      example: "83706"
+    S2CC:
+      type: string
+      description: Shipping Country Code
+      example: US
+    UDF[PARTICIPANT_ID]:
+      type: string
+      description: User Defined Field
+      example: "09837476234"
+    TRAN:
+      type: string
+      description: Kount transaction ID number
+      example: 13KP0ZY4M345
+    AUTO:
+      type: string
+      description: Auto-decision response code (Aprrove, Decline, Review, Escalate)
+      example: A
+      enum:
+      - A
+      - D
+      - R
+      - E
+    SCOR:
+      type: number
+      description: Kount score
+      example: 28
+    GEOX:
+      type: string
+      description: Persona related country with highest probability of fraud
+      example: US
+    BRND:
+      type: string
+      description: Brand of credit card used when payment type is ’credit card’
+      example: VISA
+    REGN:
+      type: string
+      description: Region associated to Device location
+      example: TX
+    NETW:
+      type: string
+      description: Riskiest network type associated with persona within the last 14
+        days (Anonymous, High School, Library, Normal, Open Proxy, Prision, Satelite)
+      example: "N"
+      enum:
+      - A
+      - H
+      - L
+      - "N"
+      - O
+      - P
+      - S
+    KAPT:
+      type: string
+      description: Whether or not device data was collected by the Data Collector
+        process (Y or N)
+      example: "Y"
+    CARDS:
+      type: number
+      description: Total number of credit cards associated to persona as seen by Kount
+      example: 1
+    DEVICES:
+      type: number
+      description: Total number of unique devices associated to persona as seen by
+        Kount
+      example: 1
+    EMAILS:
+      type: number
+      description: Total number of unique email addresses associated to persona as
+        seen by Kount
+      example: 1
+    VELO:
+      type: number
+      description: Quantity of orders seen from persona within last 14 days. AUTH
+        field must be equal to ‘A’.
+      example: 0
+    VMAX:
+      type: number
+      description: Quantity of orders from persona within the most active 6 hour window
+        in last 14 days. AUTH field must be equal to ‘A’.
+      example: 0
+    DEVICE_LAYERS:
+      type: string
+      description: 5 device layers representing the operating system, browser, javascript
+        settings, cookie setting and flash settings. Device layers are used to create
+        the device fingerprint. one continuous string with no spaces
+      example: DF651ACF30..99CF09F417.E3D16F2CB7.061826EF2B
+    FINGERPRINT:
+      type: string
+      description: The unique fingerprint of the device placing the order. (one continuous
+        string with no spaces)
+      example: 290D1C0172364AADAC25D9FD0B13D946
+    TIMEZONE:
+      type: string
+      description: The timezone the device owner has set in the device’s Control Panel.
+        The value listed represents the number of minutes from Greenwich Meantime.
+        Divide by 60 to get number of hours.
+      example: "360"
+    LOCALTIME:
+      type: string
+      description: The local time the device owner has set in the device’s Control
+        Panel
+      example: 2015-02-12 13:41
+    REGION:
+      type: string
+      description: Region associated to GEOX Location
+      example: TX
+    COUNTRY:
+      type: string
+      description: Two character ISO country code associated with the physical device
+      example: US
+    PROXY:
+      type: string
+      description: Was a proxy server detected with this order (Y or N)
+      example: "Y"
+    JAVASCRIPT:
+      type: string
+      description: A flag to indicate if the device placing order has ’javascript’
+        enabled or not
+      example: "Y"
+    FLASH:
+      type: string
+      description: A flag to indicate if the device placing order has ’flash’ enabled
+        or not
+      example: "Y"
+    COOKIES:
+      type: string
+      description: A flag to indicate if the device placing order has ’cookies’ enabled
+        or not
+      example: "Y"
+    HTTP_COUNTRY:
+      type: string
+      description: User Home country the device owner has set in the device’s Control
+        Panel
+      example: US
+    LANGUAGE:
+      type: string
+      description: The language the device owner has set in the device’s Control Panel
+      example: en
+    MOBILE_DEVICE:
+      type: string
+      description: Is the device placing the order of a mobile nature (iPhone; Android;
+        Blackberry; iPad, etc.) Y or N
+      example: "Y"
+    MOBILE_TYPE:
+      type: string
+      description: iPhone; Android; Blackberry; iPad, etc.
+      example: Blackberry
+    MOBILE_FORWARDER:
+      type: string
+      description: If device is mobile, is it using a forwarder to process the carrier’s
+        service (Y or N)
+      example: "N"
+    VOICE_DEVICE:
+      type: string
+      description: Is the device voice activated (related to mobile devices) (Y or
+        N)
+      example: "N"
+    PC_REMOTE:
+      type: string
+      description: Is the device enabled to use PC Remote software (Y or N)
+      example: "N"
+    RULES_TRIGGERED:
+      type: number
+      description: Number of rules triggered by the RIS post
+      example: 0
+    COUNTERS_TRIGGERED:
+      type: number
+      description: Number of unique counter names triggered during rules evaluation
+      example: 0
+    REASON_CODE:
+      type: string
+      description: Number of unique counter names triggered during rules evaluation.
+        Will display as NONE if no Reason_Code is defined
+    DDFS:
+      type: string
+      description: Date device first seen
+      example: 8/28/2013
+    DSR:
+      type: string
+      description: Device screen resolution
+      example: 1080x1920
+    UAS:
+      type: string
+      description: User agent string
+      example: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9a8)
+    BROWSER:
+      type: string
+      description: Web browser
+      example: Chrome 26.0.1410.63
+    OS:
+      type: string
+      description: Operating System
+      example: Linux x86_64
+    PIP_IPAD:
+      type: string
+      description: Pierced IP Address (214.43.99.120)
+    PIP_COUNTRY:
+      type: string
+      description: Country of pierced IP address (US)
+    PIP_LAT:
+      type: number
+      description: latitude of pierced IP address (-90.1922)
+    PIP_LON:
+      type: number
+      description: longtitude of pierced IP address (38.6312)
+    PIP_CITY:
+      type: string
+      description: City of pierced IP address (Houston)
+    PIP_REGION:
+      type: string
+      description: State/Region of pierced IP addres
+    PIP_ORG:
+      type: string
+      description: Owner of pierced IP address or address block
+    IP_IPAD:
+      type: string
+      description: IP address of proxy
+      example: 208.75.113.3
+    IP_COUNTRY:
+      type: string
+      description: Country of proxy IP address
+      example: US
+    IP_LAT:
+      type: number
+      description: Latitude of proxy IP address
+      example: 43.6337
+    IP_LON:
+      type: number
+      description: Longitude of proxy IP address
+      example: -116.2004
+    IP_CITY:
+      type: string
+      description: City of proxy IP address
+      example: Boise
+    IP_REGION:
+      type: string
+      description: State/Region of proxy IP address
+      example: Idaho
+    IP_ORG:
+      type: string
+      description: Owner of IP address or address block
+      example: UNKNOWN
+    OMNISCORE:
+      type: number
+      description: Kount OMNI score - Higher the score, the safer the event/transaction.
+      example: 54
+    "3D_SECURE_MERCHANT_RESPONSE":
+      type: string
+      description: 3D Secure recommendation based on policies defined within Kount
+      example: Challenge
+    WARNING_COUNT:
+      type: number
+      description: Number of warnings merchant RIS post created
+      example: 0
+    "400UpdateOrderStatusErrorCode_additionalErrorDetails_count":
+      type: object
+      properties:
+        success:
+          type: integer
+          example: 0
+        failure:
+          type: integer
+          example: 1
+    "400UpdateOrderStatusErrorCode_additionalErrorDetails_errors":
+      type: object
+      properties:
+        msg:
+          type: string
+          example: Invalid status type[a]
+        code:
+          type: string
+          example: "2201"
+        scope:
+          type: string
+          example: new_stat=a
+        type:
+          type: integer
+          example: 400
+    "400UpdateOrderStatusErrorCode_additionalErrorDetails":
+      type: object
+      properties:
+        status:
+          type: string
+          example: failure
+        count:
+          $ref: '#/components/schemas/400UpdateOrderStatusErrorCode_additionalErrorDetails_count'
+        errors:
+          $ref: '#/components/schemas/400UpdateOrderStatusErrorCode_additionalErrorDetails_errors'
+    "400UpdateChargeBackErrorCode_additionalErrorDetails_errors":
+      type: object
+      properties:
+        code:
+          type: string
+          example: "1743"
+        msg:
+          type: string
+          example: Invalid Refund/Chargeback status value, expects 'R' or 'C' [c]
+        scope:
+          type: string
+          example: status=c
+        type:
+          type: integer
+          example: 400
+    "400UpdateChargeBackErrorCode_additionalErrorDetails":
+      type: object
+      properties:
+        status:
+          type: string
+          example: failure
+        count:
+          $ref: '#/components/schemas/400UpdateOrderStatusErrorCode_additionalErrorDetails_count'
+        errors:
+          $ref: '#/components/schemas/400UpdateChargeBackErrorCode_additionalErrorDetails_errors'
+    "404UpdateChargeBackErrorCode_additionalErrorDetails_errors":
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 1731
+        msg:
+          type: string
+          example: Transaction not found [DCZY0S2HY8XX]
+        scope:
+          type: string
+          example: DCZY0S2HY8XX
+        type:
+          type: integer
+          example: 404
+    "404UpdateChargeBackErrorCode_additionalErrorDetails":
+      type: object
+      properties:
+        status:
+          type: string
+          example: failure
+        count:
+          $ref: '#/components/schemas/400UpdateOrderStatusErrorCode_additionalErrorDetails_count'
+        errors:
+          $ref: '#/components/schemas/404UpdateChargeBackErrorCode_additionalErrorDetails_errors'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

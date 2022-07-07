@@ -1,0 +1,397 @@
+openapi: 3.0.0
+info:
+  title: IXI Real Time Append
+  description: >-
+    # Introduction
+
+    **IXI Real Time Append API Actionable Customer Data and Financial Market Insights**
+
+    Leverage WalletInsights, a gateway to customizable consumer market analytics applications that combine your firm's data with our wealth, economic, and credit insights.
+
+    **WalletInsights can help your company:**
+
+    * Target highly profitable customers
+
+    * Jump on profitable markets
+
+    * Isolate and manage risk
+
+    * Drive rapid changes to your field teams
+
+    * Monitor performance in fast changing markets.
+
+    # Getting Started
+
+    1. <a href="/user/user-apps" target="_blank">Subscribe</a> to get API credentials.
+
+    2. Use API credentials to <a href="/oauth" target="_blank">generate an access token</a>
+
+    3. Reach out to <IXI-Feedback@equifax.com> to initiate your specific setup.
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+    email: ixi-bugs@equifax.com
+  version: v1
+servers:
+  - url: 'https://api.sandbox.equifax.com/business/wallet-insights/v1'
+paths:
+  /measurements:
+    post:
+      tags:
+        - Measurements
+      description: Looks up measures for a given address and/or person
+      operationId: Measurements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/V1RtaRequestZip'
+                - $ref: '#/components/schemas/V1RtaRequestCityState'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1RtaResponse'
+              example:
+                transactionId: a54c17d4-27ce-4f7e-9c72-b0e580012e8f
+                suffix: null
+                firstName: Ron
+                middleName: null
+                lastName: Weisely
+                age: 35
+                address: 123 Main St
+                city: Atlanta
+                state: GA
+                zip: 30030
+                zip4: 6232
+                measures:
+                  - name: ATP
+                    value: "123"
+                  - name: Equifax Risk Score 3.0 Neighborhood Risk Score
+                    value: "700"
+                  - name: Telco 98 Neighborhood Risk Score,
+                    value: "927"
+                  - name: DSIIndex,
+                    value: "528"
+                  - name: DSDollar
+                    value: "80571"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        '401':
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        '415':
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        '429':
+          description: >-
+            Exceeded the maximum number of requests within a specified time
+            frame.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        '501':
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        '503':
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        '504':
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    V1RtaRequestBase:
+      required:
+        - address
+        - firmId
+      type: object
+      properties:
+        suffix:
+          type: string
+        firstName:
+          description: First name of the head of household.
+          example: Ron
+          type: string
+        middleName:
+          type: string
+        lastName:
+          description: Last name of the head of household.
+          example: Weisely
+          type: string
+        age:
+          description: Age of the head of the household being looked up.
+          example: 35
+          type: integer
+          format: int32
+          nullable: true
+        address:
+          description: A street address
+          example: 123 Main St.
+          type: string
+        zip4:
+          description: 4 digit zip extension.
+          example: "6232"
+          pattern: '[0-9]{4,4}'
+          maxLength: 4
+          minLength: 4
+          type: string
+        firmId:
+          description: Your given unique identifier. You will need to register and retrieve a identifier in order to access the API.
+          example: "316fa573-ba45-489f-a68c-6a2543af9d72"
+          type: string
+    V1RtaRequestZip:
+      allOf:
+        - $ref: '#/components/schemas/V1RtaRequestBase'
+        - type: object
+          required:
+            - zip
+          properties:
+            city:
+              description: Name of the city for the street address. Mandatory if sent in combination with state.
+              example: Atlanta
+              type: string
+            state:
+              description: Two character state abbrieviation. Mandatory if sent in combination with city.
+              example: GA
+              type: string
+            zip:
+              description: 5 digit zip code. Mandatory if you are not sending both city and state.
+              example: "30030"
+              pattern: '[0-9]{5,5}'
+              maxLength: 5
+              minLength: 5
+              type: string
+    V1RtaRequestCityState:
+      allOf:
+        - $ref: '#/components/schemas/V1RtaRequestBase'
+        - type: object
+          required:
+            - city
+            - state
+          properties:
+            city:
+              description: Name of the city for the street address. Mandatory if sent in combination with state.
+              example: Atlanta
+              type: string
+            state:
+              description: Two character state abbrieviation. Mandatory if sent in combination with city.
+              example: GA
+              type: string
+            zip:
+              description: 5 digit zip code. Mandatory if you are not sending both city and state.
+              example: "30030"
+              pattern: '[0-9]{5,5}'
+              maxLength: 5
+              minLength: 5
+              type: string
+    V1RtaResponse:
+      type: object
+      properties:
+        transactionId:
+          description: Unique Id for a request generated by the server.
+          type: string
+        suffix:
+          description: Given suffix
+          type: string
+        firstName:
+          description: Given first name
+          example: Ron
+          type: string
+        middleName:
+          description: Given middle name
+          type: string
+        lastName:
+          description: Given last name
+          example: Weisely
+          type: string
+        age:
+          description: Given age
+          example: 35
+          type: integer
+          format: int32
+          nullable: true
+        address:
+          description: Standardized street name
+          example: 123 Main St.
+          type: string
+        city:
+          description: Standardized city
+          example: Atlanta
+          type: string
+        state:
+          description: Standardized state
+          example: GA
+          type: string
+        zip:
+          description: Standardized five digit zip code.
+          example: "30030"
+          maxLength: 5
+          minLength: 5
+          type: string
+        zip4:
+          description: Standardized four digit zip code extension.
+          example: "6232"
+          maxLength: 4
+          minLength: 4
+          type: string
+        measures:
+          description: Subscribed measures.
+          type: array
+          items:
+            $ref: '#/components/schemas/Measure'
+    Measure:
+      type: object
+      properties:
+        name:
+          description: Measurement name
+          example: ATP
+          type: string
+        value:
+          description: Measurement value
+          example: 123
+          type: string
+    ErrorResponse:
+      required:
+      - description
+      - efxErrorCode
+      type: object
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally added when additional error details are available.
+          $ref: '#/components/schemas/AdditionalErrorDetails'
+    AdditionalErrorDetails:
+      type: object
+      properties:
+        errorTrackingCode:
+          type: string
+          description: Unique error tracking code generated by server
+        message:
+          type: string
+          description: Additional information where applicable
+  examples:
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+        additionalErrorDetails: {}
+    '400.02':
+      value:
+        efxErrorCode: '400.02'
+        description: Missing Content-type header.
+    '401.03':
+      value:
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+    '403.01':
+      value:
+        efxErrorCode: '403.01'
+        description: Access Denied.
+    '404.01':
+      value:
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+    '415.01':
+      value:
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+    '422.01':
+      value:
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    '429.01':
+      value:
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+        additionalErrorDetails: {}
+    '501.01':
+      value:
+        efxErrorCode: '501.01'
+        description: Not-implemented - Specified resource is not implemented.
+    '503.01':
+      value:
+        efxErrorCode: '503.01'
+        description: Service is un-available.
+    '504.01':
+      value:
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

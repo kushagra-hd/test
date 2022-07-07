@@ -1,0 +1,943 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    
+    The Account Verification is the new product name incorporating the existing functionality for Account Verification and now, new capability to support bank accounts. 
+    
+    The Account Verification API verifies that the consumer’s credit card or bank account presented for payment supports a match between their credit card or bank account and their identity. The customer can pass the PII data attributes, as well as credit card information or bank account details, for verification using the URL provided below. The response contains a PII field level logical match against Equifax data assets including the linkage of the credit card number or the bank account with 'accountRisk' details.
+  
+     # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. Use API credentials to **<a href="/oauth" target="_blank">generate an access token</a>**.
+    3. Get consumer's **[account verification](#tag/Account-Verification)**.
+    
+  version: 'v2'
+  title: Account Verification
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+    
+paths:
+  /account-verification/v2/account-validations:
+    post:
+      tags:
+        - Account Verification
+      description: The InstaTouch Account Verification API verifies that the consumer’s credit card presented for payment supports a match between their credit card to their identity.
+
+      operationId: Retrieve Account Verification
+      security:
+        - OAuth 2.0: ["scopes:  https://api.equifax.com/business/account-verification"]
+      parameters:
+        - name: efx-client-correlationId
+          in: header
+          required: true
+          x-example: ff55119ceb2e47c6bdf5e7f21a47d1c7
+          description: In addition to authentication headers, all requests must include the session ID.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/CompareRequest"
+                - $ref: "#/components/schemas/BankCompareRequest"
+                - $ref: "#/components/schemas/CommercialBankCompareRequest"
+            examples:
+              Credit Card Validation Request:
+                $ref: "#/components/examples/Compare_req"
+              Bank Account Validation Request:
+                $ref: "#/components/examples/BankCompare_req"
+              Commercial Bank Account Validation Request:
+                $ref: "#/components/examples/CommercialBankCompare_req"
+        description: inputRequest
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CompareResponse"
+                  - $ref: "#/components/schemas/BankCompareResponse"
+                  - $ref: "#/components/schemas/CommercialBankCompareResponse"
+              examples:
+                Credit Card Validation Response:
+                  $ref: "#/components/examples/Compare_res"
+                Bank Account Validation Response: 
+                  $ref: "#/components/examples/BankCompare_res"
+                Commercial Bank Account Validation Response:
+                  $ref: "#/components/examples/CommercialBankCompare_res"
+        "400":
+          description: Input Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload Format is in an Unsupported Format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '422.01':
+                  $ref: '#/components/examples/422.01'
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+servers:
+  - url: https://api.sandbox.equifax.com/business
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+  schemas:
+    Address:
+      type: object
+      required:
+        - city
+        - state
+        - streetAddress
+        - type
+        - zipCode
+      properties:
+        type:
+          type: string
+          description: Address type.
+          example: CURRENT
+          maxLength: 100
+        streetAddress:
+          type: string
+          description: Street address.
+          example: PO Box 29
+          maxLength: 100
+        city:
+          type: string
+          description: City.
+          example: Abernant
+          maxLength: 50
+        state:
+          type: string
+          description: State.
+          example: AL
+          maxLength: 2
+        zipCode:
+          type: number
+          description: Zip code.
+          example: 35440
+          maxLength: 5
+    CommercialAddress:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Address type.
+          example: CURRENT
+          maxLength: 100
+        streetAddress:
+          type: string
+          description: Street address.
+          example: PO Box 29
+          maxLength: 100
+        city:
+          type: string
+          description: City.
+          example: Abernant
+          maxLength: 50
+        state:
+          type: string
+          description: State.
+          example: AL
+          maxLength: 2
+        zipCode:
+          type: number
+          description: Zip code.
+          example: 35440
+          maxLength: 5      
+    Name:
+      type: object
+      required:
+       - firstName
+       - lastName
+      properties:
+        firstName:
+          type: string
+          description: First name.
+          example: Angela
+          maxLength: 25
+        lastName:
+          type: string
+          description: Last name.
+          example: Ayers
+          maxLength: 25
+    BVName:
+      type: object
+      required:
+       - firstName
+       - lastName
+      properties:
+        firstName:
+          type: string
+          description: First name.
+          example: Jane
+          maxLength: 25
+        lastName:
+          type: string
+          description: Last name.
+          example: Doe
+          maxLength: 25      
+    CBVName:
+      type: object
+      required:
+       - businessName
+      properties:
+        businessName:
+          type: string
+          description: "Legal Entity Name"
+          example: "Smith & Associates Consulting"
+          maxLength: 40
+        firstName:
+          type: string
+          description: First name.
+          example: John
+          maxLength: 25
+        lastName:
+          type: string
+          description: Last name.
+          example: Smith
+          maxLength: 25
+      
+
+    CompareResponse:
+      type: object
+      required:
+        - identity 
+      properties:
+       transactionId:
+        type: string
+        description: Unique identifier for this transaction request.
+        example: b5e477bed68344edba18679598969ed1
+        maxLength: 36
+       identity:
+        properties:
+         address:
+          type: boolean
+          description: Address match
+          example: 'Y'
+          maxLength: 1
+         name:
+          type: boolean
+          description: Name match
+          example: 'Y'
+          maxLength: 1
+         identification:
+          properties:
+           ssn:
+            type: boolean
+            description: Social Security Number match (Optional)
+            example: 'Y'
+            maxLength: 1
+           dob:
+            type: boolean
+            description: Date of Birth match (Optional)
+            example: 'N'
+            maxLength: 1
+         contact:
+          properties:
+           emailAddress:
+            type: boolean
+            description: Email Address match (Optional)
+            example: 'N'
+            maxLength: 1
+           homePhone:
+            type: boolean
+            description: Home Phone match (Optional)
+            example: "Y"
+            maxLength: 1
+         accounts:
+          properties:
+           creditCardNumber:
+            type: boolean
+            description: Credit card number
+            example: "Y"
+            maxLength: 1
+    BankCompareResponse:
+      type: object
+      required:
+        - identity
+        - accountRisk
+      properties:
+       transactionId:
+        type: string
+        description: Unique identifier for this transaction request.
+        example: b5e477bed68344edba18679598969ed1
+        maxLength: 36
+       identity:
+        properties:
+         name:
+          type: boolean
+          description: Name match
+          example: 'Y'
+          maxLength: 1
+         addresses:
+          type: boolean
+          description: Address match
+          example: 'Y'
+          maxLength: 1
+         identification:
+          properties:
+           ssn:
+            type: boolean
+            description: Social Security Number match (Optional)
+            example: 'Y'
+            maxLength: 1
+           dob:
+            type: boolean
+            description: Date of Birth match (Optional)
+            example: 'N'
+            maxLength: 1
+         contact:
+          properties:
+           emailAddress:
+            type: boolean
+            description: Email Address match (Optional)
+            example: 'N'
+            maxLength: 1
+           homePhone:
+            type: boolean
+            description: Home Phone match (Optional)
+            example: "Y"
+            maxLength: 1
+       accountRisk:
+        type: object
+        properties:
+          riskLevel:
+              type: string
+              description: Risk Level Category
+              example: "LOW"
+              maxLength: 10
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+          riskReasonList:
+              type: array
+              items:
+                type: object
+                properties: 
+                  code:
+                    type: string
+                    description: "Risk Reason Code"
+                    example: "RC09"
+                    maxLength: 10
+                  description:
+                    type: string
+                    description: "Reason Code Description"
+                    example: "Account Verified - The account was found to be an open and valid checking account"
+    CommercialBankCompareResponse:
+      type: object
+      required:
+        - accountRisk 
+      properties:
+       transactionId:
+        type: string
+        description: Unique identifier for this transaction request.
+        example: b5e477bed68344edba18679598969ed1
+        maxLength: 36
+       identity:
+        properties:
+         name:
+          type: boolean
+          description: Name match
+          example: 'Y'
+          maxLength: 1
+         addresses:
+          type: boolean
+          description: Address match
+          example: 'Y'
+          maxLength: 1
+         identification:
+          properties:
+           ssn:
+            type: boolean
+            description: Social Security Number match (Optional)
+            example: 'Y'
+            maxLength: 1
+           dob:
+            type: boolean
+            description: Date of Birth match (Optional)
+            example: 'N'
+            maxLength: 1
+         contact:
+          properties:
+           emailAddress:
+            type: boolean
+            description: Email Address match (Optional)
+            example: 'N'
+            maxLength: 1
+           homePhone:
+            type: boolean
+            description: Home Phone match (Optional)
+            example: "Y"
+            maxLength: 1
+       accountRisk:
+        type: object
+        properties:
+          riskLevel:
+              type: string
+              description: Risk Level Category
+              example: "LOW"
+              maxLength: 10
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+          riskReasonList:
+              type: array
+              items:
+                type: object
+                properties: 
+                  code:
+                    type: string
+                    description: "Risk Reason Code"
+                    example: "RC09"
+                    maxLength: 10
+                  description:
+                    type: string
+                    description: "Reason Code Description"
+                    example: "Account Verified - The account was found to be an open and valid checking account"
+    CompareRequest:
+      type: object
+      required:
+        - identity
+        - merchantId
+        - serviceType
+        - consumerConsent
+      properties:
+        merchantId:
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          maxLength: 16
+          example: efxtest
+        serviceType:
+          type: string
+          description: Service type.
+          example: CV
+          maxLength: 3
+          enum:
+          - CV (Credit Card Validation)
+          - BV (Bank Account Validation)
+          - CBV (Commercial Bank Account Validation)
+        identity:
+          $ref: "#/components/schemas/Identity"
+        consumerConsent:
+          $ref: "#/components/schemas/ConsumerConsent"
+    CommercialBankCompareRequest:
+      type: object
+      required:
+        - identity
+        - merchantId
+        - serviceType
+        - accountInfo
+        - consumerConsent
+      properties:
+        merchantId:
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          maxLength: 16
+          example: efxtest
+        serviceType:
+          type: string
+          description: Service type.
+          example: CBV
+          maxLength: 3
+          enum:
+          - CV (Credit Card Validation)
+          - BV (Bank Account Validation)
+          - CBV (Commercial Bank Account Validation)
+        identity:
+          $ref: "#/components/schemas/CommercialBankIdentity"
+        accountInfo:
+          $ref: "#/components/schemas/accountInfo"
+        consumerConsent:
+          $ref: "#/components/schemas/ConsumerConsent"
+    BankCompareRequest:
+      type: object
+      required:
+        - identity
+        - merchantId
+        - serviceType
+        - accountInfo
+        - consumerConsent
+      properties:
+        merchantId:
+          type: string
+          description: The ID number used to identify the integrated customer or merchant. This value is provided during the onboarding process.
+          maxLength: 16
+          example: efxtest
+        serviceType:
+          type: string
+          description: Service type.
+          example: BV
+          maxLength: 3
+          enum:
+          - CV (Credit Card Validation)
+          - BV (Bank Account Validation)
+          - CBV (Commercial Bank Account Validation)
+        identity:
+          $ref: "#/components/schemas/BankIdentity"
+        accountInfo:
+          $ref: "#/components/schemas/accountInfo"
+        consumerConsent:
+          $ref: "#/components/schemas/ConsumerConsent"
+    CommercialIdentification:
+      title: Identification
+      type: object
+      properties:
+        taxId:
+          maxLength: 9
+          type: string
+          example: 666238692
+          description: taxId number.
+        dob:
+          maxLength: 10
+          type: string
+          example: 02/05/1964
+          description: Date Of Birth (optional).
+    Identification:
+      title: Identification
+      type: object
+      properties:
+        ssn:
+          maxLength: 9
+          type: string
+          example: 666238692
+          description: Social security number (optional).
+        dob:
+          maxLength: 10
+          type: string
+          example: 02/05/1964
+          description: Date Of Birth (optional).
+    ConsumerConsent:
+      type: object
+      required:
+        - consentEvent
+        - consentEventDate
+        - consentForServices
+        - consentMethod
+        - consentType
+      properties:
+        consentEventDate:
+          type: string
+          format: date-time
+          description: The date and time the consent was acquired from the consumer. In ISO 8601 format, UTC-based.
+          example: "2018-09-11T14:00:19.195Z"
+        consentEvent:
+          type: string
+          description: Type of consent event to distinguish if opt-in or opt-out.
+          example: opt-in
+          enum:
+          - opt-in
+          - opt-out
+          maxLength: 50
+        consentType:
+          type: string
+          description: The type of consent being initiated. 
+          example: whitelist
+          maxLength: 50
+          enum:
+          - whitelist
+          - SMS
+        consentMethod:
+          type: string
+          maxLength: 50
+          description: |
+            The method used for opt-in or opt-out for each consentType -  Whitelist or SMS. 
+            Valid values for Whitelist are: 
+            - TCO: Where the consumer gave consent by accepting terms and conditions online. 
+            - TCP: Consent was given via terms and conditions on paper. 
+            - MA: Consent was given via a mobile app. 
+            - Other: Another method that has been agreed with Equifax for acquiring consent from the consumer. 
+            
+             Valid values for SMS are:
+            - Other: Another method that has been agreed with Equifax for acquiring consent from the consumer.
+          example: other
+        consentForServices:
+          type: array
+          items:
+            type: string
+          maxLength: 1000
+          description: Determines which services have received consent based on the API product.
+          example: accountVerification
+    BankIdentity:
+      type: object      
+      required:
+        - address
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/BVName"
+        address:
+          $ref: "#/components/schemas/Address"
+        identification:
+          $ref: "#/components/schemas/Identification"
+        contact:
+          $ref: "#/components/schemas/Contact"
+    CommercialBankIdentity:
+      type: object      
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/CBVName"
+        address:
+          $ref: "#/components/schemas/CommercialAddress"
+        identification:
+          $ref: "#/components/schemas/CommercialIdentification"
+    accountInfo:
+      type: array
+      items:
+        type: object
+        required:
+          - accountNumber
+          - routingNumber
+        properties:
+          orgName:
+            type: string
+            description: "Bank Organization Name"
+            maxLength: 40
+            example: "BOFA"
+          accountType:
+            type: string
+            description: The account type of the bank account to be validated.
+            maxLength: 40
+            example: "CHECKING"
+            enum:
+            - CHECKING
+            - SAVING
+          accountNumber:
+              type: string
+              description: "Bank Account Number"
+              maxLength: 17
+              example: "0000000016"
+          routingNumber:
+              type: string
+              description: "Routing/ABA Number"
+              maxLength: 9 
+              example: "122105278"
+    Identity:
+      type: object
+      required:
+        - address
+        - name
+        - accounts
+      properties:
+        name:
+          $ref: "#/components/schemas/Name"
+        address:
+          $ref: "#/components/schemas/Address"
+        identification:
+          $ref: "#/components/schemas/Identification"
+        contact:
+          $ref: "#/components/schemas/Contact"
+        accounts:
+         type: object
+         required:
+          - creditCardNumber
+         properties:
+          creditCardNumber:
+           type: string
+           description: Credit Card Number (first 6 and last 4). The rest need to be masked.
+           maxLength: 16
+           example: 567808xxxxxx5120
+    Contact:
+      type: object
+      properties:
+        emailAddress:
+          type: string
+          description: Email address.
+          example: 
+          maxLength: 50
+        homePhone:
+          type: number
+          description: Home phone number.
+          example: 1234567890
+          maxLength: 10
+        mobile:
+          type: number
+          description: Mobile phone number.
+          example: 1234567899
+          maxLength: 10
+    ErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditional when additional error details are available.
+          
+  examples:        
+    Compare_req:
+      value:
+        merchantId: efxtest
+        serviceType: CV
+        identity:
+          name:
+            firstName: Angela
+            lastName: Ayers
+          addresses:
+            type: CURRENT
+            streetAddress: PO Box 29
+            city: Abernant
+            state: AL
+            zipCode: 35440
+          identification:
+            ssn: 666238692
+            dob: 02/05/1964
+          contact:
+            emailAddress: "swimfan@aol.com"
+            homePhone: 1234567890
+          accounts:
+            creditCardNumber: 567808xxxxxx5120
+        consumerConsent:
+          consentEventDate: '2018-09-11T14:00:19.195Z'
+          consentEvent: opt-in
+          consentType: whitelist
+          consentMethod: TCO
+          consentForServices: [accountVerification]
+    BankCompare_req:
+      value:
+        merchantId: efxtest
+        serviceType: BV
+        identity:
+          name:
+            firstName: Angela
+            lastName: Ayers
+          addresses:
+            type: CURRENT
+            streetAddress: PO Box 29
+            city: Abernant
+            state: AL
+            zipCode: 35440
+          identification:
+            ssn: 666238692
+            dob: 02/05/1964
+        accountInfo:
+          - orgName: "BOFA"
+            accountType: "CHECKING"
+            accountNumber: "0000000016"
+            routingNumber: "122105278"
+        consumerConsent:
+          consentEventDate: '2018-09-11T14:00:19.195Z'
+          consentEvent: opt-in
+          consentType: whitelist
+          consentMethod: TCO
+          consentForServices: [accountVerification]
+    CommercialBankCompare_req:
+      value:
+        merchantId: efxtest
+        serviceType: CBV
+        identity:
+          name:
+            businessName: Smith & Associates Consulting
+          
+          addresses:
+            type: CURRENT
+            streetAddress: "1113 Shade Tree Ln"
+            city: Allen
+            state: TX
+            zipCode: 75013
+          identification:
+            ssn: 123456543
+            dob: 05/15/1970
+        accountInfo:
+          - orgName: "Bank of America"
+            accountType: "SAVINGS"
+            accountNumber: "1011234567"
+            routingNumber: "041000124"
+        consumerConsent:
+          consentEventDate: '2018-09-11T14:00:19.195Z'
+          consentEvent: opt-in
+          consentType: whitelist
+          consentMethod: TCO
+          consentForServices: [accountVerification]
+    Compare_res:
+      value:
+        transactionId: 22345678-1234-1234-1234-123456789012
+        identity:
+          name: "Y"
+          address: "Y"
+          identification:
+           ssn: "Y"
+           dob: "Y"
+          contact:
+           emailAddress: "N"
+           homePhone: "Y"
+          account:
+           creditCardNumber: "Y"
+    BankCompare_res:
+      value:
+        transactionId: 22345678-1234-1234-1234-123456789012
+        identity:
+          name: "Y"
+          address: "Y"
+          identification:
+           ssn: "Y"
+           dob: "Y"
+        contact:
+           emailAddress: "N"
+           homePhone: "Y"
+        accountRisk:
+          riskLevel: "LOW"
+          riskReasonList:
+            - code: "RC09"
+              description: "Account Verified - The account was found to be an open and valid checking account"
+            - code: "RC19"
+              description: "Consumer information submitted passed Authentication"
+            - code: "RC32"
+              description: "The suggested action is to accept the bank account and/or customer data for this inquiry"
+    CommercialBankCompare_res:
+      value:
+        transactionId: 22345678-1234-1234-1234-123456789012
+        accountRisk:
+          riskLevel: "LOW"
+          riskReasonList:
+            - code: "RC09"
+              description: "Account Verified - The account was found to be an open and valid checking account"
+            - code: "RC19"
+              description: "Consumer information submitted passed Authentication"
+            - code: "RC32"
+              description: "The suggested action is to accept the bank account and/or customer data for this inquiry"
+    '400.01':
+      value:   
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+    '401.03':
+      value:   
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+    '403.01':
+      value:   
+        efxErrorCode: '403.01'
+        description: Access Denied.
+    '404.01':
+      value:   
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+    '415.01':
+      value:   
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+    '422.01':
+      value:   
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails:
+         properties:
+          errorCode: VA.R2001
+          developerMessage: Required field merchantId is missing
+          error type: validation_error
+          
+    '429.01':
+      value:   
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+    '500.01':
+      value:   
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+    '501.01':
+      value:   
+        efxErrorCode: '501.01'
+        description: Not implemented - Specified resource is not implemented.
+    '503.01':
+      value:   
+        efxErrorCode: '503.01'
+        description: Service is unavailable.  
+    '504.01':
+      value:   
+        efxErrorCode: '504.01'
+        description: Gateway timeout.

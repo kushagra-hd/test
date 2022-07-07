@@ -1,0 +1,1809 @@
+openapi: 3.0.0
+info:
+  description: |
+    # Introduction
+    
+    Automated Data View (ADV) is a service that enables customers to access their account information. By entering the consumer’s name, address, and social security number, the customer can verify their consumer’s account information as it appears in the Equifax files. Automated Data View can be used to measure the quality of the data in your accounts, thus enabling you to audit the way information is stored in the consumer file.
+      
+  contact:
+    name: "Equifax Developer Center Support"
+    url: "https://developer.equifax.com/contact"
+  version: 1.0.0
+  title: Automated Data View
+  termsOfService: ''
+servers:
+  - description: DEVSANDBOX URL
+    url: 'https://api.sandbox.equifax.com/business/automated-data-view/v1/'
+    
+paths:
+  /report-requests:
+    post:
+      tags:
+        - Automated Data View
+      operationId: requestAutomatedDataView
+      security:
+       - OAuth 2.0: ["scopes: https://api.equifax.com/business/automated-data-view/v1"]
+      parameters:
+        - in: header
+          name: efx-client-correlation-id
+          description: ID provided by client to uniquely track service request.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ADVReportRequest'
+            examples:
+              request:
+                $ref: '#/components/examples/ADVReportRequest'
+      
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ADVReportResponse'
+              examples:
+                response:
+                  $ref: '#/components/examples/ADVReportResponse' 
+        
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+                  
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+                  
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '403.01':
+                  $ref: '#/components/examples/403.01'
+                  
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+                  
+        '415':
+          description: Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+                  
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+                
+        '501':
+          description: Not-implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+                  
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+                  
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+      
+components:
+  securitySchemes:
+    OAuth 2.0:
+      type: http
+      scheme: bearer
+      
+  schemas:
+    FullDate:
+      type: string
+      format: date
+      description: Date in format MMDDYYYY where MM is the Month, DD is the day of the month and YYYY is the year.
+      minLength: 0
+      maxLength: 8
+      example: "MMDDYYYY"
+      
+    PartialDate:
+      type: string
+      description: Date in format MMYYYY where MM is the Month and YYYY is the year.
+      maxLength: 6
+      example: "MMYYYY"
+       
+    CreditorClassificationCode:
+      type: object
+      minItems: 0
+      maxItems: 2
+      description: > 
+        A general type of business for the original creditor and is only applicable for trades reported by Debt Buyers 
+      properties:
+        code: 
+          type: string
+          description: Code value
+          
+        description:
+          type: string
+          description: >
+            Business type of original creditor
+            
+              - 01: RETAIL
+              - 02: MEDICAL/HEALTH CARE
+              - 03: OIL COMPANY
+              - 04: GOVERNMENT
+              - 05: PERSONAL SERVICES
+              - 06: INSURANCE
+              - 07: EDUCATIONAL
+              - 08: BANKING
+              - 09: RENTAL/LEASING
+              - 10: UTILITIES
+              - 11: CABLE/CELLULAR
+              - 12: FINANCIAL
+              - 13: CREDIT UNION
+              - 14: AUTOMOTIVE
+              - 15: CHECK GUARANTEE
+            
+    NarrativeCodes:
+      type: array
+      minItems: 0
+      maxItems: 2
+      items: 
+        type: object
+        properties:
+          code: 
+            type: string
+            description: Code value
+          
+          description:
+            type: string
+            description: > 
+              Narrative codes and descriptions are listed below:
+            
+                - AA: CONSUMER SAYS MERCHANDISE OR SERVICE UNSATISFACTORY
+                - AB: CONSUMER SAYS ACCOUNT PAID/BEING PAID BY INSURANCE
+                - AC: CONSUMER SAYS ACCT IS RESPONSIBILITY OF SEPARATED OR DIVORCED SPOUSE
+                - AE: CONSUMER SAYS ACCT. INVOLVED IN BUSINESS VENTURE HELD PERSONALLY LIAB
+                - AF: CONSUMER SAYS ACCOUNT INVOLVES LEASE AGREEMENT DISPUTE
+                - AG: CONSUMER DISPUTES ACCOUNT - LITIGATION PENDING
+                - AH: CONSUMER SAYS ACCOUNT SLOW DUE TO BILLING DISPUTE WITH CREDITOR
+                - AI: CONSUMER SAYS ACCOUNT SLOW DUE TO EMPLOYMENT ISSUES
+                - AJ: CONSUMER SAYS ACCOUNT SLOW DUE TO MEDICAL EXPENSES/ILLNESS
+                - AL: CONSUMER SAYS WARRANTY DISPUTE
+                - AM: VOLUNTARY SURRENDER; THERE MAY BE A BALANCE DUE
+                - AN: INVOLUNTARY REPOSSESSION
+                - AO: AUTO
+                - AP: COMMERCIAL ACCOUNT
+                - AQ: HOUSEHOLD GOODS
+                - AR: HOME LOAN
+                - AS: HOME IMPROVEMENT LOAN
+                - AT: CHECKING ACCOUNT LOAN PLAN
+                - AU: PERSONAL LOAN
+                - AV: CHARGE
+                - AW: SECURED BY HOUSEHOLD GOODS
+                - AX: PAID BY DEALER
+                - AY: VOLUNTARILY SURRENDERED – THEN REDEEMED OR REINSTATED
+                - AZ: AMOUNT IN H/C COLUMN IS CREDIT LIMIT
+                - BB: CONSUMER DISPUTES THIS ACCOUNT INFORMATION
+                - BC: ACCOUNT TRANSFERRED OR SOLD
+                - BD: PAID - CREDIT LINE CLOSED
+                - BE: CREDIT LINE CLOSED
+                - BG: CLAIM FILED WITH GOVERNMENT
+                - BH: DISPUTE - RESOLUTION PENDING
+                - BK: REDEEMED OR REINSTATED REPOSSESSION
+                - BL: CONSUMER SAYS ACCOUNT SLOW DUE TO DOMESTIC PROBLEMS
+                - BM: CONSUMER SAYS PAID ON NOTIFICATION - NO PRIOR
+                - KN:OWLEDGE OF BALANCE DUE
+                - BN: CONSUMER SAYS CO-SIGNED ACCOUNT - NOT AWARE OF DELINQUENCY
+                - BO: CONSUMER SAYS NO STATEMENT RECEIVED DUE TO ADDRESS CHANGE
+                - BP: CONSUMER SAYS THIS ACCOUNT SPOUSE’S RESPONSIBILITY
+                - BQ: PAID CHARGE OFF
+                - BR: FORECLOSURE PROCESS STARTED
+                - BS: PAID OR BEING PAID BY GOVERNMENT GUARANTOR
+                - BT: LEASE
+                - BU: STUDENT LOAN
+                - BV: CONSUMER DISPUTE FOLLOWING RESOLUTION
+                - BW: INCLUDED IN BANKRUPTCY
+                - BX: PAYMENTS MANAGED BY FINANCIAL COUNSELING PROGRAM
+                - BY: COLLECTION AGENCY ACCOUNT - STATUS UNKNOWN
+                - BZ: ACCOUNT PAID FOR LESS THAN FULL BALANCE
+                - CA: CHARGE OFF - MAKING PAYMENTS
+                - CB: CHARGED OFF - CHECK PRESENTED WAS UNCOLLECTIBLE
+                - CD: CUSTOMER HAS NOW LOCATED CONSUMER
+                - CE: REFINANCED
+                - CF: CLOSED ACCOUNT
+                - CG: ACCOUNT CLOSED - REASON UNKNOWN
+                - CH: ACCOUNT PAID AFTER FORECLOSURE STARTED
+                - CI: INSURANCE CLAIM PENDING
+                - CJ: CUSTOMER UNABLE TO LOCATE CONSUMER
+                - CK: DEBIT CARD
+                - CL: PAID OR BEING PAID BY CO-SIGNER OR GUARANTOR
+                - CM: ACCOUNT ASSUMED BY ANOTHER PARTY
+                - CN: PAYING UNDER A PARTIAL PAYMENT AGREEMENT
+                - CP: CONSUMER SAYS PERSONAL BANKRUPTCY FILED DUE TO BUSINESS FAILURE
+                - CQ: PLTFF VERIFIED JUDGMENT PAID/SATISFACTION NOT RECORDED WITH COURT
+                - CS: SECURED CREDIT LINE
+                - CT: VOLUNTARY
+                - CU: INVOLUNTARY
+                - CV: LINE OF CREDIT
+                - CW: ACCOUNT CLOSED BY CREDIT GRANTOR
+                - CX: PAYMENT IS PAYROLL DEDUCTIBLE
+                - CY: ACCOUNT CHARGED TO PROFIT AND LOSS
+                - CZ: COLLECTION ACCOUNT
+                - DA: ACCOUNT CLOSED BY CONSUMER
+                - DB: CHARGED OFF ACCOUNT
+                - DC: CONSUMER SAYS ACCOUNT NOT PAID PROMPTLY - INSURANCE CLAIM DELAYED
+                - DD: BALANCE IS DEFICIENCY AMOUNT
+                - DE: CONSUMER SAYS ACCOUNT PAID IN FULL
+                - DG: TITLE 1 LOAN
+                - DH: BALANCE NOT PAID BY INSURANCE
+                - DI: BALANCE PAID OR BEING PAID BY INSURANCE COMPANY
+                - DJ: FORECLOSURE
+                - DK: PAID OR BEING PAID BY GARNISHMENT
+                - DL: CONSUMER RECALLED TO ACTIVE MILITARY DUTY
+                - DM: FORFEIT OF DEED IN LIEU OF FORECLOSURE
+                - DN: BROKEN LEASE AGREEMENT
+                - DO: BANKRUPTCY CHAPTER 13
+                - DP: CONVERSION LOSS PAID BY INSURANCE
+                - DQ: STUDENT LOAN - PAYMENT DEFERRED
+                - DS: SINGLE PAYMENT LOAN
+                - DT: AMORTIZED MORTGAGE
+                - DU: SHERIFF SALE
+                - DV: AMOUNT IN HIGH CREDIT INCLUDES FINANCE CHARGE
+                - DW: RETURN MAIL
+                - DX: BALANCE OWING - AMOUNT NOT REPORTED
+                - EA: PAID OR MAKING PAYMENTS - NOT ACCORDING TO TERMS OF AGREEMENT
+                - EB: LEASE - EARLY TERMINATION BY DEFAULT
+                - EC: HOME EQUITY
+                - ED: MAKING PAYMENT - FORECLOSURE WAS INITIATED
+                - EE: SECURED
+                - EF: REAL ESTATE MORTGAGE
+                - EG: GUARANTEED STUDENT LOAN
+                - EH: NATIONAL DIRECT STUDENT LOAN
+                - EI: CONSUMER DISPUTES ACCOUNT - LITIGATION FILED BY CREDITOR PENDING
+                - EJ: CONSUMER DISPUTES ACCOUNT - LITIGATION FILED BY CONSUMER PENDING
+                - EK: CHILD/FAMILY SUPPORT OBLIGATION
+                - EL: DEFENDANT VERIFIED ITEM PD/SATISFACTION NOT RECORDED WITH COURT
+                - EM: VOLUNTARY RETURN OF PURCHASE
+                - EP: FIXED RATE
+                - EQ: VARIABLE/ADJUSTABLE RATE
+                - ER: PAID COLLECTION
+                - ES: CHARGED BACK TO DEALER
+                - ET: PAID REPOSSESSION
+                - EU: SEE CONSUMER STATEMENT
+                - EV: BANKRUPTCY CHAPTER 11
+                - EX: UNSECURED
+                - EY: BUSINESS ACCOUNT - PERSONAL GUARANTEE
+                - EZ: HAS CO-SIGNER
+                - FA: CLOSED OR PAID ACCOUNT/ZERO BALANCE
+                - FB: INCLUDED IN ORDERLY PAYMENT DEBT
+                - FC: CREDIT LINE SUSPENDED
+                - FD: DEFAULTED STUDENT LOAN
+                - FE: CREDIT CARD
+                - FF: CONSUMER SAYS ACCOUNT NOT HIS/HERS
+                - FG: CONSUMER SAYS ACCOUNT NEVER LATE
+                - FH: CONSUMER SAYS THIS PUBLIC RECORD NOT HIS/HERS
+                - FL: CONSUMER SAYS THIS PUBLIC RECORD FILED IN ERROR
+                - FM: CONSUMER SAYS THIS PUBLIC RECORD ITEM SATISFIED OR RELEASED
+                - FO: CONSUMER SAYS BANKRUPTCY DISCHARGED
+                - FP: CONSUMER SAYS BANKRUPTCY DISMISSED
+                - FQ: CONSUMER SAYS CURRENT RATE/STATUS INCORRECT
+                - FR: MAKING PAYMENTS
+                - FS: ANNUAL PAYMENT
+                - FU: CHARGED OFF CHECKING ACCOUNT
+                - FV: PLTFF VERIFIED LIEN PD/RELEASE NOT RECORDED WITH COURT
+                - FW: CONSUMER DISPUTES – REINVESTIGATION IN PROGRESS
+                - FX: ACCOUNT LISTED AS PUBLIC RECORD
+                - FZ: ACCOUNT REINSTATED WITH LENDER
+                - GA: PAID BY COLLATERAL
+                - GB: ACCOUNT BEING PAID THROUGH WEP
+                - GC: ACCOUNT BEING PAID THROUGH FINANCIAL COUNSELING PLAN
+                - GD: ACCOUNT PAID THROUGH FINANCIAL COUNSELING PLAN
+                - GE: CONSUMER DISPUTES THIS ITEM
+                - GF: REAFFIRMATION OF DEBT
+                - GH: PLAINTIFF/COUNSEL VERIFIED JUDGEMENT PAID
+                - GI: UTILITY
+                - GJ: STUDENT LOAN ASSIGNED TO GOVERNMENT
+                - GK: AFFECTED BY NATURAL DISASTER
+                - GL: FIRST PAYMENT NEVER RECEIVED
+                - GM: ACCOUNT ACQUIRED BY FDIC/NCUA
+                - GN: GOVERNMENT DEBT
+                - GO: DEBT CONSOLIDATION
+                - GP: MANUFACTURED HOUSING
+                - GQ: RECREATIONAL MERCHANDISE
+                - GR: SECURED CREDIT CARD
+                - GS: MEDICAL
+                - HF: ACCOUNT CLOSED BY CONSUMER
+                - HL: 100% PAYMENT TO CREDITORS FILING CLAIMS
+                - HO: RETURNED CHECK
+                - HP: FHA MORTGAGE
+                - HQ: VA MORTGAGE
+                - HR: CONVENTIONAL MORTGAGE
+                - HS: SECOND MORTGAGE
+                - HT: AGRICULTURAL
+                - HU: COMMERCIAL MORTGAGE-INDIVIDUAL LIABLE, COMPANY IS GUARANTOR
+                - HV: DEPOSIT RELATED
+                - HW: CHILD/FAMILY SUPPORT
+                - HX: TRANSFERRED TO RECOVERY
+                - IB: LEASE - FULL TERMINATION
+                - IC: LEASE - EARLY TERMINATION
+                - ID: STATUS PENDING
+                - IE: FANNIE MAE ACCOUNT
+                - IF: FREDDIE MAC ACCOUNT
+                - IG: PREPAID LEASE
+                - IH: CONSUMER PAYS BALANCE IN FULL EACH MONTH
+                - II: PRINCIPAL DEFERRED/INTEREST PAYMENT ONLY
+                - IJ: PAYMENT DEFERRED
+                - IK: BANKRUPTCY VOLUNTARILY WITHDRAWN
+                - IL: BANKRUPTCY CHAPTER 7
+                - IM: BANKRUPTCY CHAPTER 12
+                - IN: REAFFIRMATION OF DEBT RESCINDED
+                - IP: CONSUMER DISPUTES THIS ACCOUNT INFORMATION
+                - IQ: CONSUMER DISPUTES AFTER RESOLUTION
+                - IR: ACCOUNT CLOSED AT CONSUMER’S REQUEST
+                - IT: ACCOUNT ACQUIRED FROM ANOTHER LENDER
+                - IZ: AMOUNT IN HIGH CREDIT IS ORIGINAL CHARGE-OFF AMOUNT
+                - JA: ELECTION OF REMEDY
+                - JD: CONSUMER DECEASED
+                - JE: ADJUSTMENT PENDING
+                - JF: INACTIVE ACCOUNT
+                - JG: DOLLAR AMOUNT IN EXCESS OF $1 BILLION
+                - JH: PERSONAL RECEIVERSHIP – REPAYMENT MANAGED BY COURT TRUSTEE
+                - JI: GUARANTEED/INSURED
+                - JJ: TIME SHARE LOAN
+                - JK: 120 DAYS PAST DUE
+                - JL: 150 DAYS PAST DUE
+                - JM: 180 DAYS OR MORE PAST DUE
+                - JN: PARTIALLY SECURED
+                - JO: NOTE LOAN
+                - JP: RENTAL AGREEMENT
+                - JQ: AUTO LEASE
+                - JR: TELECOMMUNICATIONS/CELLULAR
+                - JS: UNSECURED GOVERNMENT LOAN
+                - JT: SECURED GOVERNMENT LOAN
+                - JU: HOME EQUITY LINE OF CREDIT
+                - JV: ATTORNEY FEES
+                - JW: CONSTRUCTION LOAN
+                - JX: FLEXIBLE SPENDING CREDIT CARD
+                - JY: COMBINED CREDIT PLAN
+                - JZ: DEBT BUYER ACCOUNT
+                - KA: INSTALLMENT SALES CONTRACT
+                - KB: BANKRUPTCY PETITION
+                - KC: BANKRUPTCY DISCHARGED
+                - KD: BANKRUPTCY COMPLETED
+                - KE: LEASE ASSUMPTION
+                - KF: ACCOUNT PREVIOUSLY IN DISPUTE – NOW RESOLVED BY DATA FURNISHER
+                - KG: CHAPTER 7 BANKRUPTCY DISMISSED
+                - KH: CHAPTER 11 BANKRUPTCY DISMISSED
+                - KI: CHAPTER 12 BANKRUPTCY DISMISSED
+                - KJ: CHAPTER 13 BANKRUPTCY DISMISSED
+                - KK: CHAPTER 7 BANKRUPTCY WITHDRAWN
+                - KL: CHAPTER 11 BANKRUPTCY WITHDRAWN
+                - KM: CHAPTER 12 BANKRUPTCY WITHDRAWN
+                - KN: CHAPTER 13 BANKRUPTCY WITHDRAWN
+                - KO: BANKRUPCTY – UNDESIGNATED CHAPTER
+                - KP: ACCOUNT CLOSED DUE TO INACTIVITY
+                - KQ: CREDIT LINE NO LONGER AVAILABLE - IN REPAYMENT PHASE
+                - KR: CREDIT LINE REDUCED DUE TO COLLATERAL DEPRECIATION
+                - KS: CREDIT LINE SUSPENDED DUE TO COLLATERAL DEPRECIATION
+                - KT: COLLATERAL RELEASED BY CREDITOR/BALANCE OWING
+                - KU: LOAN MODIFIED UNDER A FEDERAL GOVERNMENT PLAN
+                - KV: LOAN MODIFIED
+                - KW: ACCOUNT IN FORBEARANCE
+                - KZ: ACCOUNT PAID IN FULL; WAS A VOLUNTARY SURRENDER
+                - LB: HOMEOWNERS ASSOCIATION (HOA)
+
+    AddressRequest:
+      type: object
+      required: 
+        - identifier
+        - city
+        - state
+      properties:
+        identifier:
+          type: string
+          description: Address type of the report subject
+        houseNumber:
+          type: string
+          maxLength: 10
+          description: House number
+        quadrant: 
+          type: string
+          maxLength: 2
+          description: Quadrant
+        streetName:
+          type: string
+          maxLength: 26
+          description: Street name
+        streetType:
+          type: string
+          maxLength: 2
+          description: Street type
+          example: ["AV", "ST"]
+        unitDesignator:
+          type: string
+          maxLength: 5
+        apartmentNumber:
+          type: string
+          maxLength: 10
+          description: Apartment/Condo/Unit number
+        city:
+          type: string
+          maxLength: 20
+          description: City name
+        state:
+          type: string
+          maxLength: 2
+          description: State abbreviation
+        zip:
+          type: string
+          maxLength: 9
+          description: Zip code
+        countryCode:
+          type: string
+          maxLength: 3
+          description: Country code
+        
+          
+    APIErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Error code.
+        description:
+          type: string
+        additionalErrorDetails:
+          $ref: '#/components/schemas/AdditionalErrorDetails'
+    AdditionalErrorDetails:
+      type: object
+      description: Additional error details.
+      properties:
+        status:
+          type: number
+          description: HTTP status code
+        code:
+          type: number
+          description: Internal code to identify the error
+        message:
+          type: string
+          description: Short error message
+        timeStamp:
+          type: string
+          description: Date and time when the error occurred
+    
+    ErrorResponse:
+      type: array
+      items: 
+        type: object
+        required:
+          - code
+          - errorType
+        description: >
+          Error code types\:
+          
+           98: Error Message Response 
+          
+            NARRATIVE CODES:
+            - 001: CUSTOMER NUMBER/SECURITY CODE INVALID (DIAL)
+            - 002: TELEPROCESSING TYPE CODE INVALID
+            - 003: CUSTOMER CODE INVALID
+            - 004: INPUT FORMAT CODE INVALID
+            - 005: OUTPUT FORMAT CODE INVALID
+            - 006: NUMBER OF MONTHS TO COUNT INQUIRIES INVALID (DIAL)
+            - 007: NUMBER OF MONTHS TO COUNT MAXIMUM DELINQUENCIES INV. (DIAL)
+            - 008: INPUT FORMAT INVALID
+            - 009: ADDITIONAL INPUT INVALID UNTIL DIAL COMPLETE
+            - 010: CUSTOMER NUMBER INVALID/DTEC ONLY (DIAL)
+            - 015: ACCOUNT SUSPENDED DUE TO NON-PAYMENT. CALL 800-685-6000 FOR RESOLUTION
+            - 00A: MULTIPLE CODE INVALID
+            - 00B: INPUT FORMAT INVALID
+            - 00C: FILE SELECTION CODE INVALID
+            - 00D: DIAL LINE DOES NOT END WITH A PERIOD
+            - 00E: INVALID PLAIN/TRADITIONAL LANGUAGE REQUEST CODE - FIXED INPUT
+            - 00F: INDUSTRY CODE INVALID FOR ACCESS CODE (DIAL-ACIS)
+          
+            REQUEST CODES:
+            - 021: SEGMENT COUNT NOT EQUAL TO SEGMENTS IN
+            - 026: CUSTOMER NUMBER/SECURITY CODE INVALID (IDNT)
+            - 027: SEGMENT COUNT NON-NUMERIC
+            - 028: ECOA INQUIRY TYPE INVALID
+            - 029: TYPE OF PROCESSING CODE INVALID
+            - 032: INDUSTRY CODE INVALID FOR ACCESS CODE (IDNT-ACIS)
+            - 033: CUSTOMER NUMBER INVALID/DTEC ONLY (IDNT)
+            - 034: INVALID OPTIONAL FEATURE CODE
+            - 02A: NUMBER OF MONTHS TO COUNT INQUIRIES INVALID (IDNT)
+            - 02B: NUMBER OF MONTHS TO COUNT MAXIMUM DELINQ. INV. IDNT
+            - 02C: INVALID SEGMENT IDENTIFIER
+            - 02D: MINNESOTA FILES ARE BLOCKED
+            - 02E: CHARACTER NOT IN STANDARD CHARACTER SET
+            - 02F: INCOMPLETE IDNT SEGMENT
+            - 03A: IMPROPER DELIMITER ON ACRO INQUIRY
+            - 03B: CUSTOMER NUMBER IS EQUAL TO ‘IG’, ‘IL’ ‘IZ’ AND ‘ZB’ AND A PERMISSIBLE PURPOSE CODE IS NOT PRESENT
+            - 03C: REQUIRED FIELD IS MISSING ON “EU” SEGMENT
+            - 03D: MORE THAN ONE “EU” SEGMENT IS PRESENT ON IDNT
+            - 03E: CUSTOMER NUMBER IS NOT EQUAL TO A “ZB” AND “EU” IS PRESENT
+            - 03F: VERMONT FILES BLOCKED - CONTACT 1-800-685-5000 FOR REQUIRED CERTIFICATION
+            - 0E0: **END USER NOT IDENTIFIED – CONTACT 1-800-685-5000 FOR INFORMATION**
+            - 0EF: PERMISSIBLE PURPOSE CODE IS REQUIRED FOR THIS PRODUCT
+            - 0F1: PRODUCT NOT AVAILABLE TO INSURANCE INDUSTRY
+           
+            The following refers to the first 42 bytes of the record:
+            - 101: INVALID CUSTOMER NUMBER
+            - 102: INVALID TELEPROCESSING TYPE
+            - 103: INVALID COMPANY CODE
+            - 104: INVALID INPUT/OUTPUT CODE
+            - 105: ACCOUNT SUSPENDED DUE TO NON-PAYMENT. CALL 800-685-6000 FOR RESOLUTION
+            - 1F1: LINE ONE DUPLICATE LINES
+            - 1F2: LINE ONE UNACCEPTABLE FOREIGN BUREAU LINE
+            - 1F3: LINE ONE INVALID LINE MNEMONIC
+            - 1F4: LINE ONE LONGER THAN 80 BYTES
+          
+            Error codes used in the segment’s name portion:
+            - 201: INVALID LAST NAME
+            - 202: INVALID FIRST NAME
+            - 203: INVALID MIDDLE NAME
+            - 204: INVALID SUFFIX
+            - 205: INVALID SPOUSE NAME
+            - 2F1: LINE TWO DUPLICATE LINES
+            - 2F2: LINE TWO UNACCEPTABLE FOREIGN BUREAU LINE
+            - 2F3: LINE TWO INVALID LINE MNEMONIC
+            - 2F4: LINE TWO LONGER THAN 80 BYTES
+          
+            Inquiry Search Information Error Codes:
+            - 031: INVALID PHONE NUMBER
+            - 401: INVALID SUBJECT SOCIAL SECURITY NUMBER
+            - 403: INVALID SUBJECT AGE
+            - 404: INVALID SUBJECT SEX
+            - 405: INVALID SPOUSE BIRTH DATE
+            - 406: INVALID SPOUSE SOCIAL SECURITY NUMBER
+            - 407: INVALID NUMBER OF DEPENDENTS
+            - 408: INVALID MARITAL STATUS
+            - 4F1: LINE FOUR DUPLICATE LINES
+            - 4F2: LINE FOUR UNACCEPTABLE FOREIGN BUREAU LINE
+            - 4F3: LINE FOUR INVALID LINE MNEMONIC
+            - 4F4: LINE FOUR LONGER THAN 80 BYTES
+            - 022: MAXIMUM NUMBER OF “AD” SEGMENTS EXCEEDED
+            - 025: AD SEGMENT DOES NOT FOLLOW IDNT SEGMENT    
+          
+            The codes to follow refer to the first AD Segment:
+            - 301: INVALID STREET NUMBER
+            - 302: INVALID STREET NAME
+            - 303: INVALID STREET TYPE
+            - 304: INVALID CITY NAME
+            - 305: INVALID STATE CODE
+            - 306: INVALID ZIP CODE
+            - 307: INVALID FILE SINCE
+            - 308: INVALID R-O-B CODE
+            - 3F1: LINE THREE DUPLICATE LINES
+            - 3F2: LINE THREE UNACCEPTABLE FOREIGN BUREAU LINE
+            - 3F3: LINE THREE INVALID LINE MNEMONIC
+            - 3F4: LINE THREE LONGER THAN 80 BYTES
+           
+            These next codes refer to the second AD Segment:
+            - 501: INVALID FORMER ADDRESS STREET NUMBER
+            - 503: INVALID FORMER ADDRESS STREET TYPE
+            - 504: INVALID FORMER ADDRESS CITY NAME
+            - 505: INVALID FORMER ADDRESS STATE CODE
+            - 506: INVALID FORMER ADDRESS ZIP CODE
+            - 507: INVALID FORMER ADDRESS DATE SINCE
+            - 508: INVALID FORMER ADDRESS R-O-B CODE
+            - 5F1: LINE FIVE DUPLICATE LINES
+            - 5F2: LINE FIVE UNACCEPTABLE FOREIGN BUREAU LINE
+            - 5F3: LINE FIVE INVALID LINE MNEMONIC
+            - 5F4: LINE FIVE LONGER THAN 80 BYTES
+            - 6F1: LINE SIX DUPLICATE LINES
+            - 6F2: LINE SIX UNACCEPTABLE FOREIGN BUREAU LINE
+            - 6F3: LINE SIX INVALID LINE MNEMONIC
+            - 6F4: LINE SIX LONGER THAN 80 BYTES        
+          
+            Processing Error Codes (Processing Error Codes apply to the Fixed Inquiry Format.):
+            - 002: NO RECORD FOUND - CHECK INPUT FOR ACCURACY, IF SOCIAL AVAILABLE TRY DTEC
+            - 003: ERROR IN MASTER RECORD - CONTACT EQUIFAX AUTOMATED DELIVERY SYSTEMS
+            - 006: SPOUSE NAME REQUIRED FOR JOINT FILE ACCESS
+            - 008: THIS AREA OF RECORDS TEMPORARILY UNAVAILABLE - PLEASE TRY LATER
+            - 009: THIS AREA OF RECORDS TEMPORARILY UNAVAILABLE - PLEASE TRY LATER
+            - 00A: YOUR TRANSACTION WAS NOT COMPLETED - ERROR HAS OCCURRED IN SEARCHING FILE
+            - 014: RE-ENTER YOUR ENTIRE TRANSACTION - FILE HAS BEEN CHANGED SINCE YOU INQUIRED
+            - 015: CONTACT EQUIFAX - AUTOMATED DELIVERY SYSTEMS
+            - 01B: YOUR NM LINE IS INVALID
+            - 01C: YOUR ADDRESS LINE IS INVALID
+            - 01D: CURRENT AND FORMER ADDRESS BOTH OUT OF AREA
+            - 021: ERROR IN PREPARING YOUR FORM - RE-ORDER FORM - BILLING AND MAINTENANCE IS OK
+            - 02B: CA - CITY OR STATE IS MISSPELLED OR NOT IN ACROPAC SYSTEM
+            - 02C: FA - CITY OR STATE IS MISSPELLED OR NOT IN ACROPAC SYSTEM
+            - 02D: F2 - CITY OR STATE MISSPELLED OR NOT IN ACROPAC SYSTEM
+            - 02E: THIS AREA OF RECORDS TEMPORARILY UNAVAILABLE - PLEASE TRY LATER
+            - 03A: NO ADDITIONAL BILLING ENTRIES ALLOWED WITH BILL - NO
+            - 03E: YOUR REPLY IS INVALID SINCE IT HAS ALREADY BEEN ENTERED ON THIS TRANSACTION
+            - 040: NOT AUTHORIZED TO RECEIVE THIS PRODUCT
+            - 045: PROGRAM ERROR - PRINT TOTAL TRANSACTION AND NOTIFY AUTOMATION DIVISION (CONTACT BUREAU)
+            - 046: ADDRESS - CITY OR STATE IS MISSPELLED OR NOT IN ACROPAC SYSTEM
+            - 04A: INVALID SECURITY CODE - USE YOUR CORRECT CODE
+            - 06E: INVALID REQUEST
+            - 076: CONTACT BUREAU SUPERVISOR - FILE EXCEEDS MAXIMUM LENGTH
+            - 077: CANCELED CUSTOMER NUMBER - CONTACT EQUIFAX SALES DEPARTMENT
+            - 078: SECURITY VIOLATION - UNAUTHORIZED TRANSACTION TYPE
+            - 079: UNABLE TO BUILD SUMMARY OUTPUT FOR THIS RECORD
+            - 07A: UNABLE TO BUILD TOTALVIEW FULL-FILE FIXED OUTPUT FOR THIS RECORD
+            - 07B: UNABLE TO BUILD PRINT IMAGE OUTPUT FOR THIS RECORD
+            - 07C: INSUFFICIENT INFORMATION FOR FILE SEARCH – ADDITIONAL DATA IS NEEDED
+            - 0A3: SOCIAL SECURITY NUMBER IS REQUIRED TO ACCESS PUERTO RICO FILES
+            - 0A4: NO RECORD SUBJECT (JOINT FILE ACCESS) - CHECK INPUT FOR ACCURACY, IF SOCIAL AVAILABLE TRY DTEC
+            - 0A5: NO RECORD SPOUSE (JOINT FILE ACCESS) - CHECK INPUT FOR ACCURACY, IF SOCIAL AVAILABLE TRY DTEC
+            - 0A7: COMBINED FILE IS TOO LARGE FOR PROCESSING. PLEASE RE-SUBMIT USING ONLY CANADIAN ADDRESS
+            - 0A8: NO CANADIAN ADDRESS IN THE INQUIRY.
+            - 0A9: CANADIAN FILE NOT AVAILABLE IN ACROFILE PLUS FORMAT
+            - 0C6: SOCIAL SECURITY NUMBER REQUIRED ON INPUT WHEN USING MILITARY ADDRESS
+            - 0E1: VERMONT FILES BLOCKED - CONTACT 1-800-685-5000 FOR REQUIRED CERTIFICATION
+            - 0F0: INVALID FCRA PERMISSIBLE PURPOSE OR GLB EXCEPTION FOR PRODUCT REQUESTED
+            - 0F9: CURRENT ADDRESS ON FILE IS MINNESOTA - FILE BLOCKED
+            - 4F5: INVALID ACCOUNT NUMBER
+         
+
+        properties: 
+          code: 
+            type: string
+            description: Error code
+          
+          errorType: 
+            type: string
+            description: Error type
+            enum:
+              - 98
+          
+          message: 
+            type: string
+            description: Error description.
+            
+    CustomerConfiguration:
+      type: object
+      description: Configuration related to the customer request
+      required: 
+        - memberNumber
+        - securityCode
+        
+      properties: 
+        memberNumber: 
+          type: string
+          minLength: 10
+          maxLength: 10
+          description: >
+            This is your Equifax Customer Number. This number is used to both access and invoice for Equifax data, products and services.
+            
+            Please contact your Equifax Sales Associate for additional information and activation
+        securityCode: 
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Security code
+          
+        customerCode:
+          type: string
+          maxLength: 4
+          description: Assigned customer code  
+          
+        optionalFeatureCode:
+          description: >
+            The optional features requested in the credit report.
+            
+            Please contact your Equifax Sales Associate for additional information and activation
+          type: array
+          maxItems: 18
+          items:
+            type: string
+            maxLength: 2
+            description: >
+              Optional feature code
+             
+              - G: Payment History returned with Metro II values (default Equifax values)
+        
+    ADVReportRequest:
+      type: object
+      required:
+        - consumer
+        - customerConfiguration
+      properties:
+        consumer: 
+          type: object
+          required:
+            - identifier
+            - name
+          properties:
+            identifier: 
+              type: string
+              default: "Current"
+              description: Record identifier
+            name: 
+              type: array
+              description: Consumer name
+              items: 
+                type: object
+                required: 
+                  - identifier
+                  - lastName
+                  - firstName
+                  
+                properties: 
+                  identifier: 
+                    type: string
+                    default: "Current"
+                    description: Record identifier
+                  firstName: 
+                    type: string
+                    maxLength: 15
+                    description: First name
+                  lastName: 
+                    type: string
+                    maxLength: 25
+                    description: Last name
+                  middleName: 
+                    type: string
+                    maxLength: 15
+                    description: Middle name or initial
+                  suffix: 
+                    type: string
+                    maxLength: 2
+                    description: Suffix 
+            socialNum: 
+              type: array
+              description: Social Security Number
+              items:
+                type: object
+                required:
+                  - identifier
+                  - number
+                  
+                properties:
+                  identifier: 
+                    type: string
+                    default: "Current"
+                    description: Record identifier
+                  number:
+                    type: string
+                    minLength: 0
+                    maxLength: 9
+                    description: Social Security Number (SSN)
+            dateOfBirth: 
+              allOf:
+                - $ref: '#/components/schemas/FullDate'
+              description: Date of Birth 
+            age: 
+              type: string
+              maxLength: 2
+              description: Age 
+            addresses: 
+              type: array
+              minItems: 1
+              maxItems: 2
+              description: Address information. A maximum of 2 addresses can be sent per inquiry. If socialNum is not provided, the houseNumber, streetName, city and state are required
+              items: 
+                $ref: '#/components/schemas/AddressRequest'
+
+        customerReferenceIdentifier: 
+          type: string
+          minLength: 0
+          maxLength: 20
+          description: Unique identifier provided by customer.
+        customerConfiguration: 
+          description: Configurations related to the credit report being requested.
+          allOf:
+            - $ref: '#/components/schemas/CustomerConfiguration'
+    
+    Collection:
+      type: object
+      description: Provides information about any collection item.
+      properties: 
+        industryCode: 
+          title: IndustryCode
+          type: string
+          description: Industry code
+        customerNumber: 
+          type: string
+          maxLength: 10
+          description: Collection agency customer number
+        clientNameOrNumber: 
+          type: string
+          maxLength: 30
+          description: Original creditor name/number
+        statusCode: 
+          type: object
+          description: Current status of the collection
+          properties:
+            code:
+              type: string
+              maxLength: 1
+              description: Code value
+            description:
+              type: string
+              description: >
+                - D: UNPAID Subject has not satisfied debt.
+                - F: FINANCIAL COUNSELOR Identifies that a subject is receiving professional guidance on financial matters, and is under a payment plan.
+                - J: ADJUSTMENT Settlement of a debt in which full payment is not made or when the amount involved is not certain.
+                - M: WAGE EARNER Chapter 13 (Debtors with regular income). This chapter allows an individual to reorganize finances and protect assets while a court approved repayment plan is in effect.
+                - N: NEW LISTING Collection account which has just been turned over for collection of past due debt.
+                - P: PAID Subject has satisfied debt.
+                - S: ACCOUNT DISPUTED Merchant and consumer disagree on various particulars regarding merchandise, terms of agreement or amount owing.
+                - T: PAYMENT Subject submits portion of money owing.
+                - U: STATUS UNKNOWN Indicates status is not verified.
+                - X: CHECKED As of the date reported, the balance was not paid and the account was verified at the request of the consumer via a dispute.
+                - Z: IN BANKRUPTCY The legal process under the Federal Bankruptcy Act by which debtors are granted some form of relief from their financial obligations.
+          
+        narrativeCodes: 
+          $ref: '#/components/schemas/NarrativeCodes'
+        rawNarrativeCodes: 
+          type: array
+          minItems: 0
+          maxItems: 2
+          description: Raw narrative codes included in the report.
+          items: 
+            type: string
+            maxLength: 2
+            description: Narrative code
+        indicator: 
+          type: string
+          maxLength: 1
+          description: Automated Update Indicator
+        dateReported: 
+          description: Date the collection was reported to Equifax.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        dateAssigned: 
+          description: Date Assigned
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        originalAmount: 
+          type: string
+          maximum: 999999999
+          description: Original amount in USD.
+        statusDate: 
+          description: Current Status Date
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        balance: 
+          type: string
+          maximum: 999999999
+          description: Balance in USD.
+        lastPaymentDate: 
+          description: Date of most recent payment
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        dateOfFirstDelinquency:
+          description: Indicates the date of first delinquency as reported by the original creditor.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        accountNumber: 
+          type: string
+          maxLength: 30
+          description: Account number
+        accountDesignatorCode:
+          $ref: '#/components/schemas/AccountDesignatorCode'
+          
+        creditorClassificationCode:
+          $ref: '#/components/schemas/CreditorClassificationCode'
+          
+    AccountTypeCode:
+      type: object
+      description: Codes describing the account type
+      properties:
+        code: 
+          type: string
+          description: Code value
+          
+        description:
+          type: string
+          description: >
+            Account Type Codes
+              - 00: Auto
+              - 01: Unsecured
+              - 02: Secured
+              - 03: Partially Secured
+              - 04: Home Improvement
+              - 05: Federal Housing Administration Home Improvement
+              - 06: Installment Sales Contract
+              - 07: Charge Account
+              - 08: Real Estate
+              - 10: Business Loan - Individual is personally liable
+              - 11: Recreational Merchandise
+              - 12: Education Loan
+              - 13: Lease
+              - 14: Co-Maker Not Borrower (Retired 9-18-09)
+              - 15: Line of Credit
+              - 17: Manufactured Housing
+              - 18: Credit Card
+              - 19: Federal Housing Administration Real Estate Mortgage
+              - 20: Note Loan
+              - 21: Note Loan With Co-Maker
+              - 22: Secured By Household Goods
+              - 23: Secured By Household Goods/Collateral
+              - 25: Veteran’s Administration Real Estate Mortgage
+              - 26: Conventional Real Estate Mortgage
+              - 27: Real Estate Mortgage
+              - 29: Rental Agreement
+              - 34: Debt Counseling Service
+              - 37: Combined Credit Plan (represents two credit plans being reported as one account)
+              - 43: Debit Card (used when backed by a line of credit or overdraft protection)
+              - 47: Credit Line Secured
+              - 48: Collection Agency/Attorney
+              - 49: Insurance Claim Pending
+              - 50: Family Support
+              - 65: Government Unsecured Guaranteed Loan
+              - 66: Government Secured Guaranteed Loan
+              - 67: Government Unsecured Direct Loan
+              - 68: Government Secured Direct Loan
+              - 69: Government Grant
+              - 70: Government Overpayment
+              - 71: Government Fine
+              - 72: Government Fee for Services
+              - 73: Government Employee Advance
+              - 74: Government Miscellaneous Debt
+              - 75: Government Benefit
+              - 77: Returned Check
+              - 78: Installment Loan
+              - 85: Bi-Monthly Mortgage Payment (every other month)
+              - 87: Semi-Monthly Mortgage Payment (twice per month)
+              - 89: Home Equity Line of Credit
+              - 90: Medical Debt
+              - 91: Debt Consolidation
+              - 92: Utility Company
+              - 93: Child Support
+              - 94: Spouse Support
+              - 95: Attorney Fees
+              - 0A: Time Share Loan (a purchased time share)
+              - 1A: Lender Placed Insurance
+              - 2A: Secured Credit Card
+              - 3A: Auto Lease
+              - 5A: Real Estate (junior liens and non-purchase money first)
+              - 6A: Commercial Installment Loan (Individual personally liable; company is guarantor)
+              - 7A: Commercial Line of Credit (Individual personally liable; company is guarantor)
+              - 8A: Business Credit Card (Individual has primary responsibility)
+              - 9A: Secured Home Improvement
+              - 5B: Second Mortgage
+              - 6B: Commercial Mortgage Loan (Individual is personally liable; company is guarantor)
+              - 7B: Agricultural
+              - 8B: Deposit Related (overdrawn account)
+              - 9B: Business Line Personally Guaranteed
+              - 0C: Debt Buyer Account
+              - 1C: Household Goods
+              - 2C: US Department of Agriculture Real Estate Mortgage Loan
+              - 4D: Telecommunication/Cellular
+              - 6D: Home Equity
+              - 0F: Construction Loan
+              - 0G: Flexible Spending Credit Card
+              
+    AccountDesignatorCode:
+      type: object
+      description: Consumer relationship with account
+      properties:
+        code: 
+          type: string
+          description: Code value
+          
+        description:
+          type: string
+          description: >
+            - A: Authorized User – This is an authorized user of this account; another individual has contractual responsibility.
+            
+            - B: On behalf of another person – The subject has financial responsibility for an account, which is used exclusively by another person.
+            
+            - C: Co-maker – The subject has co-signed for a loan, and will be responsible for payment if the borrower should default.
+            
+            - I: Individual Account – The subject of the report has contractual responsibility for this account and is primarily responsible for its payment.
+            
+            - J: Joint Account – The subject and another person (or persons) are jointly responsible for payment on this account.
+            
+            - M: Maker – The subject is responsible for payment of a loan, but a co-maker will be responsible for payment if maker defaults.
+            
+            - S: Shared, but otherwise undesignated – This code is an indication that the credit grantor knows that the subject and at least one other person share the account, but not enough information is available to designate the account as “J” or “A”.
+            
+            - T: Terminated – The subject’s relationship to this account has ended, although other parties who once shared the account may continue to maintain the account.
+            
+            - U: Undesignated
+            
+            - X: Deceased (Not returned on Trade Lines)
+
+    Trade:
+      type: object
+      properties: 
+        automatedUpdateIndicator: 
+          type: string
+          maxLength: 1
+          description: Automated Update Indicator
+        monthsReviewed: 
+          type: string
+          maxLength: 2
+          description: How many months the trade was reviewed
+        accountDesignator: 
+          $ref: '#/components/schemas/AccountDesignatorCode'
+        accountNumber: 
+          type: string
+          maxLength: 20
+          description: Account number 
+        previousHighRate1: 
+          type: integer
+          maximum: 999999999
+          description: >
+            First highest rate that occurred outside of the timeframe of the payment history that has beed requested (Valid Rates\: 2-5, 8 and 9)
+        previousHighDate1: 
+          $ref: '#/components/schemas/PartialDate'
+        previousHighRate2: 
+          type: integer
+          maximum: 999999999
+          description: >
+            Second highest rate that occurred outside of the timeframe of the payment history that has beed requested (Valid Rates\: 2-5, 8 and 9)
+        previousHighDate2: 
+          $ref: '#/components/schemas/PartialDate'
+        previousHighRate3: 
+          type: integer
+          maximum: 999999999
+          description: >
+            Third highest rate that occurred outside of the timeframe of the payment history that has beed requested (Valid Rates\: 2-5, 8 and 9)
+        previousHighDate3: 
+          $ref: '#/components/schemas/PartialDate'
+          
+        lastActivityDate:
+          type: string
+          description: Date of first delinquency or date of last activity
+        
+        customerName:
+          type: string
+          maxLength: 20
+          description: Customer name
+          
+        customerNumber: 
+          type: string
+          maxLength: 10
+          description: Customer number
+        
+        dateReported: 
+          description: >
+            Represents the "as of" date of the most recent update received from the data furnisher. Accounts may continue to be updated by the data furnisher even after they are closed, paid out or become severely delinquent (charge off, repossession, etc.).
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        dateOpened: 
+          description: Date account originally opened
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        highCredit: 
+          type: integer
+          maximum: 999999999
+          description: Highest outstanding balance or original amount
+        creditLimit: 
+          type: integer
+          maximum: 999999999
+          description: Highest available credit limit
+        balance: 
+          type: integer
+          maximum: 999999999
+          description: Account balance
+        pastDueAmount: 
+          type: integer
+          maximum: 999999999
+          description: Amount past due on an account (late)
+        portfolioTypeCode:
+          type: object
+          description: Describes the payment arrangement of the account (revolving, open, installment, line of credit or mortgage).
+          properties:
+            code:
+              type: string
+              maxLength: 1
+              description: Code value
+            
+            description:
+              type: string
+              description: >
+                  Portfolio Type Codes:
+                    - C: Line of Credit (payment amounts based on the outstanding balance)
+                    - I: Installment (fixed number of payments)
+                    - M: Mortgage (fixed number of payments – usually for real estate)
+                    - O: Open Account (entire balance is due upon demand)
+                    - R: Revolving (payment amounts based on the outstanding balance)
+                    - Blank: No Portfolio Type available
+                    
+        rateStatusCode: 
+          type: object
+          description: Current status or rating of the account
+          properties:
+            code:
+              type: string
+              maxLength: 1
+              description: Code value
+            
+            description:
+              type: string
+              description: >
+                
+                 - 0: Too new to rate; Approved but not used
+                    :
+                 - 1: Pays account as agreed
+                    :
+                 - 2: Not more than two payments past due
+                    :
+                 - 3: Not more than three payments past due
+                    :
+                 - 4: Not more than four payments past due
+                    :
+                 - 5: At least 120 days or more than four payments past due
+                    :
+                 - 6: Collection account (Enhanced Trade Only)
+                    :
+                 - 7: Included in Chapter 13
+                    :
+                 - 8: Repossession
+                    :
+                 - 9: Charge-off
+                 
+                 - Blank: No rate reported
+              
+        narrativeCodes: 
+          $ref: '#/components/schemas/NarrativeCodes'
+              
+        rawNarrativeCodes: 
+          type: array
+          description: Raw codes for the narratives.
+          minItems: 0
+          maxItems: 4
+          items: 
+            type: string
+            maxLength: 2
+            description: Narrative code
+          
+        accountTypeCode:
+          $ref: '#/components/schemas/AccountTypeCode'
+        
+        lastPaymentDate: 
+          description: Date of the most recent payment.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        closedDate: 
+          description: Contains the date the account was closed.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        dateMajorDelinquencyFirstReported: 
+          description: >
+            If current Rate/Status code is 6, 7, 8, 9, M, Z or if trade contains narrative code 081 (foreclosure), this date will reflect the first time that Rate/Status or narrative code was reported.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        actualPaymentAmount: 
+          type: integer
+          maximum: 999999999
+          description: Payment actually received for a reporting period.
+        scheduledPaymentAmount: 
+          type: integer
+          maximum: 999999999
+          description: >
+            Contractual amount due for a payment period. (The figure in this field should be the monthly amount due regardless of the actual payment frequency.) 
+        termsFrequencyCode:
+          type: object
+          description: Reflects how often payments are due.
+          properties:
+            code:
+              type: string
+              maxLength: 1
+              description: Code value
+            
+            description:
+              type: string
+              description: > 
+                  - B: Biweekly (due every 2 weeks)
+                  
+                  - D: Deferred
+                  
+                  - E: Semi-monthly (due twice a month)
+                  
+                  - L: Bi-monthly (due every 2 months)
+                  
+                  - M: Monthly (due every month)
+                  
+                  - P: Single Payment Loan
+                  
+                  - Q: Quarterly (due every 3 months)
+                  
+                  - S: Semi-annually (due twice a year)
+                  
+                  - T: Tri-annually (due every 4 months)
+                  
+                  - W: Weekly (due every week)
+                  
+                  - Y: Annually (due every year)
+                  
+        termsDurationCode:
+          type: object
+          description: Amount of time to repay the loan
+          properties:
+            code: 
+              type: string
+              maxLength: 1
+              description: Code value
+          
+            description: 
+              type: string
+              description: >
+                Terms duration codes 
+                  - D: Days
+                  - M: Months
+                  - Y: Years
+              
+        purchasedFromOrSoldCreditorIndicator:
+          type: object
+          description: Purchased From/Sold To/Original Creditor Name is the purchaser, seller or original creditor.
+          properties:
+            code: 
+              type: string
+              maxLength: 1
+              description: Code value
+          
+            description:
+              type: string
+              description: >
+                  Purchased From/Sold To/Original Creditor Values
+                  
+                  - O: Original Creditor
+                  
+                  - P: Purchased From
+                  
+                  - S: Sold To
+        
+        purchasedFromOrSoldCreditorName:
+          type: string
+          maxLength: 30
+          description: Denotes who the account was either purchased from or sold to or the Original Creditor’s name
+        creditorClassificationCode: 
+          $ref: '#/components/schemas/CreditorClassificationCode'
+              
+        activityDesignatorCode:
+          type: object
+          description: Describes the final state of the account.
+          properties:
+            code: 
+              type: string
+              maxLength: 1
+              description: Code value
+          
+            description:
+              type: string        
+              description: >
+                  - B: Paid and Closed
+                  
+                  - C: Closed
+                  
+                  - D: Transfer/Sold/Paid
+                  
+                  - L: Lost/Stolen
+                  
+                  - P: Paid
+                  
+                  - R: Refinanced
+                  
+                  - T: Transfer/Sold
+          
+        originalChargeOffAmount: 
+          type: integer
+          maximum: 999999999
+          description: Amount originally charged to loss by the creditor.
+        deferredPaymentStartDate: 
+          description: Contains the date the first payment is due for deferred loans.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        ballonPaymentAmount: 
+          type: integer
+          maximum: 999999999
+          description: Amount of the balloon payment.
+        ballonPaymentDueDate: 
+          description: Contains the date the balloon payment is due.
+          allOf:
+            - $ref: '#/components/schemas/FullDate'
+        
+        mortgageIDNumber:
+          type: string
+          maxLength: 18
+          description: >
+            Number assigned to a mortgage loan that remains constant throughout the life of the loan. The MIN indicates that the loan is registered with the Mortgage Electronic Registration Systems, Inc., the electronic registry for tracking the ownership of mortgage rights.
+        paymentHistoryProfile:
+          type: array
+          minItems: 0
+          maxItems: 99
+          items: 
+            type: object
+            properties: 
+                code:
+                  type: string
+                  maxLength: 1
+                description:
+                  type: string
+                  description: >
+                    The valid values for the 81 Month Payment History are:
+                    
+                    - Blank: not populated based on the Date Open (payment history will only be populated for each of the months that the account has been open). 
+                    - E: Zero balance and current account  
+                    - \*: Rate/Status was not available for that month
+                    - 2 – 6, 8 and 9 (See Rate/Status Codes for values)
+                    - 6: Valid value for Payment History
+
+    ADVReportResponse:
+      type: object
+      properties:
+        status: 
+            type: string
+            description: Transaction status. It could include some comments related to the transaction.
+            example: [
+              "completed",
+              "completed === Request Schema Validation Error"
+            ]
+            
+            
+        consumer:
+          $ref: '#/components/schemas/ConsumerADVReport'
+        
+    ConsumerADVReport: 
+      type: object
+      properties: 
+        equifaxUSConsumerCreditReport: 
+          type: object
+          properties:
+            identifier:
+              type: string 
+              example: ["Primary Report #","Secondary Report #","Individual Report #"]
+            
+            customerReferenceNumber: 
+              type: string 
+              maxLength: 20
+              description: This field will return a value sent in the request  
+            
+            customerNumber: 
+              type: string 
+              maxLength: 10
+              description: This field returns the same value provided in the request 
+            consumerReferralCode: 
+              type: string
+              maxLength: 3
+              description: Credit Reporting Agency Number
+            outputFormatCode: 
+              type: string
+              maxLength: 2
+              description: The report output format
+            hitCode:
+              type: object
+              description: Hit code
+              properties:
+                code: 
+                  type: string
+                  maxLength: 1
+                  description: Code value
+                description:
+                  type: string                    
+                  description: >
+                    - 1: Hit
+                    
+                    - 2: No-Hit
+                    
+                    - 3: Manual File (Returned if credit report has been designated by Equifax as manual return only or in response to an on-line prescreen transaction when the file contains a promo block.)
+                    
+                    - 4: Manual File Review Required - Due to reasons such as unable to deliver Consumer Narrative(s), Fraud/Active Duty Alert(s), or Address Discrepancy Indicator
+                    
+                    - 5: Referred File (File is under review or file is being referred to another)
+                    
+                    - 6: Hit and Automated Consumer Narrative
+                    
+                    - 7: Fraud/Verification Product Being Requested Without Requesting a Credit File
+                    
+                    - 8: "Thin File" when using Fraud/Verification Products
+                    
+                    - 9: No-Hit/Auto-DTEC**
+                    
+                    - A: Consumer Requested Security Freeze on His/Her Credit File Report Unavailable (See Attachment 15 Legislative Information)
+                    
+                    - C: No-Hit With Information From Additional Data Source(s) Returned
+                    
+                    - D: Manual File With Information From Additional Data Source(s) Returned
+                    
+                    - E: Manual Consumer Narrative With Information From Additional Data Source(s) Returned
+                    
+                    - F: Referred File With Information from Additional Data Source(s) Returned
+                    
+                    - G: Consumer Requested Security Freeze on His/Her Credit File – Report Unavailable With Information From Additional Data Source(s) Returned (except MarketMax) 
+                    
+                    - I*: Information from your inquiry has been identified as potentially fraudulent or misused, therefore the credit report is not available for delivery 
+                    
+                    - J*: Information from your inquiry has been identified as potentially fraudulent or misused, therefore the credit report is not available for delivery – with information from additional data source(s) returned
+                    
+                    - L*: Consumer Requested Equifax Lock on His/Her Credit File – Report Unavailable
+                    
+                    - M*: Consumer Requested Equifax Lock on His/Her Credit File – Report Unavailable With Information From Additional Data Source(s) Returned
+                    
+                    - T: Additional data source being returned without requesting a consumer report (MLA)
+                    
+                    - *:Optional Hit Codes require your customer number to be activated through your Sales Representative.
+                    
+            reportDate: 
+              description: Date of this report.
+              allOf:
+                - $ref: '#/components/schemas/FullDate'
+            
+            subjectName: 
+              type: object
+              description: Subject's full name
+              properties: 
+                firstName: 
+                  type: string
+                  maxLength: 25
+                  description: Subject's first name
+                lastName: 
+                  type: string
+                  maxLength: 51
+                  description: Subject's last name
+                middleName: 
+                  type: string
+                  maxLength: 25
+                  description: Subject's middle name
+                suffix: 
+                  type: string
+                  maxLength: 2
+                  description: Subject's suffix name
+            subjectSocialNum: 
+              type: string
+              maxLength: 9
+              description: Subject's Social Security Number (SSN)
+             
+            address: 
+              type: object
+              description: It contains Equifax report data pertaining to the subject's addresses 
+              properties: 
+                addressType:
+                  type: string
+                  maxLength: 2
+                  enum: 
+                    - "current"
+                  description: >
+                    The address type:
+                    
+                    - current: Current Address. A maximum of 1 current Address can be returned per report
+                    
+                houseNumber:
+                  type: string
+                  description: Street Number/House number
+                  maxLength: 10
+                streetName:
+                  type: string
+                  maxLength: 26
+                  description: Street name
+                streetType:
+                  type: string
+                  description: Street type/Direction/Apartment number
+                  maxLength: 26
+                cityName:
+                  type: string
+                  maxLength: 20
+                  description: City name
+                stateAbbreviation:
+                  type: string
+                  maxLength: 2
+                  description: State abbreviation
+                zipCode:
+                  type: string
+                  maxLength: 9
+                  description: Zip code
+                    
+
+            collections: 
+              type: array
+              minItems: 0
+              maxItems: 99
+              items:
+                $ref: '#/components/schemas/Collection'
+
+            trades: 
+              type: array
+              minItems: 0
+              maxItems: 198
+              items:
+                $ref: '#/components/schemas/Trade'
+            inquiries: 
+              type: array
+              minItems: 0
+              maxItems: 198
+              items: 
+                type: object
+                properties: 
+                  type: 
+                    type: string
+                    description: Inquiries from customers requesting Equifax credit reports and other products.
+                    example: [
+                      "inquiryfileInquiry"
+                    ]
+                  
+                  industryCode: 
+                    title: IndustryCode
+                    type: string
+                    description: Customer's industry code.
+                  inquiryDate: 
+                    description: Date of inquiry.
+                    allOf:
+                      - $ref: '#/components/schemas/FullDate'
+                  
+                  customerNumber: 
+                    type: string
+                    maxLength: 18
+                    description: Customer's member number who made the inquiry.
+                  customerName: 
+                    type: string
+                    maxLength: 20
+                    description: Customer's name who made the inquiry.
+                    
+                  accountTypeOrInquiryIntent:
+                    $ref: '#/components/schemas/AccountTypeCode'
+                
+            errors: 
+              $ref: "#/components/schemas/ErrorResponse"
+  
+  examples:
+    ADVReportRequest:
+      value:
+        consumer:
+          name:
+          - identifier: current
+            firstName: KURT
+            lastName: BBUXTI
+          socialNum:
+          - identifier: current
+            number: '666130032'
+          addresses:
+          - identifier: current
+            houseNumber: '744'
+            streetName: T LRQF E QIN
+            streetType: AV
+            city: PHOENIX
+            state: AZ
+        customerReferenceIdentifier: JSON-CT
+        customerConfiguration:
+          memberNumber: 999XX00000
+          securityCode: "XXX"
+          optionalFeatureCode:
+          - G
+
+    
+    ADVReportResponse:
+      value:
+        status: completed
+        consumer:
+          equifaxUSConsumerCreditReport:
+          - identifier: Individual Report 1
+            customerReferenceNumber: JSON-CT
+            customerNumber: 999XX00000
+            consumerReferralCode: '300'
+            outputFormatCode: CT
+            hitCode:
+              code: '1'
+              description: Hit
+            reportDate: '10082019'
+            subjectName: 
+              firstName: KURT
+              lastName: BBUXTI
+            subjectSocialNum: '666130032'
+            address:
+              addressType: current
+              houseNumber: '744'
+              streetName: T LRQF E QIN
+              streetType: AV
+              cityName: PHOENIX
+              stateAbbreviation: AZ
+            collections:
+            - customerNumber: 683YC02136
+              clientNameOrNumber: SPEEDY CASH 67
+              statusCode:
+              - code: D
+                description: UNPAID
+              narrativeCodes:
+              - code: IP
+                description: CONSUMER DISPUTES THIS ACCOUNT INFORMATION
+              rawNarrativeCodes:
+              - IP
+              indicator: "*"
+              dateReported: '09032019'
+              dateAssigned: '05162016'
+              originalAmount: 897
+              statusDate: '09032019'
+              balance: 867
+              dateOfFirstDelinquency: '03102016'
+              accountDesignatorCode:
+              - code: I
+                description: Individual Account
+              creditorClassificationCode:
+              - code: '12'
+                description: FINANCIAL
+            - customerNumber: 668YC51199
+              clientNameOrNumber: TARA ENERGY
+              statusCode:
+              - code: D
+                description: UNPAID
+              indicator: "*"
+              dateReported: '09112019'
+              dateAssigned: '09112019'
+              originalAmount: 571
+              statusDate: '09112019'
+              balance: 571
+              dateOfFirstDelinquency: '11282018'
+              accountDesignatorCode:
+              - code: I
+                description: Individual Account
+              creditorClassificationCode:
+              - code: '10'
+                description: UTILITIES
+            trades:
+            - automatedUpdateIndicator: "*"
+              monthsReviewed: '01'
+              accountDesignator:
+              - code: I
+                description: Individual Account
+              accountNumber: '390'
+              customerName: HOUSTON FINANCE
+              dateReported: '09082019'
+              dateOpened: '09032019'
+              highCredit: 213
+              balance: 213
+              pastDueAmount: 54
+              portfolioTypeCode:
+              - code: I
+                description: Installment (fixed number of payments)
+              rateStatusCode:
+              - code: 3
+                description: Not more than three payments past due
+              narrativeCodes:
+              - code: EP
+                description: FIXED RATE
+              rawNarrativeCodes:
+              - EP
+              accountTypeCode:
+              - code: '01'
+                description: Unsecured
+              lastPaymentDate: '09002019'
+              termsDurationCode:
+              - code: 8M
+                description: Months
+            inquiries:
+            - type: inquiry
+              industryCode: AN
+              inquiryDate: '09282019'
+              customerNumber: 990AN88973
+              customerName: TMPCKCADIL
+            - type: inquiry
+              industryCode: FA
+              inquiryDate: '06282018'
+              customerNumber: 168FA28487
+              customerName: ALLYFINANC
+
+
+    '400.00':
+      value:
+        efxErrorCode: '400.00'
+        description: Please refer to additionalErrorDetails
+        additionalErrorDetails: {}
+        
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload
+        
+    '400.02':
+      value:
+        efxErrorCode: '400.02'
+        description: Missing Content-type header
+        
+    '401.01':
+      value:
+        efxErrorCode: '401.01'
+        description: Access Token Expired
+        
+    '401.02':
+      value:
+        efxErrorCode: '401.02'
+        description: Missing mandatory parameters
+        
+    '401.03':
+      value:
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+       
+    '401.04':
+      value:
+        efxErrorCode: '401.04'
+        description: 'Custom response'
+        
+    '403.01':
+      value:
+        efxErrorCode: '403.01'
+        description: Access denied
+        
+    '403.02':
+      value:
+        efxErrorCode: '403.02'
+        description: Access Denied for user
+        
+    '404.01':
+      value:
+        efxErrorCode: '404.01'
+        description: Not Found - The specified resource does not exist
+        
+    '415.01':
+      value:
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format
+        
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+        
+    '501.01':
+      value:
+        efxErrorCode: '501.01'
+        description: Not-implemented - Specified resource is not implemented
+        
+    '503.01':
+      value:
+        efxErrorCode: '503.01'
+        description: Service is un-available
+        
+    '504.01':
+      value:
+        efxErrorCode: '504.01'
+        description: Gateway timeout

@@ -1,0 +1,599 @@
+openapi: "3.0.0"
+
+info:
+  title: Alternative Employment And Income Data 
+  description: |
+    # Introduction
+      Alternative Data with instant access to self-reported data from the consumer as reported to Equifax. It provides insight into the consumers potential employment and income history.
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. **<a href="/oauth" target="_blank">Get an access token</a>** using the credentials.
+    3. **[Verify Stated Data ](#tag/StatedData-Reports)**.
+
+  contact:
+    name: Equifax Developer Center Support
+    url: https://developer.equifax.com/contact
+  version: 'v1'
+  termsOfService: ''
+
+servers:
+  - url: https://api.sandbox.equifax.com/business/statedData/v1
+
+paths:
+  /reports:
+    post:
+      tags:
+        - Alternative Employment And Income Data
+      description: >
+        Alternative Data with instant access to self-reported data from the consumer as reported to Equifax. Self-reported (stated) Employment and/or Income data can help provide insight into the consumers potential employment and income history.
+      operationId: Validate Stated Data
+      security:
+      - OAuth 2.0:
+        - 'scopes:  https://api.equifax.com/business/statedData/v1'
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            default: application/json
+            enum:
+            - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Request"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/AlternativeEmploymentAndIncomeVerification"
+                  - $ref: "#/components/schemas/AlternativeEmploymentVerification"
+              examples:
+                AlternativeEmploymentAndIncomeVerification:
+                  $ref: "#/components/examples/AlternativeEmploymentAndIncomeVerification"
+                AlternativeEmploymentVerification:
+                  $ref: "#/components/examples/AlternativeEmploymentVerification"
+             
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload is in an unsupported format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Request:
+      required:
+        - applicants
+      properties:
+        applicants:
+          $ref: "#/components/schemas/Applicants"
+    Applicants:
+      type: object
+      description: 'Container to hold order information along with primary consumer details.'
+      required:
+        - orderInfo
+        - primaryConsumer
+      properties:
+        orderInfo:
+          $ref: "#/components/schemas/OrderInfo"
+        primaryConsumer:
+          $ref: "#/components/schemas/PrimaryConsumer"
+    OrderInfo:
+      type: object
+      description: 'Container to hold order information such as requestor, inquiry date, inquiry type, source details, etc.'
+      required:
+        - organizationId
+        - organizationName
+        - locationId
+        - locationName
+        - inquiryType
+        - permPurpose
+      properties:
+        organizationId:
+          type: number
+          description: 'Customer Organization ID as supplied by Equifax. This is generated as part of Customer Onboarding on the Equifax side.'
+          example: 10002119
+        locationId:
+          type: number
+          description: 'Customer Location  ID is the department or product line the Customer is configured for in the Equifax. This is generated as part of Customer Onboarding on the Equifax side.'
+          example: 964128
+        organizationName:
+          type: string
+          description: 'Customer Organization Name corresponding to the ID as supplied by Equifax. This is generated as part of Customer Onboarding on the Equifax side.'
+          example: 'ABC Corp'
+        locationName:
+          type: string
+          description: 'Location  Name corresponding to the ID as supplied by Equifax. This is generated as part of Customer Onboarding on the Equifax side.'
+        inquiryDate:
+          type: string
+          example: '2019-07-15'
+          description: 'Inquiry date in the format yyyy-mm-dd'
+        inquiryType:
+          type: string
+          description: "Inquiry type. Indicates if the request is for Employment and Income Or only for Employment.Possible values:�  AlternativeEmployment�  AlternativeEmploymentAndIncome"
+          enum:
+            - AlternativeEmployment
+            - AlternativeEmploymentAndIncome
+        permPurpose:
+          type: string
+          description: "Represents the permissible purpose code Only the following values are allowed =['PPCHLDSPA','PPCREDIT','PPCRTORD','PPEMPLOY','PPGOVRNM','PPASSESS','PPBUSNSS','PPINSRNC','PPREVIEW','PPSECRTY','PPWRTTEN']"
+          example: PPCHLDSPA
+        trackingId:
+          type: string
+          description: 'Tracking id.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'Source system id.'
+          example: string
+        sourceName:
+          type: string
+          description: 'Source name.'
+          example: string
+        resellerName:
+          type: string
+          description: 'Reseller name.'
+          example: string
+        platformName:
+          type: string
+          description: 'Platform name.'
+          example: string
+        intermediaryName:
+          type: string
+          description: 'Intermediary name.'
+          example: string
+        requestor:
+          $ref: "#/components/schemas/Requestor"
+    Requestor:
+      type: object
+      description: 'Object with requestor details such as name, organization, email, address, phone numbers.'
+      properties:
+        name:
+          type: string
+          description: 'Requestor name.'
+          example: John Doe
+        endUser:
+          type: string
+          description: 'Requestor end user.'
+          example: 'ABC Company'
+        email:
+          type: string
+          description: 'Requestor email.'
+          example: 'john.doe@abccompany.com'
+        address:
+          type: string
+          description: 'Requestor address.'
+          example: '111 ABC Road, St. Louis, MO 63146'
+        phoneNumbers:
+          type: array
+          description: "Requestor phone number related information."
+          items:
+            $ref: "#/components/schemas/PhoneNumbers"
+    PhoneNumbers:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: 'Requestor phone identifier.'
+          example: 'primary'
+        number:
+          type: string
+          description: 'Requestor phone number.'
+          example: '314-555-5555'
+    PrimaryConsumer:
+      type: object
+      description: 'Primary consumer details.'
+      required:
+        - personalInformation
+      properties:
+        personalInformation:
+          $ref: "#/components/schemas/PersonalInformation"
+    PersonalInformation:
+      type: object
+      description: "Personal information details."
+      required:
+        - socialSecurityNumber
+        - name
+        - education
+      properties:
+        customerReferenceIdentifier:
+          type :  string
+          description: "Applicant�s reference identifier This is also used for internal testing to return Mock responses for different scenarios in lower environment. For this to return Mock responses, set mockuprequired to true."
+          example: 'MOCK/1400'
+        socialSecurityNumber:
+          type: string
+          description: "Applicant's Social Security Number."
+          example: '992880001'
+    AlternativeEmploymentAndIncomeVerification:
+      type: object
+      properties:
+        orderInfo:
+          $ref: "#/components/schemas/OrderInfoResponse"
+        responseStatus:
+          type: string
+          description: "Describes whether the overall report is a Hit or a No-Hit"
+          enum:
+            - Hit
+            - No-Hit
+          example: Hit
+        alternativeData:
+          $ref: "#/components/schemas/AlternativeData"
+        statedEmployment:
+          type: array
+          description: Container to hold former names.
+          items:
+            $ref: "#/components/schemas/StatedEmployment"
+        transactionId:
+          type : string
+          description: 'Equifax generated report ID.'
+          example: '123456789'
+    AlternativeEmploymentVerification:
+      type: object
+      properties:
+        orderInfo:
+          $ref: "#/components/schemas/OrderInfoResponse"
+        alternativeData:
+          $ref: "#/components/schemas/AlternativeData"          
+        responseStatus:
+          type: string
+          description: Describes whether the overall report is a Hit or No-Hit.
+          enum:
+            - Hit
+            - No-Hit
+          example: Hit
+        transactionId:
+          type : string
+          description: 'Equifax generated report ID.'
+          example: '123456789'
+        statedEmployment:
+          type: array
+          description: Container to hold former names.
+          items:
+            $ref: "#/components/schemas/StatedEmployment"          
+    OrderInfoResponse:
+      type: object
+      description: 'Container to hold  order information along with primary consumer details.'
+      properties:
+        inquiryDate:
+          type: string
+          description: 'Inquiry date in the format yyyy-mm-dd.'
+          example: '2018-04-11'
+        inquiryType:
+          type: string
+          description: 'Inquiry type identifier. Identifies a particular report within a category of report. The value received in request will be echoed back in the response.'
+          example: 'BGS-001'
+        permPurpose:
+          type: string
+          description: "Represents the permissible purpose code Only the following values are allowed =['PPCHLDSPA','PPCREDIT','PPCRTORD','PPEMPLOY','PPGOVRNM','PPASSESS','PPBUSNSS','PPINSRNC','PPREVIEW','PPSECRTY','PPWRTTEN']"
+          example: PPCHLDSPA
+        trackingId:
+          type: string
+          description: 'Tracking id is a customer provided reference number. The value if received in request will be echoed back in the response.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'Source system id is a customer provided system id. The value if received in request will be echoed back in the response.'
+          example: string
+        sourceName:
+          type: string
+          description: 'Source name is a customer provided system name. The value if received in request will be echoed back in the response.'
+          example: string
+        inquirySsn:
+          type: string
+          description: 'The Social Security Number received in the request is echoed back in the response.'
+          example: '666314889'
+        requestor:
+          $ref: "#/components/schemas/Requestor"
+    StatedEmployment:
+      type: object
+      properties:
+        source:
+          type: string
+          description: 'The type of Education Verification that is required.'
+          enum:
+            - Equifax - ACRO
+            - Equifax - DataX
+        statedEmployer:
+          type: string
+          description: "Stated Employer ."
+          example: 'OZARK HOTEL PARTNERS'
+        statedOccupation:
+          type: string
+          description: "Stated Occupation (if available). This will be returned only for source �Equifax � ACRO�."
+          example: 'AUDITOR'  
+        dateOriginallyReported:
+          type: string
+          description: "Date Originally Reported."
+          example: '2017-05-04'          
+        dateLastReported:
+          type: string
+          description: "Date Last Reported ."
+          example: '2018-05-05'          
+        frequencyReported:
+          type: string
+          description: "Number of times (frequency) that the information was reported. This will be returned only for source �Equifax � DataX�."
+          example: '10'          
+        subjectName:
+          $ref: "#/components/schemas/SubjectName"
+        statedIncome:
+          type: array
+          description: Container to hold former names.
+          items:
+            $ref: "#/components/schemas/StatedIncome"
+    StatedIncome:
+      type: object
+      properties:
+        source:
+          type: string
+          description: 'The type of Education Verification that is required.'
+          enum:
+            - Equifax - DataX
+        statedIncome:
+          type: string
+          description: Stated Income (if available).
+          example: '1000'
+        dateOriginallyReported:
+          type: string
+          description: Date Originally Reported .
+          example: '2016-05-04'          
+        dateLastReported:
+          type: string
+          description: Date Last Reported (if available).
+          example: '2017-05-05'          
+        frequencyReported:
+          type: string
+          description: "Number of times (frequency) that the information was reported. This will be returned only for source �Equifax � DataX�"
+          example: '10'          
+        subjectName:
+          $ref: "#/components/schemas/SubjectName"
+    SubjectName:
+      type: object
+      description: "Container to hold Name details.This section will contain name  include Income data from different sources.The subjectName section will only be included if available for source �Equifax � ACRO�."
+      properties:
+        firstName:
+          type: string
+          description: "First Name of the consumer ."
+          example: 'BARBARA'
+        lastName:
+          type: string
+          description: "Last Name of the consumer."
+          example: 'DOE'
+        middleInitial:
+          type: string
+          description: "Middle Initial of the consumer."
+          example: 'E'
+    ErrorResponse:
+      type: object
+      required:
+        - efxErrorCode
+        - description
+      properties:
+        efxErrorCode:
+          type: number
+          description: Code to indicate more specific cause of the error.
+        description:
+          type: string
+        additionalErrorDetails:
+          type: object
+          description: This property is conditionally added when additional error details are available.
+    AlternativeData:
+      type: object
+      description: Container to hold consumer’s name details.
+      properties:
+        status:
+          type: string
+          description: "Status.Possible values:�  Completed �  Unable To Complete."
+          example: 'Completed or Unable To Complete'
+        disclaimer:
+          type: string
+          description: Disclaimer
+          example: 'NOTICE: INFORMATION CONTAINED IN THE ALTERNATIVE EMPLOYMENT DATA SECTION OF THIS REPORT IS THE CONSUMERS STATED INFORMATION SOURCED FROM THE EQUIFAX CREDIT FILE DATA("DATA"). THIS DATA IS A CONSUMER REPORT. HOWEVER, CLIENT MAY NOT USE THE DATA TO TAKE ANY ACTION, IN WHOLE OR IN PART FOR ADVERSE ACTION AS DEFINED BY THE FCRA WITH RESPECT TO ANY CONSUMER ON THE BASIS OF SUCH DATA. CLIENT SHOULD CONDUCT ENHANCED DUE DILEGENCE TO VERIFY OR RESOLVE THE DATA PROVIDED FOR THE SUBJECT OF THE REPORT.'
+  examples:
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+        additionalErrorDetails: {}
+    '401.03':
+      value:
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+        additionalErrorDetails: {}
+    '403.01':
+      value:
+        efxErrorCode: '403.01'
+        description: Access Denied.
+        additionalErrorDetails: {}
+    '404.01':
+      value:
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+        additionalErrorDetails: {}
+    '415.01':
+      value:
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+        additionalErrorDetails: {}
+    '422.01':
+      value:
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    '429.01':
+      value:
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+        additionalErrorDetails: {}
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+        additionalErrorDetails: {}
+    '501.01':
+      value:
+        efxErrorCode: '501.01'
+        description: Not-implemented - Specified resource is not implemented.
+        additionalErrorDetails: {}
+    '503.01':
+      value:
+        efxErrorCode: '503.01'
+        description: Service is un-available.
+        additionalErrorDetails: {}
+    '504.01':
+      value:
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+        additionalErrorDetails: {}
+    'AlternativeEmploymentAndIncomeVerification':
+      value:
+        orderInfo:
+          inquiryDate: '2018-04-11'
+          inquiryType: " AlternativeEmploymentAndIncome"
+          permPurpose: "N/A"
+          trackingId: "9991110000"
+          sourceSystemId: string
+          sourceName: "CSF"
+          requestor:
+            name: John Doe
+            email: john.doe@abccompany.com
+            address: '111 ABC Rd. St. Louis, MO. 63146'
+            phoneNumbers:
+              - identifier: primary
+                number: 314-555-5555
+          inquirySsn: '666314889'
+        responseStatus: Hit
+        alternativeData:
+          status: Completed
+          disclaimer: "NOTICE: INFORMATION CONTAINED IN THE ALTERNATIVE EMPLOYMENT AND INCOME DATA SECTION OF THIS REPORT IS THE CONSUMERS STATED INFORMATION SOURCED FROM THE EQUIFAX CREDIT FILE DATA('DATA'). THIS DATA IS A CONSUMER REPORT. HOWEVER, CLIENT MAY NOT USE THE DATA TO TAKE ANY ACTION, IN WHOLE OR IN PART FOR ADVERSE ACTION AS DEFINED BY THE FCRA WITH RESPECT TO ANY CONSUMER ON THE BASIS OF SUCH DATA. CLIENT SHOULD CONDUCT ENHANCED DUE DILEGENCE TO VERIFY OR RESOLVE THE DATA PROVIDED FOR THE SUBJECT OF THE REPORT."
+          statedEmployment:
+          source: " Equifax - ACRO"
+          dateOriginallyReported: "1955-01-01"
+          dateLastReported:  "1972-01-01"
+          statedOccupation: "Engineer"
+          statedEmployer: "GRAIN PROCESSING COR"
+          subjectName:
+            firstName: BARBARA
+            lastName: FFHKSVC
+            middleInitial: E
+        transactionId: '1000014987'
+    'AlternativeEmploymentVerification':
+      value:
+        orderInfo:
+          inquiryDate: '2018-04-11'
+          inquiryType: "AlternativeEmployment"
+          permPurpose: "N/A"
+          trackingId: '9991110000'
+          sourceSystemId: string
+          sourceName: "CSF"
+          requestor:
+            name: John Doe
+            email: john.doe@abccompany.com
+            address: '111 ABC Rd. St. Louis, MO. 63146'
+            phoneNumbers:
+              - identifier: primary
+                number: 314-555-5555
+          inquirySsn: '666314889'
+        responseStatus: Hit
+        consumerIdentity:
+          status: Completed
+          disclaimer: " NOTICE: INFORMATION CONTAINED IN THE ALTERNATIVE EMPLOYMENT DATA SECTION OF THIS REPORT IS THE CONSUMERS STATED INFORMATION SOURCED FROM THE EQUIFAX CREDIT FILE DATA('DATA'). THIS DATA IS A CONSUMER REPORT. HOWEVER, CLIENT MAY NOT USE THE DATA TO TAKE ANY ACTION, IN WHOLE OR IN PART FOR ADVERSE ACTION AS DEFINED BY THE FCRA WITH RESPECT TO ANY CONSUMER ON THE BASIS OF SUCH DATA. CLIENT SHOULD CONDUCT ENHANCED DUE DILEGENCE TO VERIFY OR RESOLVE THE DATA PROVIDED FOR THE SUBJECT OF THE REPORT."
+          statedEmployment:
+          source: " Equifax - ACRO"
+          dateOriginallyReported: " Data Not Returned"
+          dateLastReported: " Data Not Returned"
+          statedOccupation: "Engineer"
+          statedEmployer: "GRAIN PROCESSING COR"
+          subjectName:
+            firstName: BARBARA
+            lastName: FFHKSVC
+            middleInitial: E
+        transactionId: '1000014987'       

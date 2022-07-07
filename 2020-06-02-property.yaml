@@ -1,0 +1,787 @@
+openapi: 3.0.0
+
+info:
+  title: Property Report API
+  description: |
+    # Introduction
+    Property Verification shows properties a consumer owns. By providing an automated source of property verification, Equifax can provide clients an efficient method to confirm property ownership and help improve internal processes with a fuller understanding of property ownership.
+    # Getting started
+    1. **<a href="/user/user-apps" target="_blank">Subscribe</a>** to get API credentials.
+    2. **<a href="/oauth" target="_blank">Get an access token</a>** using the credentials.
+    3. **[Property verification](#tag/Property-verification)**
+
+  contact:
+    name: "Equifax Developer Center Support"
+    url: "https://developer.equifax.com/contact"
+  version: 'v1'
+  termsOfService: ''
+
+servers:
+  - url: 'https://api.sandbox.equifax.com/business/verifications/v1'
+
+components:
+  securitySchemes:
+    OAuth 2.0:
+     type: http
+     scheme: bearer
+     extensions: {}
+     description: 'Access token obtained from the <a href="">OAuth token call</a>.'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: "Code to indicate more specific cause of the error."
+        description:
+          type: string
+    Request:
+      properties:
+        applicants:
+          $ref: '#/components/schemas/ApplicantsObject'
+    ApplicantsObject:
+      type: object
+      description: 'Container to hold order information along with primary consumer details.'
+      required:
+        - orderInfo
+        - primaryConsumer
+      properties:
+        customerReferenceNumber:
+          type: string
+          description: 'Customer reference number.'
+          example: '1519'
+        orderInfo:
+          $ref: '#/components/schemas/OrderInfo'
+        primaryConsumer:
+          $ref: '#/components/schemas/PrimaryConsumer'
+    OrderInfo:
+      type: object
+      description: 'Container to hold order information such as requestor, inquiry date, inquiry type, source details, etc.'
+      required:
+        - organizationId
+        - organizationName
+        - locationId
+        - locationName
+        - permPurpose
+      properties:
+        organizationId:
+          type: number
+          description: 'Customer Organization ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 10002119
+        locationId:
+          type: number
+          description: 'Customer Location ID is the department or product line the Customer is configured for in the Equifax system. This will be generated as part of customer onboarding on the Equifax side.'
+          example: 964128
+        organizationName:
+          type: string
+          description: 'Customer Organization Name corresponding to the ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: ABC Corp
+        locationName:
+          type: string
+          description: 'Location Name corresponding to the ID as supplied by Equifax. This will be generated as part of customer onboarding on the Equifax side.'
+          example: ABC Corp Location
+        inquiryDate:
+          type: string
+          description: 'Inquiry date in the format yyyy-mm-dd'
+          example: '2019-07-02'
+        inquiryType:
+          type: string
+          description: 'This field can be used to denote the type of report requested. This is an optional element for this report and if provided it is just used for tracking.'
+          example: BGS-001
+        permPurpose:
+          type: string
+          description: "Represents the permissible purpose code Only the following values are allowed =['PPCHLDSPA','PPCREDIT','PPCRTORD','PPEMPLOY','PPGOVRNM','PPASSESS','PPBUSNSS','PPINSRNC','PPREVIEW','PPSECRTY','PPWRTTEN']"
+          example: PPCHLDSPA
+        trackingId:
+          type: string
+          description: 'This is an optional element for this report and if provided, it is just a passthrough.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'This is used to capture the id of the source system from which the request is coming (if provided). This is a pass-through used for tracking.'
+          example: string
+        sourceName:
+          type: string
+          description: 'This is used to capture the source system from which the request is coming (if provided). This is a pass-through and is just used for tracking.'
+          example: string
+        resellerName:
+          type: string
+          description: 'Reseller name.'
+          example: string
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+    Requestor:
+      type: object
+      description: 'Container to hold requestor details such as name, organization, email, address, phone numbers. The value if received in request will be echoed back in the response.'
+      properties:
+        name:
+          type: string
+          description: 'Requestor name.'
+          example: John Doe
+        endUser:
+          type: string
+          description: 'Requestor organization.'
+          example: ABC Company
+        email:
+          type: string
+          description: 'Requestor email.'
+          example: john.doe@abccompany.com
+        address:
+          type: string
+          description: 'Requestor address.'
+          example: 111 ABC Road, St. Louis, MO 63146
+        phoneNumbers:
+          type: array
+          description: "Details of requestor's phone numbers."
+          items:
+            $ref: '#/components/schemas/PhoneNumbers'
+    PhoneNumbers:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: 'Requestor phone identifier. The only value supported currently is "primary".'
+          example: primary
+        number:
+          type: string
+          description: 'Requestor phone number.'
+          example: '314-555-5555'
+    PrimaryConsumer:
+      type: object
+      description: 'Container section to hold details of the Primary Consumer.'
+      required:
+        - personalInformation
+      properties:
+        personalInformation:
+          $ref: '#/components/schemas/PersonalInformation'
+    PersonalInformation:
+      type: object
+      description: "Container to hold Personal Information of the Primary Consumer."
+      required:
+        - socialSecurityNumber
+        - name
+      properties:
+        socialSecurityNumber:
+          type: string
+          description: "Social Security Number."
+          example: '666314889'
+        name:
+          type: array
+          title: "Applicant's name"
+          items:
+            $ref : '#/components/schemas/Name'
+    Name:
+      type: object
+      description: Container to hold name details.
+      required:
+        - identifier
+        - lastName
+      properties:
+        identifier:
+          type: string
+          description: "The only option currently supported is \"current\"."
+          example: current
+        firstName:
+          type: string
+          description: "First Name. This is an optional element but is highly recommended be sent if available to get better hit rate."
+          example: "John"
+        lastName:
+          type: string
+          description: "Last Name"
+          example: "Doe"
+        middleName:
+          type: string
+          description: "Middle Name"
+          example: "K"
+        suffix:
+          type: string
+          description: "Name Suffix."
+          example: "Jr."
+    Response:
+      type: object
+      properties:
+        transactionId :
+          type : string
+          description: 'Equifax generated report ID.'
+          example: '123456789'
+        orderInfo:
+          $ref: '#/components/schemas/OrderInfoResponse'
+        responseStatus:
+          type: string
+          description: Describes whether the overall report is a Hit or No-Hit.
+          enum:
+            - Hit
+            - No-Hit
+          example: Hit
+        consumerIdentity:
+          $ref: '#/components/schemas/consumerIdentity'
+        propertyIdentity:
+          $ref: '#/components/schemas/propertyIdentity'
+    OrderInfoResponse:
+      type: object
+      description: 'Container to hold  order information along with primary consumer details.'
+      properties:
+        inquiryDate:
+          type: string
+          description: 'Inquiry date in the format yyyy-mm-dd.'
+          example: '2018-04-11'
+        inquiryType:
+          type: string
+          description: 'Inquiry type identifier.'
+          example: BGS-001
+        permPurpose:
+          type: string
+          description: "Represents the permissible purpose code Only the following values are allowed =['PPCHLDSPA','PPCREDIT','PPCRTORD','PPEMPLOY','PPGOVRNM','PPASSESS','PPBUSNSS','PPINSRNC','PPREVIEW','PPSECRTY','PPWRTTEN']"
+          example: PPCHLDSPA
+        trackingId:
+          type: string
+          description: 'Tracking id is a customer provided reference number. The value if received in request will be echoed back in the response.'
+          example: '9991110000'
+        sourceSystemId:
+          type: string
+          description: 'Source system id is a customer provided system id. The value if received in request will be echoed back in the response.'
+          example: string
+        sourceName:
+          type: string
+          description: 'Source name is a customer provided system name. The value if received in request will be echoed back in the response.'
+          example: string
+        inquirySsn:
+          type: string
+          description: 'Social Security Number sourced from the Employment record.'
+          example: '992880001'
+        requestor:
+          $ref: '#/components/schemas/Requestor'
+    consumerIdentity:
+      type: object
+      description: 'Container to hold consumer identity details.'
+      properties:
+        status:
+          type: string
+          description: 'Status of Identity Match request.'
+          enum:
+            - Completed
+            - Unable To Complete
+          example: Completed
+        disclaimer:
+          type: string
+          description: 'This is an Equifax Disclaimer statement for the Report.'
+          example: "NOTICE: INFORMATION CONTAINED IN THE CONSUMER IDENTITY AND HOME ADDRESS HISTORY SECTION OF THIS REPORT IS THE CONSUMER'S PERSONALLY IDENTIFIABLE INFORMATION SOURCED FROM THE CONSUMER'S EQUIFAX CREDIT FILE ('DATA'). THE DATA IS NOT A CONSUMER REPORT. CLIENT MAY NOT USE THE CONSUMER DATA AS PART OF ITS DECISION-MAKING PROCESS FOR DETERMINING AN INDIVIDUAL'S ELIGIBILITY FOR ANY EMPLOYMENT, CREDIT OR ANY OTHER PURPOSE AUTHORIZED UNDER THE FCRA."
+        subjectSsn:
+          type: string
+          description: Social Security Number sourced from the Consumer’s Equifax credit file.
+          example: '666314889'
+        subjectName:
+          $ref: "#/components/schemas/SubjectName"
+        idAlerts:
+          type: array
+          description: Identity Scan Alert uses detailed comparisons and proprietary analytics to deliver alerts based on the Social Security Number submitted in the inquiry.
+          items:
+            $ref: "#/components/schemas/IdAlerts"
+        formerNames:
+          type: array
+          description: Container to hold former names.
+          items:
+            $ref: "#/components/schemas/FormerName"
+        homeAddressHistory:
+          $ref: "#/components/schemas/HomeAddressHistory"
+        ssnValidated:
+          type: string
+          description: >
+            Indicates if the SSN has been provided to Equifax by 3 or more
+            creditors
+
+            - Y = Yes
+
+            - N = No or Blank
+          example: Y
+        ssnStateIssued:
+          type: string
+          description: >
+            State abbreviation where the Inquiry Social Security Number was issued.
+
+            Inquiry Social Security Number State Issued may contain an "RR", indicating that the SSN was issued to a railroad employee. (RR = Railroad Board) Discontinued July 1, 1963.
+          example: GA
+    propertyIdentity:
+      type: object
+      description: 'Container to hold property identity details.'
+      properties:
+        status:
+          type: string
+          description: 'Status of Identity Match request.'
+          enum:
+            - Completed
+            - Unable To Complete
+          example: Completed
+        disclaimer:
+          type: string
+          description: 'This is an Equifax Disclaimer statement for the Report.'
+          example: "NOTICE: INFORMATION CONTAINED IN THE OTHER RELEVANT COUNTIES SECTION OF THIS REPORT IS NOT A CONSUMER REPORT. CLIENT MAY NOT USE THE CONSUMER DATA AS PART OF ITS DECISION-MAKING PROCESS FOR DETERMINING AN INDIVIDUAL'S ELIGIBILITY FOR ANY EMPLOYMENT OR ANY OTHER PURPOSE AUTHORIZED UNDER THE FCRA."
+        property:
+          type: array
+          description: Container to hold Property Verification details.
+          items:
+            $ref: "#/components/schemas/Property"
+          example: [
+            {
+              "nameOnDeed": "JACK Y LAND",
+              "propertyAddress": {
+                  "addressLine1": "4298 COXWOLD ABBEY LN",
+                  "city": "AURORA",
+                  "state": "TX",
+                  "zip4": "4608",
+                  "zip5": "76078"
+              },
+              "priceOnTransaction": "269500",
+              "transactionType": "Purchased",
+              "parcelNumber": "12112117 -0050-0010-076-1",
+              "propertyUse": {
+                "code": "SFR",
+                "description": "Single Family Residence"
+              },
+              "dateOfTransaction": "1998-01-29"
+            },
+            {
+              "nameOnDeed": "",
+              "propertyAddress": {
+                  "addressLine1": "4298 COXWOLD ABBEY LN",
+                  "city": "AURORA",
+                  "state": "TX",
+                  "zip4": "4608",
+                  "zip5": "76078"
+              },
+              "priceOnTransaction": "",
+              "transactionType": "Transferred",
+              "parcelNumber": "12112117 -0050-0010-076-1",
+              "propertyUse": {
+                "code": "SFR",
+                "description": "Single Family Residence"
+              },
+              "dateOfTransaction": "2010-07-12"
+            }
+          ]
+    SubjectName:
+      type: object
+      description: Container to hold consumer’s name details.
+      properties:
+        firstName:
+          type: string
+          description: First name sourced from the Consumer’s Equifax credit file.
+          example: 'Barry'
+        lastName:
+          type: string
+          description: Last name sourced from the Consumer’s Equifax credit file.
+          example: 'Ffhksvc'
+        middleInitial:
+          type: string
+          description: Middle Initial sourced from the Consumer’s Equifax credit file.
+          example: 'B'
+    FormerName:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Former first name sourced from the Consumer's Equifax credit file.
+          example: Barry
+        lastName:
+          type: string
+          description: Former last name sourced from the Consumer's Equifax credit file.
+          example: Ffhksvc
+        middleInitial:
+          type: string
+          description: Former middle initial sourced from the Consumer's Equifax credit
+            file.
+          example: B
+    Property:
+      type: object
+      properties:
+        nameOnDeed:
+          type: string
+          description: Name of the person as per the deed.
+          example: JACK Y LAND
+        propertyAddress:
+          $ref: "#/components/schemas/PropertyAddress"
+        priceOnTransaction:
+          type: string
+          description: Price on transaction.
+          example: 269500
+        transactionType:
+          type: string
+          description: 'Type of transaction'
+          enum:
+            - Purchased
+            - Sold
+            - Transferred
+            - Owner
+          example: Purchased
+        parcelNumber:
+          type: string
+          description: Parcel number of the Property.
+          example: '12112117 -0050-0010-076-1'
+        propertyUse:
+          $ref: "#/components/schemas/PropertyUse"
+        dateOfTransaction:
+          type: string
+          description: Date on which the transaction was recorded.
+          example: '1998-01-29'
+    PropertyUse:
+      type: object
+      description: Container for property use details.
+      properties:
+        code:
+          type: string
+          description: Code for Property use.
+          example: SFR
+        description:
+          type: string
+          description: Description for the Property use code.
+          example: Single Family Residence
+    PropertyAddress:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+          description: Address line 1
+          example: 4298 COXWOLD ABBEY LN
+        city:
+          type: string
+          description: City
+          example: AURORA
+        state:
+          type: string
+          description: State
+          example: TX
+        zip4:
+          type: string
+          description: Zip4
+          example: 4608
+        zip5:
+          type: string
+          description: Zip5
+          example: 76078
+    HomeAddressHistory:
+      type: object
+      description: Container to hold consumer's home address history.
+      properties:
+        addresses:
+          type: array
+          description: Address information sourced from the Consumer's Equifax credit file.
+          items:
+            $ref: "#/components/schemas/Addresses"
+          example: [
+            {
+              "addressType": "current",
+              "sourceOfAddress": "T",
+              "cityName": "MONROE TWP",
+              "dateLastReported": "2018-11-16",
+              "dateFirstReported": "2013-06-01",
+              "stateAbbreviation": "NJ",
+              "streetName": "RCE ISXXSA",
+              "houseNumber": "63N",
+              "streetType": "RD",
+              "zipCode": "08831",
+              "primaryAddress": "63N RCE ISXXSA RD",
+              "countyName": "MIDDLESEX"
+            },
+            {
+              "addressType": "former",
+              "sourceOfAddress": "C",
+              "cityName": "NEW BRUNSWICK",
+              "dateLastReported": "2018-11-16",
+              "dateFirstReported": "2006-11-01",
+              "stateAbbreviation": "NJ",
+              "streetName": "WVSUX",
+              "houseNumber": "87",
+              "streetType": "RD",
+              "zipCode": "08902",
+              "primaryAddress": "87 WVSUX RD",
+              "countyName": "MIDDLESEX"
+            },
+            {
+              "addressType": "former",
+              "sourceOfAddress": "E",
+              "cityName": "PALM BAY",
+              "dateLastReported": "2018-11-16",
+              "dateFirstReported": "2009-06-01",
+              "stateAbbreviation": "FL",
+              "streetName": "NCSHWKRZXV",
+              "houseNumber": "118",
+              "streetType": "ST SE",
+              "zipCode": "32909",
+              "primaryAddress": "118 NCSHWKRZXV ST SE",
+              "countyName": "BREVARD"
+            },
+            {
+              "addressType": "former",
+              "sourceOfAddress": "O",
+              "cityName": "MONTREAT",
+              "dateLastReported": "2017-01-28",
+              "dateFirstReported": "2006-01-01",
+              "stateAbbreviation": "NC",
+              "streetName": "CRRWRAU",
+              "houseNumber": "476",
+              "streetType": "RD",
+              "zipCode": "28757",
+              "primaryAddress": "476 CRRWRAU RD",
+              "countyName": "BUNCOMBE"
+            }
+          ]
+    Addresses:
+      type: object
+      properties:
+        addressType:
+          type: string
+          description: Indicates if the address is a current or former address for the consumer.
+          example: 'current'
+        sourceOfAddress:
+          type: string
+          description: |
+            Indicates source of address:
+            - C = EQUIFAX
+            - D = OTH/Sys-Sys
+            - T = AUT (Automated Update Indicator)
+          example: T
+        cityName:
+          type: string
+          description: Address city sourced from the Consumer's Equifax credit file.
+          example: 'MONROE TWP'
+        dateFirstReported:
+          type: string
+          description: Date the address was first reported to Equifax. Format yyyy-mm-dd.
+          example: '2013-06-01'
+        dateLastReported:
+          type: string
+          description: Last date the address was reported to Equifax. Format yyyy-mm-dd.
+          example: '2018-11-16'
+        stateAbbreviation:
+          type: string
+          description: Address state abbreviation sourced from the Consumer's Equifax credit file.
+          example: 'NJ'
+        streetName:
+          type: string
+          description: Address street  name sourced from the Consumer's Equifax credit file.
+          example: 'RCE ISXXSA'
+        houseNumber:
+          type: string
+          description: Address house number sourced from the Consumer's Equifax credit file.
+          example: '63N'
+        streetType:
+          type: string
+          description: Address street type sourced from the Consumer's Equifax credit file.
+          example: 'RD'
+        zipCode:
+          type: string
+          description: Zip Code sourced from the Consumer's Equifax credit file.
+          example: '08831'
+        primaryAddress:
+          type: string
+          description: Single address line containing house number and street name.
+          example: '63N RCE ISXXSA RD'
+        countyName:
+          type: string
+          description: Address county name.
+          example: 'MIDDLESEX'
+    IdAlerts:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            Available Identity Scan alert codes include:
+
+            - L &dash; Fraud Victim Alert present in database.
+
+            - N &dash; Active Duty Alert present in database.
+
+            - I &dash; Inquiry SSN associated with a person reported as deceased.
+
+            - 4 &dash; Inquiry SSN may be a tax number.
+
+            - 9 &dash; Inquiry SSN is invalid.
+
+            - A &dash; Inquiry SSN has never been issued or has been issued after June 2011.
+
+            - B &dash; Inquiry SSN reported as misused.
+
+            - S &dash; Identity Scan did not detect any alerts.
+
+            - O &dash; Incomplete scan limited data sources available.
+          example: S
+        description:
+          type: string
+          description: Identity Scan alert code description.
+          example: Identity Scan did not detect any alerts.
+  examples:
+    '400.01':
+      value:
+        efxErrorCode: '400.01'
+        description: Invalid JSON payload.
+        additionalErrorDetails: {}
+    '401.03':
+      value:
+        efxErrorCode: '401.03'
+        description: Invalid mandatory parameters.
+        additionalErrorDetails: {}
+    '403.01':
+      value:
+        efxErrorCode: '403.01'
+        description: Access Denied.
+        additionalErrorDetails: {}
+    '404.01':
+      value:
+        efxErrorCode: '404.01'
+        description: The specified resource does not exist.
+        additionalErrorDetails: {}
+    '415.01':
+      value:
+        efxErrorCode: '415.01'
+        description: Payload Format is in an Unsupported Format.
+        additionalErrorDetails: {}
+    '422.01':
+      value:
+        efxErrorCode: '422.01'
+        description: Unprocessable Entity.
+        additionalErrorDetails: {}
+    '429.01':
+      value:
+        efxErrorCode: '429.01'
+        description: Exceeded the maximum number of requests within a specified time frame.
+        additionalErrorDetails: {}
+    '500.01':
+      value:
+        efxErrorCode: '500.01'
+        description: An internal error has occurred.
+        additionalErrorDetails: {}
+    '501.01':
+      value:
+        efxErrorCode: '501.01'
+        description: Not-implemented - Specified resource is not implemented.
+        additionalErrorDetails: {}
+    '503.01':
+      value:
+        efxErrorCode: '503.01'
+        description: Service is un-available.
+        additionalErrorDetails: {}
+    '504.01':
+      value:
+        efxErrorCode: '504.01'
+        description: Gateway timeout.
+        additionalErrorDetails: {}
+
+paths:
+  /property:
+    post:
+      tags:
+        - Property Verification
+      description:
+        Property Verification shows properties a consumer owns. This service requires an OAuth access token that can be obtained by first making the OAuth 2.0 Access Token call.
+      operationId: Verify property ownership
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            default: application/json
+            enum:
+            - application/json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '400.01':
+                  $ref: '#/components/examples/400.01'
+        "401":
+          description: UnAuthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '401.03':
+                  $ref: '#/components/examples/401.03'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '404.01':
+                  $ref: '#/components/examples/404.01'
+        "415":
+          description: Payload is in an unsupported format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '415.01':
+                  $ref: '#/components/examples/415.01'
+
+        "429":
+          description: Exceeded the maximum number of requests within a specified time frame.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '429.01':
+                  $ref: '#/components/examples/429.01'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '500.01':
+                  $ref: '#/components/examples/500.01'
+        "501":
+          description: Not-implemented - Specified resource is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '501.01':
+                  $ref: '#/components/examples/501.01'
+        "503":
+          description: Service UnAvailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '503.01':
+                  $ref: '#/components/examples/503.01'
+        "504":
+          description: Gateway Timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                '504.01':
+                  $ref: '#/components/examples/504.01'
+
+security:
+  - OAuth 2.0: ["scopes: https://api.equifax.com/business/v1/<resourcepath>"]

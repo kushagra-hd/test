@@ -1,0 +1,7067 @@
+swagger: '2.0'
+info:
+  description: >-
+    Privately accessible RESTful web services for Experian Resellers. Helps them
+    deploy our consumer consent credit sharing functionality into their website
+    and mobile apps. 
+  version: '3.0'
+  title: Experian ConnectAPI
+  termsOfService: 'https://www.experian.com'
+  contact:
+    name: ConnectAPISupport@experian.com
+  license:
+    name: Experian ConnectAPI 3.0
+    url: 'https://www.experian.com'
+host: sandbox-us-api.experian.com    
+basePath: /connectapi
+tags:
+  - name: Passive Authentication
+  - name: Consumer Report Pull
+  - name: Consumer Report Share
+paths:
+  '/v3/passive/user':
+    post:
+      tags:
+        - Passive Authentication
+      summary: >-
+        Starts the authentication process by providing Consumer Personal
+        Information
+      description: >-
+        The response will depend on the implemented workflow. It can
+        be:Notification to wait for OTP if OTP is enabled.Accept/Reject.
+      operationId: authConsumer
+      parameters:
+        - name: firstName
+          in: formData
+          description: >-
+            The full first name should be entered when available. The minimum
+            entry is the first name initial. Blanks and special characters are
+            not allowed.
+          required: true
+          type: string
+          schema:
+           type: string
+           example: MIKE
+        - name: middleName
+          in: formData
+          description: >-
+            The full middle name should be entered when available. A middle
+            initial is acceptable. Blanks and special characters are not
+            allowed. Omit if the middle name is not available.
+          required: false
+          type: string
+        - name: lastName
+          in: formData
+          description: >-
+            The full applicant's surname is required and must be two or more
+            characters. If the surname contains two surnames, then split the
+            surnames with a hyphen (e.g., Smith-Jones).
+          required: true
+          type: string
+          schema:
+           type: string
+           example: BEENE
+        - name: ssn
+          in: formData
+          description: Social Security Number
+          required: false
+          type: string
+          schema:
+           type: string
+           example: 666117440
+        - name: email
+          in: formData
+          required: false
+          type: string
+        - name: currentAddress
+          in: formData
+          description: 'Street address, PO Box, Route Number'
+          required: true
+          type: string
+          schema:
+           type: string
+           example: 564 MARYLAND AVE APT31
+        - name: currentCity
+          in: formData
+          description: City name
+          required: true
+          type: string
+          schema:
+           type: string
+           example: PITTSBURGH
+        - name: currentState
+          in: formData
+          description: State code
+          required: true
+          type: string
+          schema:
+           type: string
+           example: PA
+        - name: currentZip
+          in: formData
+          description: ZIP code. 5 or 9 digits zip only (no -)
+          required: true
+          type: string
+          schema:
+           type: string
+           example: 152022966
+        - name: previousAddress
+          in: formData
+          description: 'Previous Address - Street address, PO Box, Route Number'
+          required: false
+          type: string
+        - name: previousCity
+          in: formData
+          description: Previous Address - City name
+          required: false
+          type: string
+        - name: previousState
+          in: formData
+          description: Previous Address - State code
+          required: false
+          type: string
+        - name: previousZip
+          in: formData
+          description: Previous Address - ZIP code
+          required: false
+          type: string
+        - name: userId
+          in: formData
+          description: Reserver for future use
+          required: false
+          type: string
+        - name: ipAddress
+          in: formData
+          required: true
+          type: string
+          schema:
+           type: string
+           example: 24.115.244.64
+        - name: generation
+          in: formData
+          description: |-
+            Generation code: 
+            “SR” Senior 
+            “JR” Junior 
+            ‘2’ or “II” Second 
+            ‘3’ or “III” Third 
+            ‘4’ or “IV” Fourth
+          required: false
+          type: string
+        - name: phoneNumber
+          in: formData
+          required: false
+          type: string
+        - name: phoneType
+          in: formData
+          description: |-
+            Telephone number type: 
+            ‘B’ Business
+            ‘P’ Pager 
+            ‘C’ Cellular 
+            ‘R’ Residential 
+            ‘F’ Fax 
+            ‘T’ Pay Phone 
+            ‘I’ Institution
+          required: false
+          type: string
+        - name: dob
+          in: formData
+          description: 8 digits only (no -) MMDDYYYY
+          required: false
+          type: string
+          schema:
+           type: string
+           example: 06061972
+        - name: driverLicenseNumber
+          in: formData
+          required: false
+          type: string
+        - name: driverLicenseState
+          in: formData
+          required: false
+          type: string
+        - name: employmentCompanyName
+          in: formData
+          required: false
+          type: string
+        - name: employmentStreet
+          in: formData
+          required: false
+          type: string
+        - name: employmentPostalCode
+          in: formData
+          required: false
+          type: string
+        - name: employmentState
+          in: formData
+          required: false
+          type: string
+        - name: employmentCity
+          in: formData
+          required: false
+          type: string
+        - name: age
+          in: formData
+          required: false
+          type: string
+        - name: yob
+          in: formData
+          required: false
+          type: string
+        - name: mothersMaidenName
+          in: formData
+          required: false
+          type: string
+        - name: spouseName
+          in: formData
+          required: false
+          type: string
+        - name: secondaryAddressStreet
+          in: formData
+          required: false
+          type: string
+        - name: secondaryAddressCity
+          in: formData
+          required: false
+          type: string
+        - name: secondaryAddressState
+          in: formData
+          required: false
+          type: string
+        - name: secondaryAddressZip
+          in: formData
+          required: false
+          type: string
+        - name: jscPayload
+          in: formData
+          description: JavaScript Payload generated by JavaScript Collector
+          required: true
+          type: string
+          schema:
+           type: string
+           example: FWa44j1fgBNlY5Du4UXuKrnZ2CI9XkPrwVL6tqAhbrmQmkqlE4Ww.GEFF0Yz3ccbbJYMLgiPFU77qZoOSix5ezdstlYysrhsui6SFLwke22O_AvLG9mhORoVidPZW2AUMnGWVQdsBL6yXyjaY1WMsiZRPrwVL6tqAhbrmQmkqlE4Ww.GEFF0Yz3ccbbJYMLgiPFU77qZoOSix5ezdstlYysrhsui6SFLwke22O_AvLG9mhORoVjnjk3nKxUC55yjaY2ftckuyPBDjaY1HGOg3ZLQ0FFdvHe2qv8BkQBpk6Hb9LarUqUdHz16rgPtKSL8KFY6RgBhw1JgN3dNA1RfgRe4JDvnEp5UZETlfe2Reif.Df237lYRQqwSMETnsKtEhlrlgNlrAq5BNlmqwos5AldDvp.xoeFTe4JE_9zI9z1byaCBBOQeWNJDc5J3vfAKY5D7yS9ttwVMvsD7mCC6wah8xzHr_GjqeBy0JEnvOj_H0By9Mup_TBjFzFmj5McNxof4.VQdtiWr1zUcfbrRKNc5f80kOPUXlByHJmFANSroLKQ_0lNc1lF4XVA4.WL9.MBmlF1x_Ff4.A2pWL90ftctDL90ftctDL9.KML4Nc0KSNKXV4hkf4.trs1OfSnjL90pv8H55SKsDSgea.B9JsDhLbhVeokpPcTghHR6aPDCI86xyAB1lF.xKg9lF4A4.9gJ14Nc1_XVRFP3Se_RgJ0aYaKU6YQ9lF6U9jIcf4.ST_StQUm6HYbUofjTCTervYTrYeqdpGpXVDjHizdMCAjTCTLrwWoctrx9vrYMx9tdSvlfmqzRQqwSLpDeDgJ0p7pmlF6JYMTux9tNc0KXVSKXVSKXVSKXV91gJ14Nc0F8uWL90oA4.90EJ9lF1ke1gJ.c4XV4.gJ.BEN1lF1vXf4.AiA1c9lFDXJ3ivc_09gJ.edSlKHv_8L9.KJisedSmZf4.9eMRKJitHKXV4KAi9eMRd9lF.4s671IMfs.8n_
+        - name: hdimPayload
+          in: formData
+          description: Initial Browser Data collected by JavaScript Collector
+          required: true
+          type: string
+          schema:
+           type: string
+           example: rO0ABXNyACdjb20udGhlNDEuY29tbW9ucy5jcnlwdG8uQ3J5cHRvRW52ZWxvcGUAAJbgqPhc8wIAA0wABWFsaWFzdAASTGphdmEvbGFuZy9TdHJpbmc7WwAMZW5jcnlwdGVkS2V5dAACW0JbABBlbmNyeXB0ZWRQYXlsb2FkcQB-AAJ4cHQABGhkaW11cgACW0Ks8xf4BghU4AIAAHhwAAACAC7wGUDb-YlPnWXuRLtu1_TK0JSPdvWQC4M6u22---y7G-3IkmyjJ3XnX5BsyKZtIfL-r6DPiDD2p4eGk4RFvmbvsTEAcMn4rW1TvnJQURHiCkGGpuXUZ9xheZmUMrIrqqEsR9QDs6o7ku_hobV0A4ATf--0aQCxWVDKJrZPxwOZ0VF0zp-OfdTAJiwXpchctVfytD3O-g-L-WJgophz3Muqx9h95VzKjcHOO01m9SnrxhmnxX-U7rqKLFJZkH-3plRNJNQ4vVndfag6X9O2hQ9nSLgg_Ms_O2q46DFY_HRQBZjvdeIOr-sMCi-AoIFbJsnc0wYG2EIy6-oPJBi-LnHduQZ95E57XQGl9Uerp0uPyCXps9bUTk1BfLzvm4Zp7cJSNnacFIECcGlkHl3ckeTsVJKI8SWBna6fwL_wOdmH0bctRg0_289Mac5-KTlx6KsAGy4CjpaeJkQu29VgYWSuyW4bQhqTp-6eTimEOGfTW3oYJX_b7K8OBUvSvAIXc7LL5twff5qENzdOr-oCYTEo19foeSXeBGOhN0f6qvlJYW4nPMXoCP5po4Aw_jPVwV53629mQNzw8gzpM0J5Yn29qJn8YZlzy5aNg3zx4herCyedU-qW0reVB2qjYPa75ztZKNB4SbihbuzFUUIK7yxPgeq8f85ewMFRKkUKsQLTdXEAfgAFAAACAG6IpZ0ZqfALDvkU2sMx7thj_y8SfoULufYVvA8Y3cqLuuDQ30Zve4AmI1Q1BZpk_Ev_VHuUZ1RR1uM1CrHP3LGGgbFwPoih_f-UrLihxomgTXN94fIzgW3KFTEl4qH2Vy08PY9Dopxk93B0WDX-aM6NU2bU7kdCvOsE5eg6HA-c4gfWuhGOXbEAk72CCrLK8loD__V8DNCqon6sC_KykIPBAKIkKJ84PSUZu3vMuKdW_2RICrKG-3Fr7_lYoAtHEw1a2fhp_OliBo-09YnhSPoL6wRrJ39U8MSpV-2wynSKF7nA489HyiReoSQCS0pXHmWR5NafpUCeCqqySP7tZyZBeDd0XfaFLHDPtXtIUXAK5cgQDFurbkTlF_TvGaZeo_15dxx2m2FfzXdzQf3RyoD_QoohD0tUgnIeXW3kocY81l3eR_7orZpvndozsyYQ1xxulTS5n4dKjcrbq2udAwEYtFP8JJUjrCGm0Mz9vsY2ZErtDMaSNBF6ugviq_1PBvryZ0c5bnBw50SznvNtmSZvEkicRTYjA3hLinu5rksNblqkt37EwwysNHosA_E5f_DX9Zng68dKolJ2MGT1V9jB6sTIKoEhG9UdnXCSQt1QSsmiP5A3WPBDkRhCM72nSwaCuFhPZOvDPyLygxn1il05P4KbunKEkCgb89v07gUC
+        - name: device
+          in: formData
+          description: Fraudnet Device Json
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PassiveAuthResponse'
+      security:
+      - OAuth2: [user]     
+  '/v3/passive/user/otp':
+    post:
+      tags:
+        - Passive Authentication
+      summary: Validates the OTP provided by the user on the client's UI
+      description: Validates the OTP provided by the user on the client's UI
+      operationId: authOtp
+      parameters:
+        - name: authSession
+          in: formData
+          description: >-
+            Identifier used to reference the current authentication flow
+            instance
+          required: true
+          type: string
+        - name: otp
+          in: formData
+          description: OTP (One-time password)
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PassiveAuthResponse'
+      security:
+      - OAuth2: [user]       
+  '/v3/passive/user/answers':
+    post:
+      tags:
+        - Passive Authentication
+      summary: Answers security questions for Consumer authentication
+      description: Submit the option number when submitting answers
+      operationId: authAnswers
+      parameters:
+        - name: authSession
+          in: formData
+          description: >-
+            Identifier used to reference the set of questions when submitting
+            the answers
+          required: true
+          type: string
+        - name: answer
+          in: formData
+          description: 'Array of Answers. Index of option starting from 1. '
+          required: true
+          type: array
+          items:
+            type: integer
+            format: int32
+          collectionFormat: multi
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PassiveAuthResponse'
+      security:
+      - OAuth2: [user]      
+  '/v3/report':
+    post:
+      tags:
+        - Consumer Report Pull
+      summary: Pull Report
+      description: Pull a report for Consumer
+      operationId: pullReportByProduct
+      parameters:
+        - name: productId
+          in: formData
+          description: regexp=(\d+) maxLength=4
+          required: true
+          type: integer
+          format: int64
+        - name: consumerToken
+          in: formData
+          description: 'regexp=(^[A-Za-z0-9\-\)\(\s]+$) maxLength=100'
+          required: true
+          type: string
+        - name: purposeType
+          in: formData
+          description: regexp=(\d+) maxLength=2
+          required: true
+          type: string
+        - name: ipAddress
+          in: formData
+          description: >-
+            regexp=(^([0-9]{1,3}).([0-9]{1,3}).<br>([0-9]{1,3}).([0-9]{1,3})$)
+            maxLength=15
+          required: false
+          type: string
+        - name: propertyZip
+          in: formData
+          description: 'regexp=((([\d]{5}([\-]?[\d]{4})?){1})) maxLength=10'
+          required: false
+          type: string
+        - name: includeImage
+          in: formData
+          description: 'regexp=(^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$)'
+          required: false
+          type: string
+        - name: includeRace
+          in: formData
+          description: 'regexp=(^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$)'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ReportResponse'
+      security:
+      - OAuth2: [user] 
+  '/v3/report/archive':
+    post:
+      tags:
+        - Consumer Report Pull
+      summary: Get archived report
+      description: >-
+        Gets the same consumer view of the report again. This is used to allow
+        the same consumer to view the same report again.  This endpoint may not
+        be used to allow a different end user to view the report.
+      operationId: getArchiveReports
+      parameters:
+        - name: consumerToken
+          in: formData
+          description: 'regexp=(^[A-Za-z0-9\-\)\(\s]+$) maxLength=100'
+          required: true
+          type: string
+        - name: transactionId
+          in: formData
+          description: regexp=(\d+) maxLength=10
+          required: true
+          type: string
+        - name: ipAddress
+          in: formData
+          description: >-
+            regexp=(^([0-9]{1,3}).([0-9]{1,3}).<br>([0-9]{1,3}).([0-9]{1,3})$)
+            maxLength=15
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ReportResponse'
+      security:
+      - OAuth2: [user]       
+  '/v3/share':
+    post:
+      tags:
+        - Consumer Report Share
+      summary: Share report
+      description: >-
+        Share consumer report with end user. Please notice that propertyZip is
+        required if your are pulling a Background Data report.
+      operationId: share
+      parameters:
+        - name: transactionId
+          in: formData
+          description: Transaction ID returned by report request
+          required: true
+          type: string
+        - name: consumerToken
+          in: formData
+          description: Consumer (tenant) Token
+          required: true
+          type: string
+        - name: endUserToken
+          in: formData
+          description: End User Token
+          required: true
+          type: string
+        - name: purposeType
+          in: formData
+          description: Permissible Purpose Type Code for this sharing operation
+          required: true
+          type: string
+        - name: ipAddress
+          in: formData
+          required: false
+          type: string
+        - name: icraa
+          in: formData
+          description: Set to true for ICRAA requests.
+          required: false
+          type: boolean
+        - name: propertyZip
+          in: formData
+          description: >-
+            Zipcode of the viewer to whom the report is being shared . Mandatory
+            only for background report
+          required: false
+          type: string
+        - name: includeImage
+          in: formData
+          description: 'regexp=(^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$)'
+          required: false
+          type: string
+        - name: includeRace
+          in: formData
+          description: 'regexp=(^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$)'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SharedReportResponse'
+      security:
+      - OAuth2: [user]       
+  '/v3/share/get':
+    post:
+      tags:
+        - Consumer Report Share
+      summary: Get shared report
+      description: >-
+        Gets the same landlord view of the report again. This is used to allow
+        the same end user to view the same report again.  This endpoint may not
+        be used to allow a different end user to view the report.
+      operationId: getShare
+      parameters:
+        - name: shareId
+          in: formData
+          description: Share ID returned by share request
+          required: true
+          type: string
+        - name: endUserToken
+          in: formData
+          description: End User Token
+          required: true
+          type: string
+        - name: ipAddress
+          in: formData
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SharedReportResponse' 
+      security:
+      - OAuth2: [user]       
+definitions:
+  AddressInformation:
+    type: object
+    properties:
+      FirstReportedDate:
+        type: string
+      LastUpdatedDate:
+        type: string
+      Origination:
+        $ref: '#/definitions/Indicator'
+      TimesReported:
+        type: string
+      LastReportingSubcode:
+        type: string
+      DwellingType:
+        $ref: '#/definitions/Indicator'
+      HomeOwnership:
+        $ref: '#/definitions/Indicator'
+      StreetPrefix:
+        type: string
+      StreetName:
+        type: string
+      StreetSuffix:
+        type: string
+      City:
+        type: string
+      State:
+        type: string
+      Zip:
+        type: string
+      CensusGeoCode:
+        type: string
+      CountyCode:
+        type: string
+  Amount:
+    type: object
+    properties:
+      qualifier:
+        xml:
+          name: Qualifier
+        $ref: '#/definitions/Qualifier'
+      value:
+        type: string
+        xml:
+          name: Value
+  Bankruptcy:
+    type: object
+    properties:
+      type:
+        xml:
+          name: Type
+        $ref: '#/definitions/Type'
+      assetAmount:
+        type: string
+        xml:
+          name: AssetAmount
+      liabilitiesAmount:
+        type: string
+        xml:
+          name: LiabilitiesAmount
+      repaymentPercent:
+        type: string
+        xml:
+          name: RepaymentPercent
+      adjustmentPercent:
+        type: string
+        xml:
+          name: AdjustmentPercent
+  BaseError:
+    type: object
+    properties:
+      Code:
+        type: string
+      Message:
+        type: string
+      Status:
+        type: integer
+        format: int32
+      FieldErrors:
+        type: object
+        additionalProperties:
+          type: string
+  ConsumerAssistanceReferralAddress:
+    type: object
+    properties:
+      officeName:
+        type: string
+        xml:
+          name: OfficeName
+      streetName:
+        type: string
+        xml:
+          name: StreetName
+      cityStateZip:
+        type: array
+        xml:
+          name: CityStateZip
+        items:
+          type: string
+          xml:
+            name: CityStateZip
+      phone:
+        type: string
+        xml:
+          name: Phone
+      pobox:
+        type: string
+  ConsumerIdentity:
+    type: object
+    properties:
+      Name:
+        $ref: '#/definitions/Name'
+  CreditProfileReport:
+    type: object
+    properties:
+      Header:
+        $ref: '#/definitions/HeaderRecord'
+      ConsumerIdentity:
+        type: array
+        items:
+          $ref: '#/definitions/ConsumerIdentity'
+      AddressInformation:
+        type: array
+        items:
+          $ref: '#/definitions/AddressInformation'
+      EmploymentInformation:
+        type: array
+        items:
+          $ref: '#/definitions/iEmploymentInformation'
+      PublicRecord:
+        type: array
+        items:
+          $ref: '#/definitions/PubRecord'
+      Inquiry:
+        type: array
+        items:
+          $ref: '#/definitions/InquiryRecord'
+      TradeLine:
+        type: array
+        items:
+          $ref: '#/definitions/TradeLine'
+      RiskModel:
+        type: array
+        items:
+          $ref: '#/definitions/RiskModel'
+      ConsumerAssistanceReferralAddress:
+        $ref: '#/definitions/ConsumerAssistanceReferralAddress'
+      ProfileSummary:
+        $ref: '#/definitions/iProfileSummary'
+      ProfileSummaryAttributes:
+        type: array
+        items:
+          $ref: '#/definitions/Amount'
+      Statement:
+        type: array
+        items:
+          $ref: '#/definitions/iConsumerStatement'
+      InformationalMessage:
+        type: array
+        items:
+          $ref: '#/definitions/InfoMessage'
+  HeaderRecord:
+    type: object
+    properties:
+      ReportDate:
+        type: string
+      ReportTime:
+        type: string
+  Indicator:
+    type: object
+    properties:
+      desc:
+        type: string
+      code:
+        type: string
+  InfoMessage:
+    type: object
+    properties:
+      MessageNumber:
+        type: string
+      MessageText:
+        type: string
+  InquiryRecord:
+    type: object
+    properties:
+      Date:
+        type: string
+      Amount:
+        type: string
+      Type:
+        $ref: '#/definitions/Indicator'
+      Terms:
+        $ref: '#/definitions/Indicator'
+      Subcode:
+        type: string
+      KOB:
+        $ref: '#/definitions/Indicator'
+      SubscriberDisplayName:
+        type: string
+  Name:
+    type: object
+    properties:
+      Type:
+        $ref: '#/definitions/Indicator'
+      Surname:
+        type: string
+      First:
+        type: string
+      Middle:
+        type: string
+  PubRecord:
+    type: object
+    properties:
+      Status:
+        $ref: '#/definitions/Indicator'
+      StatusDate:
+        type: string
+      FilingDate:
+        type: string
+      Evaluation:
+        $ref: '#/definitions/Indicator'
+      Amount:
+        type: string
+      ConsumerComment:
+        type: string
+      Court:
+        $ref: '#/definitions/Indicator'
+      ReferenceNumber:
+        type: string
+      PlaintiffName:
+        type: string
+      DisputeFlag:
+        type: string
+      ECOA:
+        $ref: '#/definitions/Indicator'
+      Bankruptcy:
+        $ref: '#/definitions/Bankruptcy'
+      BookPageSequence:
+        type: string
+  ReportResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      transactionId:
+        type: integer
+        format: int64
+      CreditProfile:
+        $ref: '#/definitions/CreditProfileReport'
+    xml:
+      name: response
+  RiskModel:
+    type: object
+    properties:
+      positiveScoreFactorCodeOne:
+        type: string
+      positiveScoreFactorCodeTwo:
+        type: string
+      positiveScoreFactorCodeThree:
+        type: string
+      positiveScoreFactorCodeFour:
+        type: string
+      ModelIndicator:
+        $ref: '#/definitions/Indicator'
+      Score:
+        type: string
+      ScoreFactorCodeOne:
+        type: string
+      ScoreFactorCodeTwo:
+        type: string
+      ScoreFactorCodeThree:
+        type: string
+      ScoreFactorCodeFour:
+        type: string
+      ScoreFactorCodeFive:
+        type: string
+      Evaluation:
+        $ref: '#/definitions/Indicator'
+  TradeLine:
+    type: object
+    properties:
+      SpecialComment:
+        $ref: '#/definitions/Indicator'
+      Evaluation:
+        $ref: '#/definitions/Indicator'
+      OpenDate:
+        type: string
+      StatusDate:
+        type: string
+      MaxDelinquencyDate:
+        type: string
+      AccountType:
+        $ref: '#/definitions/Indicator'
+      TermsDuration:
+        $ref: '#/definitions/Indicator'
+      ECOA:
+        $ref: '#/definitions/Indicator'
+      Amount:
+        type: array
+        items:
+          $ref: '#/definitions/Amount'
+      BalanceDate:
+        type: string
+      BalanceAmount:
+        type: string
+      Status:
+        $ref: '#/definitions/Indicator'
+      AmountPastDue:
+        type: string
+      OpenOrClosed:
+        $ref: '#/definitions/Indicator'
+      RevolvingOrInstallment:
+        $ref: '#/definitions/Indicator'
+      ConsumerComment:
+        type: string
+      AccountNumber:
+        type: string
+      MonthsHistory:
+        type: string
+      DelinquenciesOver30Days:
+        type: string
+      DelinquenciesOver60Days:
+        type: string
+      DelinquenciesOver90Days:
+        type: string
+      DerogCounter:
+        type: string
+      PaymentProfile:
+        type: string
+      MonthlyPaymentAmount:
+        type: string
+      MonthlyPaymentType:
+        type: string
+      LastPaymentDate:
+        type: string
+      Subcode:
+        type: string
+      KOB:
+        $ref: '#/definitions/Indicator'
+      SubscriberDisplayName:
+        type: string
+      EnhancedPaymentData:
+        $ref: '#/definitions/iEnhancedPaymentData'
+      MaxPayment:
+        $ref: '#/definitions/Indicator'
+      FirstDelinquencyDate:
+        type: string
+      SecondDelinquencyDate:
+        type: string
+  iConsumerStatement:
+    type: object
+    properties:
+      number:
+        type: string
+        xml:
+          name: Number
+      text:
+        type: string
+        xml:
+          name: Text
+  iEmploymentInformation:
+    type: object
+    properties:
+      FirstReportedDate:
+        type: string
+      LastUpdatedDate:
+        type: string
+      Origination:
+        $ref: '#/definitions/Indicator'
+      Name:
+        type: string
+      AddressFirstLine:
+        type: string
+      AddressSecondLine:
+        type: string
+      AddressExtraLine:
+        type: string
+      Zip:
+        type: string
+  iEnhancedPaymentData:
+    type: object
+    properties:
+      InitialPaymentLevelDate:
+        type: string
+      AccountCondition:
+        $ref: '#/definitions/Indicator'
+      PaymentStatus:
+        $ref: '#/definitions/Indicator'
+      AccountType:
+        $ref: '#/definitions/Indicator'
+      SpecialComment:
+        $ref: '#/definitions/Indicator'
+  iProfileSummary:
+    type: object
+    properties:
+      DisputedAccountsExcluded:
+        type: integer
+        format: int32
+      DelinquenciesOver30Days:
+        type: integer
+        format: int32
+      DelinquenciesOver60Days:
+        type: integer
+        format: int32
+      DelinquenciesOver90Days:
+        type: integer
+        format: int32
+      DerogCounter:
+        type: integer
+        format: int32
+      PublicRecordsCount:
+        type: integer
+        format: int32
+      TotalInquiries:
+        type: integer
+        format: int32
+      MonthlyPaymentPartialFlagDesc:
+        type: string
+      InquiriesDuringLast6Months:
+        type: integer
+        format: int32
+      NowDelinquentDerog:
+        type: integer
+        format: int32
+      RealEstatePaymentPartialFlagDesc:
+        type: string
+      TotalTradeItems:
+        type: integer
+        format: int32
+      WasDelinquentDerog:
+        type: integer
+        format: int32
+      RevolvingAvailablePartialFlagDesc:
+        type: string
+      PaidAccounts:
+        type: integer
+        format: int32
+      hasProfileSummary:
+        type: boolean
+      InstallmentBalance:
+        type: string
+      MonthlyPayment:
+        type: string
+      PastDueAmount:
+        type: string
+      RealEstateBalance:
+        type: string
+      RealEstatePayment:
+        type: string
+      RevolvingBalance:
+        type: string
+      RevolvingAvailablePercent:
+        type: string
+      OldestTradeOpenDate:
+        type: string
+      Y2KOldestTradeline:
+        type: string
+      SatisfactoryAccount:
+        type: integer
+        format: int32
+  SharedReportResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      shareId:
+        type: integer
+        format: int64
+      CreditProfile:
+        $ref: '#/definitions/CreditProfileReport'
+    xml:
+      name: response
+  AcceptDeclineFlag:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AcceptDeclineFlag
+  Account:
+    type: object
+    properties:
+      consumerABANumber:
+        type: string
+        xml:
+          name: ConsumerABANumber
+      accountNumber:
+        type: string
+        xml:
+          name: AccountNumber
+      closureDate:
+        type: string
+        xml:
+          name: ClosureDate
+      ageInMonths:
+        type: string
+        xml:
+          name: AgeInMonths
+      lossType:
+        xml:
+          name: LossType
+        $ref: '#/definitions/LossType'
+      contributionSource:
+        xml:
+          name: ContributionSource
+        $ref: '#/definitions/ContributionSource'
+      principalLoss:
+        type: string
+        xml:
+          name: PrincipalLoss
+      feeReversal:
+        type: string
+        xml:
+          name: FeeReversal
+      combinedLossAndFeeReversal:
+        type: string
+        xml:
+          name: CombinedLossAndFeeReversal
+      paidStatus:
+        xml:
+          name: PaidStatus
+        $ref: '#/definitions/PaidStatus'
+      paidDate:
+        type: string
+        xml:
+          name: PaidDate
+      settleDate:
+        type: string
+        xml:
+          name: SettleDate
+      dispute:
+        xml:
+          name: Dispute
+        $ref: '#/definitions/Dispute'
+      cacreturnItemCount:
+        type: string
+    xml:
+      name: Account
+  AccountCondition:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  AccountType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  AdditionalAddresses:
+    type: object
+    properties:
+      addressInformation:
+        type: array
+        xml:
+          name: AddressInformation
+        items:
+          xml:
+            name: AddressInformation
+          $ref: '#/definitions/iAddressInformation'
+    xml:
+      name: AdditionalAddresses
+  Address:
+    type: object
+    required:
+      - city
+      - state
+    properties:
+      addressType:
+        xml:
+          name: AddressType
+        $ref: '#/definitions/AddressType'
+      address1:
+        type: string
+        xml:
+          name: Address1
+      address2:
+        type: string
+        xml:
+          name: Address2
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      postalCode:
+        type: string
+        xml:
+          name: PostalCode
+      countryCode:
+        type: string
+        xml:
+          name: CountryCode
+  AddressErrorCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  AddressHighRiskDescription:
+    type: object
+    properties:
+      highRiskDescription:
+        type: string
+        xml:
+          name: HighRiskDescription
+    xml:
+      name: AddressHighRiskDescription
+  AddressHighRiskDetail:
+    type: object
+    properties:
+      businessName:
+        type: string
+        xml:
+          name: BusinessName
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+    xml:
+      name: AddressHighRiskDetail
+  AddressHighRiskResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressHighRiskResult
+  AddressMatchConfidenceLevel:
+    type: object
+    properties:
+      currentAddress:
+        xml:
+          name: CurrentAddress
+        $ref: '#/definitions/CurrentAddress'
+      previousAddress:
+        xml:
+          name: PreviousAddress
+        $ref: '#/definitions/PreviousAddress'
+      phoneMatch:
+        xml:
+          name: PhoneMatch
+        $ref: '#/definitions/PhoneMatch'
+    xml:
+      name: AddressMatchConfidenceLevel
+  AddressMatchIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressMatchIndicator
+  AddressType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressType
+  AddressTypeResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressTypeResult
+  AddressUnitMismatchResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressUnitMismatchResult
+  AddressVerificationResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerificationResult
+  AddressVerifiesToDL:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToDL
+  AddressVerifiesToDOB:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToDOB
+  AddressVerifiesToFullName:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToFullName
+  AddressVerifiesToPhone:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToPhone
+  AddressVerifiesToSSN:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToSSN
+  AddressVerifiesToSurnameOnly:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AddressVerifiesToSurnameOnly
+  AdverseActionCode1:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AdverseActionCode1
+  AdverseActionCode2:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AdverseActionCode2
+  AdverseActionCode3:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AdverseActionCode3
+  AdverseActionCode4:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: AdverseActionCode4
+  AnswerSet:
+    type: object
+    required:
+      - answerResult
+      - creditType
+      - questionType
+      - questionTypeDescription
+    properties:
+      questionType:
+        type: integer
+        xml:
+          name: QuestionType
+      questionTypeDescription:
+        type: string
+        xml:
+          name: QuestionTypeDescription
+      creditType:
+        type: string
+        xml:
+          name: CreditType
+      answerResult:
+        type: string
+        xml:
+          name: AnswerResult
+      questionWeight:
+        type: integer
+        format: int32
+        xml:
+          name: QuestionWeight
+    xml:
+      name: AnswerSet
+  Attribute:
+    type: object
+    required:
+      - id
+      - value
+    properties:
+      id:
+        type: string
+        xml:
+          name: ID
+      value:
+        type: string
+        xml:
+          name: Value
+  Balloon:
+    type: object
+    properties:
+      dueDate:
+        type: string
+        xml:
+          attribute: true
+      amount:
+        type: string
+        xml:
+          attribute: true
+  BankAndTAndECardAccountSummary:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      monthIndicator:
+        type: string
+        xml:
+          name: MonthIndicator
+      totalBalance:
+        type: string
+        xml:
+          name: TotalBalance
+      averageBalance:
+        type: string
+        xml:
+          name: AverageBalance
+      percentUtilized:
+        type: string
+        xml:
+          name: PercentUtilized
+      numberOfCards:
+        type: string
+        xml:
+          name: NumberOfCards
+      numberOfCardsWithBalance:
+        type: string
+        xml:
+          name: NumberOfCardsWithBalance
+  BestPickAcceptDeny:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: BestPickAcceptDeny
+  BusinessAddressDetail:
+    type: object
+    properties:
+      businessName:
+        type: string
+        xml:
+          name: BusinessName
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+    xml:
+      name: BusinessAddressDetail
+  BusinessPhoneDetail:
+    type: object
+    properties:
+      businessName:
+        type: string
+        xml:
+          name: BusinessName
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+    xml:
+      name: BusinessPhoneDetail
+  CCNumerics:
+    type: object
+    properties:
+      ccnumeric2:
+        type: string
+      ccnumeric3:
+        type: string
+      ccnumeric5:
+        type: string
+      ccnumeric1:
+        type: string
+      ccnumeric6:
+        type: string
+      ccnumeric7:
+        type: string
+      ccnumeric4:
+        type: string
+      ccnumeric8:
+        type: string
+      ccnumeric9:
+        type: string
+      ccnumeric10:
+        type: string
+    xml:
+      name: CCNumerics
+  CCStrings:
+    type: object
+    properties:
+      ccstring1:
+        type: string
+      ccstring4:
+        type: string
+      ccstring3:
+        type: string
+      ccstring5:
+        type: string
+      ccstring2:
+        type: string
+    xml:
+      name: CCStrings
+  COAResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: COAResult
+  Call2Results:
+    type: object
+    properties:
+      authenticationIndex:
+        type: string
+        xml:
+          name: AuthenticationIndex
+      mostLikelyFraudType:
+        xml:
+          name: MostLikelyFraudType
+        $ref: '#/definitions/MostLikelyFraudType'
+      reasons:
+        xml:
+          name: Reasons
+        $ref: '#/definitions/Reasons'
+      initialDecision:
+        type: string
+        xml:
+          name: InitialDecision
+      finalDecision:
+        type: string
+        xml:
+          name: FinalDecision
+      actionPath:
+        type: string
+        xml:
+          name: ActionPath
+    xml:
+      name: Call2Results
+  CardType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: CardType
+  ChangeOfAddressDetail:
+    type: object
+    properties:
+      name:
+        type: string
+        xml:
+          name: Name
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      reportedDate:
+        type: string
+        xml:
+          name: ReportedDate
+      lastTouched:
+        type: string
+        xml:
+          name: LastTouched
+    xml:
+      name: ChangeOfAddressDetail
+  Checkpoint:
+    type: object
+    properties:
+      generalResults:
+        xml:
+          name: GeneralResults
+        $ref: '#/definitions/GeneralResults'
+      standardizedAddressDetail:
+        xml:
+          name: StandardizedAddressDetail
+        $ref: '#/definitions/StandardizedAddressDetail'
+      consumerIDVerification:
+        type: array
+        xml:
+          name: ConsumerIDVerification
+        items:
+          xml:
+            name: ConsumerIDVerification
+          $ref: '#/definitions/ConsumerIDVerification'
+      residentialAddressDetail:
+        type: array
+        xml:
+          name: ResidentialAddressDetail
+        items:
+          xml:
+            name: ResidentialAddressDetail
+          $ref: '#/definitions/ResidentialAddressDetail'
+      businessAddressDetail:
+        type: array
+        xml:
+          name: BusinessAddressDetail
+        items:
+          xml:
+            name: BusinessAddressDetail
+          $ref: '#/definitions/BusinessAddressDetail'
+      addressHighRiskDetail:
+        type: array
+        xml:
+          name: AddressHighRiskDetail
+        items:
+          xml:
+            name: AddressHighRiskDetail
+          $ref: '#/definitions/AddressHighRiskDetail'
+      addressHighRiskDescription:
+        xml:
+          name: AddressHighRiskDescription
+        $ref: '#/definitions/AddressHighRiskDescription'
+      residentialPhoneDetail:
+        type: array
+        xml:
+          name: ResidentialPhoneDetail
+        items:
+          xml:
+            name: ResidentialPhoneDetail
+          $ref: '#/definitions/ResidentialPhoneDetail'
+      businessPhoneDetail:
+        type: array
+        xml:
+          name: BusinessPhoneDetail
+        items:
+          xml:
+            name: BusinessPhoneDetail
+          $ref: '#/definitions/BusinessPhoneDetail'
+      phoneHighRiskDetail:
+        type: array
+        xml:
+          name: PhoneHighRiskDetail
+        items:
+          xml:
+            name: PhoneHighRiskDetail
+          $ref: '#/definitions/PhoneHighRiskDetail'
+      phoneHighRiskDescription:
+        xml:
+          name: PhoneHighRiskDescription
+        $ref: '#/definitions/PhoneHighRiskDescription'
+      changeOfAddressDetail:
+        type: array
+        xml:
+          name: ChangeOfAddressDetail
+        items:
+          xml:
+            name: ChangeOfAddressDetail
+          $ref: '#/definitions/ChangeOfAddressDetail'
+      originalInquiryEcho:
+        xml:
+          name: OriginalInquiryEcho
+        $ref: '#/definitions/OriginalInquiryEcho'
+      validationSegment:
+        xml:
+          name: ValidationSegment
+        $ref: '#/definitions/ValidationSegment'
+      previousAddressSegment:
+        type: array
+        xml:
+          name: PreviousAddressSegment
+        items:
+          xml:
+            name: PreviousAddressSegment
+          $ref: '#/definitions/PreviousAddressSegment'
+      ofacrecordSegment:
+        $ref: '#/definitions/OFACRecordSegment'
+      ssnfinderDetail:
+        type: array
+        items:
+          $ref: '#/definitions/SSNFinderDetail'
+      edaquery:
+        type: array
+        items:
+          $ref: '#/definitions/EDAQuery'
+      edacaption:
+        type: array
+        items:
+          $ref: '#/definitions/EDACaption'
+    xml:
+      name: Checkpoint
+  CheckpointSummary:
+    type: object
+    properties:
+      primaryResultCode:
+        xml:
+          name: PrimaryResultCode
+        $ref: '#/definitions/PrimaryResultCode'
+      bestPickAcceptDeny:
+        xml:
+          name: BestPickAcceptDeny
+        $ref: '#/definitions/BestPickAcceptDeny'
+      addrCode:
+        type: string
+        xml:
+          name: AddrCode
+      phnCode:
+        type: string
+        xml:
+          name: PhnCode
+      addrTypeCode:
+        type: string
+        xml:
+          name: AddrTypeCode
+      addrUnitMismatchCode:
+        type: string
+        xml:
+          name: AddrUnitMismatchCode
+      phnUnitMismatchCode:
+        type: string
+        xml:
+          name: PhnUnitMismatchCode
+      dateOfBirthMatch:
+        xml:
+          name: DateOfBirthMatch
+        $ref: '#/definitions/DateOfBirthMatch'
+      highRiskAddrCode:
+        type: string
+        xml:
+          name: HighRiskAddrCode
+      highRiskPhoneCode:
+        type: string
+        xml:
+          name: HighRiskPhoneCode
+      addrResMatches:
+        type: string
+        xml:
+          name: AddrResMatches
+      addrBusMatches:
+        type: string
+        xml:
+          name: AddrBusMatches
+      phnResMatches:
+        type: string
+        xml:
+          name: PhnResMatches
+      phnBusMatches:
+        type: string
+        xml:
+          name: PhnBusMatches
+      ofacvalidationResult:
+        $ref: '#/definitions/OFACValidationResult'
+      dlresultCode:
+        type: string
+      ssncode:
+        type: string
+      coacode:
+        type: string
+    xml:
+      name: CheckpointSummary
+  CityStateZipMatchCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: CityStateZipMatchCode
+  Consumer:
+    type: object
+    required:
+      - address
+      - firstName
+      - phone
+    properties:
+      consumerType:
+        xml:
+          name: ConsumerType
+        $ref: '#/definitions/ConsumerType'
+      ssn:
+        type: string
+        xml:
+          name: SSN
+      lastName:
+        type: string
+        xml:
+          name: LastName
+      middleName:
+        type: string
+        xml:
+          name: MiddleName
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      birthDate:
+        type: string
+        xml:
+          name: BirthDate
+      identificationType:
+        xml:
+          name: IdentificationType
+        $ref: '#/definitions/IdentificationType'
+      identificationNumber:
+        type: string
+        xml:
+          name: IdentificationNumber
+      identificationState:
+        type: string
+        xml:
+          name: IdentificationState
+      identificationCountry:
+        type: string
+        xml:
+          name: IdentificationCountry
+      identificationExpirationDate:
+        type: string
+        xml:
+          name: IdentificationExpirationDate
+      address:
+        xml:
+          name: Address
+        $ref: '#/definitions/Address'
+      phone:
+        xml:
+          name: Phone
+        $ref: '#/definitions/Phone'
+    xml:
+      name: Consumer
+  ConsumerIDVerification:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      initial:
+        type: string
+        xml:
+          name: Initial
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+      monthOfBirth:
+        type: string
+        xml:
+          name: MonthOfBirth
+      dayOfBirth:
+        type: string
+        xml:
+          name: DayOfBirth
+      yearOfBirth:
+        type: string
+        xml:
+          name: YearOfBirth
+      dateOfBirthMatchCode:
+        xml:
+          name: DateOfBirthMatchCode
+        $ref: '#/definitions/DateOfBirthMatchCode'
+      reportedDate:
+        type: string
+        xml:
+          name: ReportedDate
+      lastTouched:
+        type: string
+        xml:
+          name: LastTouched
+    xml:
+      name: ConsumerIDVerification
+  ConsumerOrBusinessMatch:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: ConsumerOrBusinessMatch
+  ConsumerStatement:
+    type: object
+    required:
+      - text
+    properties:
+      number:
+        type: string
+        xml:
+          name: Number
+      text:
+        type: string
+        xml:
+          name: Text
+    xml:
+      name: ConsumerStatement
+  ConsumerType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: ConsumerType
+  ContributionSource:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: ContributionSource
+  Contributor:
+    type: object
+    properties:
+      contributorName:
+        type: string
+        xml:
+          name: ContributorName
+    xml:
+      name: Contributor
+  Court:
+    type: object
+    properties:
+      code:
+        type: string
+        xml:
+          attribute: true
+      name:
+        type: string
+        xml:
+          attribute: true
+  CreditCardVerificationResults:
+    type: object
+    properties:
+      matchResults:
+        type: array
+        xml:
+          name: MatchResults
+        items:
+          xml:
+            name: MatchResults
+          $ref: '#/definitions/MatchResults'
+    xml:
+      name: CreditCardVerificationResults
+  CreditProfile:
+    type: object
+    properties:
+      header:
+        xml:
+          name: Header
+        $ref: '#/definitions/iHeader'
+      riskModel:
+        type: array
+        xml:
+          name: RiskModel
+        items:
+          xml:
+            name: RiskModel
+          $ref: '#/definitions/iRiskModel'
+      ssn:
+        type: array
+        xml:
+          name: SSN
+        items:
+          xml:
+            name: SSN
+          $ref: '#/definitions/SSN'
+      consumerIdentity:
+        type: array
+        xml:
+          name: ConsumerIdentity
+        items:
+          xml:
+            name: ConsumerIdentity
+          $ref: '#/definitions/iConsumerIdentity'
+      addressInformation:
+        type: array
+        xml:
+          name: AddressInformation
+        items:
+          xml:
+            name: AddressInformation
+          $ref: '#/definitions/iAddressInformation'
+      employmentInformation:
+        type: array
+        xml:
+          name: EmploymentInformation
+        items:
+          xml:
+            name: EmploymentInformation
+          $ref: '#/definitions/EmploymentInformation'
+      publicRecord:
+        type: array
+        xml:
+          name: PublicRecord
+        items:
+          xml:
+            name: PublicRecord
+          $ref: '#/definitions/PublicRecord'
+      tradeLine:
+        type: array
+        xml:
+          name: TradeLine
+        items:
+          xml:
+            name: TradeLine
+          $ref: '#/definitions/iTradeLine'
+      inquiry:
+        type: array
+        xml:
+          name: Inquiry
+        items:
+          xml:
+            name: Inquiry
+          $ref: '#/definitions/Inquiry'
+      informationalMessage:
+        type: array
+        xml:
+          name: InformationalMessage
+        items:
+          xml:
+            name: InformationalMessage
+          $ref: '#/definitions/InformationalMessage'
+      statement:
+        type: array
+        xml:
+          name: Statement
+        items:
+          xml:
+            name: Statement
+          $ref: '#/definitions/Statement'
+      directCheck:
+        type: array
+        xml:
+          name: DirectCheck
+        items:
+          xml:
+            name: DirectCheck
+          $ref: '#/definitions/DirectCheck'
+      fraudServices:
+        type: array
+        xml:
+          name: FraudServices
+        items:
+          xml:
+            name: FraudServices
+          $ref: '#/definitions/FraudServices'
+      consumerAssistanceReferralAddress:
+        type: array
+        xml:
+          name: ConsumerAssistanceReferralAddress
+        items:
+          xml:
+            name: ConsumerAssistanceReferralAddress
+          $ref: '#/definitions/ConsumerAssistanceReferralAddress'
+      profileSummary:
+        type: array
+        xml:
+          name: ProfileSummary
+        items:
+          xml:
+            name: ProfileSummary
+          $ref: '#/definitions/ProfileSummary'
+      creditTrendsSummary:
+        type: array
+        xml:
+          name: CreditTrendsSummary
+        items:
+          xml:
+            name: CreditTrendsSummary
+          $ref: '#/definitions/CreditTrendsSummary'
+      modelAttributes:
+        type: array
+        xml:
+          name: ModelAttributes
+        items:
+          xml:
+            name: ModelAttributes
+          $ref: '#/definitions/ModelAttributes'
+      stagg:
+        type: array
+        xml:
+          name: STAGG
+        items:
+          xml:
+            name: STAGG
+          $ref: '#/definitions/STAGG'
+      error:
+        xml:
+          name: Error
+        $ref: '#/definitions/Error'
+    xml:
+      name: CreditProfile
+  CreditQuestionSet:
+    type: object
+    required:
+      - questionSelect
+      - questionText
+      - questionType
+      - relativeOrder
+    properties:
+      relativeOrder:
+        type: integer
+        format: int32
+        xml:
+          name: RelativeOrder
+      questionType:
+        type: integer
+        format: int32
+        xml:
+          name: QuestionType
+      questionText:
+        type: string
+        xml:
+          name: QuestionText
+      questionSelect:
+        xml:
+          name: QuestionSelect
+        $ref: '#/definitions/QuestionSelect'
+    xml:
+      name: CreditQuestionSet
+  CreditTrendsSummary:
+    type: object
+    properties:
+      revolvingAccountSummary:
+        type: array
+        xml:
+          name: RevolvingAccountSummary
+        items:
+          xml:
+            name: RevolvingAccountSummary
+          $ref: '#/definitions/RevolvingAccountSummary'
+      bankAndTAndECardAccountSummary:
+        type: array
+        xml:
+          name: BankAndTAndECardAccountSummary
+        items:
+          xml:
+            name: BankAndTAndECardAccountSummary
+          $ref: '#/definitions/BankAndTAndECardAccountSummary'
+      retailCardAccountSummary:
+        type: array
+        xml:
+          name: RetailCardAccountSummary
+        items:
+          xml:
+            name: RetailCardAccountSummary
+          $ref: '#/definitions/RetailCardAccountSummary'
+      installmentAccountSummary:
+        type: array
+        xml:
+          name: InstallmentAccountSummary
+        items:
+          xml:
+            name: InstallmentAccountSummary
+          $ref: '#/definitions/InstallmentAccountSummary'
+      mortgageAccountSummary:
+        type: array
+        xml:
+          name: MortgageAccountSummary
+        items:
+          xml:
+            name: MortgageAccountSummary
+          $ref: '#/definitions/MortgageAccountSummary'
+  CrossReferenceIndicatorsGrid:
+    type: object
+    properties:
+      fullNameVerifiesToAddress:
+        xml:
+          name: FullNameVerifiesToAddress
+        $ref: '#/definitions/FullNameVerifiesToAddress'
+      fullNameVerifiesToSSN:
+        xml:
+          name: FullNameVerifiesToSSN
+        $ref: '#/definitions/FullNameVerifiesToSSN'
+      fullNameVerifiesToDOB:
+        xml:
+          name: FullNameVerifiesToDOB
+        $ref: '#/definitions/FullNameVerifiesToDOB'
+      fullNameVerifiesToDL:
+        xml:
+          name: FullNameVerifiesToDL
+        $ref: '#/definitions/FullNameVerifiesToDL'
+      fullNameVerifiesToPhone:
+        xml:
+          name: FullNameVerifiesToPhone
+        $ref: '#/definitions/FullNameVerifiesToPhone'
+      surnameOnlyVerifiesToAddress:
+        xml:
+          name: SurnameOnlyVerifiesToAddress
+        $ref: '#/definitions/SurnameOnlyVerifiesToAddress'
+      surnameOnlyVerifiesToSSN:
+        xml:
+          name: SurnameOnlyVerifiesToSSN
+        $ref: '#/definitions/SurnameOnlyVerifiesToSSN'
+      surnameOnlyVerifiesToDL:
+        xml:
+          name: SurnameOnlyVerifiesToDL
+        $ref: '#/definitions/SurnameOnlyVerifiesToDL'
+      surnameOnlyVerifiesToPhone:
+        xml:
+          name: SurnameOnlyVerifiesToPhone
+        $ref: '#/definitions/SurnameOnlyVerifiesToPhone'
+      addressVerifiesToFullName:
+        xml:
+          name: AddressVerifiesToFullName
+        $ref: '#/definitions/AddressVerifiesToFullName'
+      addressVerifiesToSurnameOnly:
+        xml:
+          name: AddressVerifiesToSurnameOnly
+        $ref: '#/definitions/AddressVerifiesToSurnameOnly'
+      addressVerifiesToSSN:
+        xml:
+          name: AddressVerifiesToSSN
+        $ref: '#/definitions/AddressVerifiesToSSN'
+      addressVerifiesToDOB:
+        xml:
+          name: AddressVerifiesToDOB
+        $ref: '#/definitions/AddressVerifiesToDOB'
+      addressVerifiesToDL:
+        xml:
+          name: AddressVerifiesToDL
+        $ref: '#/definitions/AddressVerifiesToDL'
+      addressVerifiesToPhone:
+        xml:
+          name: AddressVerifiesToPhone
+        $ref: '#/definitions/AddressVerifiesToPhone'
+      phoneVerifiesToFullName:
+        xml:
+          name: PhoneVerifiesToFullName
+        $ref: '#/definitions/PhoneVerifiesToFullName'
+      phoneVerifiesToSurnameOnly:
+        xml:
+          name: PhoneVerifiesToSurnameOnly
+        $ref: '#/definitions/PhoneVerifiesToSurnameOnly'
+      phoneVerifiesToAddress:
+        xml:
+          name: PhoneVerifiesToAddress
+        $ref: '#/definitions/PhoneVerifiesToAddress'
+      ssnverifiesToFullName:
+        $ref: '#/definitions/SSNVerifiesToFullName'
+      dlverifiesToAddress:
+        $ref: '#/definitions/DLVerifiesToAddress'
+      ssnverifiesToAddress:
+        $ref: '#/definitions/SSNVerifiesToAddress'
+      dlverifiesToSurnameOnly:
+        $ref: '#/definitions/DLVerifiesToSurnameOnly'
+      dlverifiesToFullName:
+        $ref: '#/definitions/DLVerifiesToFullName'
+      ssnverifiesToSurnameOnly:
+        $ref: '#/definitions/SSNVerifiesToSurnameOnly'
+    xml:
+      name: CrossReferenceIndicatorsGrid
+  CurrentAddress:
+    type: object
+    properties:
+      matchedFormatCode:
+        xml:
+          name: MatchedFormatCode
+        $ref: '#/definitions/MatchedFormatCode'
+      matchConfidenceLevel:
+        xml:
+          name: MatchConfidenceLevel
+        $ref: '#/definitions/MatchConfidenceLevel'
+      houseStreetSuffixCode:
+        xml:
+          name: HouseStreetSuffixCode
+        $ref: '#/definitions/HouseStreetSuffixCode'
+      prePostUnitMatchCode:
+        xml:
+          name: PrePostUnitMatchCode
+        $ref: '#/definitions/PrePostUnitMatchCode'
+      cityStateZipMatchCode:
+        xml:
+          name: CityStateZipMatchCode
+        $ref: '#/definitions/CityStateZipMatchCode'
+      unitTypeZipPlus4Code:
+        xml:
+          name: UnitTypeZipPlus4Code
+        $ref: '#/definitions/UnitTypeZipPlus4Code'
+    xml:
+      name: CurrentAddress
+  DLVerifiesToAddress:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DLVerifiesToAddress
+  DLVerifiesToFullName:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DLVerifiesToFullName
+  DLVerifiesToSurnameOnly:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DLVerifiesToSurnameOnly
+  DateOfBirthMatch:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DateOfBirthMatch
+  DateOfBirthMatchCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DateOfBirthMatchCode
+  Decision:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Decision
+  Detail:
+    type: object
+    properties:
+      memberID:
+        type: string
+        xml:
+          name: MemberID
+      kindOfBusiness:
+        xml:
+          name: KindOfBusiness
+        $ref: '#/definitions/KindOfBusiness'
+      fraudOrVictimCategory:
+        xml:
+          name: FraudOrVictimCategory
+        $ref: '#/definitions/FraudOrVictimCategory'
+      loadDate:
+        type: string
+        xml:
+          name: LoadDate
+      applicationDate:
+        type: string
+        xml:
+          name: ApplicationDate
+      fraudDiscoveryDate:
+        type: string
+        xml:
+          name: FraudDiscoveryDate
+      ownRecordMatchIndicator:
+        type: string
+        xml:
+          name: OwnRecordMatchIndicator
+      consumerOrBusinessMatch:
+        xml:
+          name: ConsumerOrBusinessMatch
+        $ref: '#/definitions/ConsumerOrBusinessMatch'
+      inquirySSNStatus:
+        xml:
+          name: InquirySSNStatus
+        $ref: '#/definitions/InquirySSNStatus'
+      addressMatchIndicator:
+        xml:
+          name: AddressMatchIndicator
+        $ref: '#/definitions/AddressMatchIndicator'
+      driversLicenseMatchIndicator:
+        xml:
+          name: DriversLicenseMatchIndicator
+        $ref: '#/definitions/DriversLicenseMatchIndicator'
+      inquiryPhoneNumberCount:
+        type: string
+        xml:
+          name: InquiryPhoneNumberCount
+      addressMatchConfidenceLevel:
+        xml:
+          name: AddressMatchConfidenceLevel
+        $ref: '#/definitions/AddressMatchConfidenceLevel'
+      phoneMatch:
+        xml:
+          name: PhoneMatch
+        $ref: '#/definitions/PhoneMatch'
+      ssnmatchStatus:
+        $ref: '#/definitions/SSNMatchStatus'
+    xml:
+      name: Detail
+  Details:
+    type: object
+    properties:
+      detail:
+        type: array
+        xml:
+          name: Detail
+        items:
+          xml:
+            name: Detail
+          $ref: '#/definitions/iDetail'
+  DeviceIDResponse:
+    type: object
+    properties:
+      error:
+        xml:
+          name: Error
+        $ref: '#/definitions/Error'
+      header:
+        xml:
+          name: Header
+        $ref: '#/definitions/iHeader'
+      results:
+        xml:
+          name: Results
+        $ref: '#/definitions/Results'
+    xml:
+      name: DeviceIDResponse
+  DirectCheck:
+    type: object
+    properties:
+      subscriberNumber:
+        type: string
+        xml:
+          name: SubscriberNumber
+      subscriberName:
+        type: string
+        xml:
+          name: SubscriberName
+      subscriberAddress:
+        type: string
+        xml:
+          name: SubscriberAddress
+      subscriberCity:
+        type: string
+        xml:
+          name: SubscriberCity
+      subscriberState:
+        type: string
+        xml:
+          name: SubscriberState
+      subscriberZip:
+        type: string
+        xml:
+          name: SubscriberZip
+      subscriberPhone:
+        type: string
+        xml:
+          name: SubscriberPhone
+  Dispute:
+    type: object
+    properties:
+      disputeCode:
+        xml:
+          name: DisputeCode
+        $ref: '#/definitions/DisputeCode'
+      disputeReason:
+        type: string
+        xml:
+          name: DisputeReason
+      disputeDate:
+        type: string
+        xml:
+          name: DisputeDate
+    xml:
+      name: Dispute
+  DisputeCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DisputeCode
+  DriverLicense:
+    type: object
+    properties:
+      state:
+        type: string
+        xml:
+          name: State
+      number:
+        type: string
+        xml:
+          name: Number
+  DriverLicenseResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DriverLicenseResult
+  DriversLicenseFormatValidation:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DriversLicenseFormatValidation
+  DriversLicenseMatchIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: DriversLicenseMatchIndicator
+  DwellingType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  ECOA:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  EDACaption:
+    type: object
+    properties:
+      recordType:
+        type: string
+        xml:
+          name: RecordType
+      caption:
+        type: string
+        xml:
+          name: Caption
+    xml:
+      name: EDACaption
+  EDAQuery:
+    type: object
+    properties:
+      recordType:
+        type: string
+        xml:
+          name: RecordType
+      name:
+        type: string
+        xml:
+          name: Name
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+      edabestPickScore:
+        type: string
+    xml:
+      name: EDAQuery
+  EDAResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: EDAResult
+  EarlyWarningResponse:
+    type: object
+    required:
+      - responseCode
+      - responseMessage
+    properties:
+      responseCode:
+        type: string
+        xml:
+          name: ResponseCode
+      responseMessage:
+        type: string
+        xml:
+          name: ResponseMessage
+      customerUse1:
+        type: string
+        xml:
+          name: CustomerUse1
+      attemptNumber:
+        type: string
+        xml:
+          name: AttemptNumber
+      initialMessage:
+        type: string
+        xml:
+          name: InitialMessage
+      decisionMessage:
+        type: string
+        xml:
+          name: DecisionMessage
+      overallSeverity:
+        type: string
+        xml:
+          name: OverallSeverity
+      cumulativeLoss:
+        type: string
+        xml:
+          name: CumulativeLoss
+      matchRecord:
+        type: array
+        xml:
+          name: MatchRecord
+        items:
+          xml:
+            name: MatchRecord
+          $ref: '#/definitions/MatchRecord'
+      fcraflag:
+        type: string
+    xml:
+      name: EarlyWarningResponse
+  EmailAddress:
+    type: object
+    required:
+      - validationResultCode
+    properties:
+      validationResultCode:
+        xml:
+          name: ValidationResultCode
+        $ref: '#/definitions/ValidationResultCode'
+    xml:
+      name: EmailAddress
+  EmploymentInformation:
+    type: object
+    properties:
+      firstReportedDate:
+        type: string
+        xml:
+          name: FirstReportedDate
+      lastUpdatedDate:
+        type: string
+        xml:
+          name: LastUpdatedDate
+      origination:
+        xml:
+          name: Origination
+        $ref: '#/definitions/Origination'
+      name:
+        type: string
+        xml:
+          name: Name
+      addressFirstLine:
+        type: string
+        xml:
+          name: AddressFirstLine
+      addressSecondLine:
+        type: string
+        xml:
+          name: AddressSecondLine
+      addressExtraLine:
+        type: string
+        xml:
+          name: AddressExtraLine
+      zip:
+        type: string
+        xml:
+          name: Zip
+  EnhancedPaymentData:
+    type: object
+    properties:
+      initialPaymentLevelDate:
+        type: string
+        xml:
+          name: InitialPaymentLevelDate
+      accountCondition:
+        xml:
+          name: AccountCondition
+        $ref: '#/definitions/AccountCondition'
+      paymentStatus:
+        xml:
+          name: PaymentStatus
+        $ref: '#/definitions/PaymentStatus'
+      accountType:
+        xml:
+          name: AccountType
+        $ref: '#/definitions/AccountType'
+      specialComment:
+        xml:
+          name: SpecialComment
+        $ref: '#/definitions/SpecialComment'
+  Error:
+    type: object
+    required:
+      - errorCode
+      - errorMessage
+      - providerCode
+      - tranID
+    properties:
+      tranID:
+        type: string
+        xml:
+          name: TranID
+      providerCode:
+        type: string
+        xml:
+          name: ProviderCode
+        default: '1'
+      errorCode:
+        type: string
+        xml:
+          name: ErrorCode
+      errorMessage:
+        type: string
+        xml:
+          name: ErrorMessage
+  Evaluation:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  FCRADetail:
+    type: object
+    properties:
+      fraudShield:
+        xml:
+          name: FraudShield
+        $ref: '#/definitions/FraudShield'
+      sharedApplication:
+        xml:
+          name: SharedApplication
+        $ref: '#/definitions/SharedApplication'
+      nfdsummary:
+        $ref: '#/definitions/NFDSummary'
+    xml:
+      name: FCRADetail
+  FCRARule1:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule1
+  FCRARule10:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule10
+  FCRARule11:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule11
+  FCRARule12:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule12
+  FCRARule13:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule13
+  FCRARule14:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule14
+  FCRARule15:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule15
+  FCRARule16:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule16
+  FCRARule17:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule17
+  FCRARule18:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule18
+  FCRARule19:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule19
+  FCRARule2:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule2
+  FCRARule20:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule20
+  FCRARule3:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule3
+  FCRARule4:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule4
+  FCRARule5:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule5
+  FCRARule6:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule6
+  FCRARule7:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule7
+  FCRARule8:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule8
+  FCRARule9:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FCRARule9
+  FraudOrVictimCategory:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FraudOrVictimCategory
+  FraudServices:
+    type: object
+    properties:
+      type:
+        xml:
+          name: Type
+        $ref: '#/definitions/Type'
+      sic:
+        xml:
+          name: SIC
+        $ref: '#/definitions/SIC'
+      text:
+        type: string
+        xml:
+          name: Text
+      socialDate:
+        type: string
+        xml:
+          name: SocialDate
+      socialCount:
+        type: string
+        xml:
+          name: SocialCount
+      socialErrorCode:
+        xml:
+          name: SocialErrorCode
+        $ref: '#/definitions/SocialErrorCode'
+      addressDate:
+        type: string
+        xml:
+          name: AddressDate
+      addressCount:
+        type: string
+        xml:
+          name: AddressCount
+      addressErrorCode:
+        xml:
+          name: AddressErrorCode
+        $ref: '#/definitions/AddressErrorCode'
+      indicator:
+        type: array
+        xml:
+          name: Indicator
+        items:
+          type: string
+          xml:
+            name: Indicator
+      dateOfBirth:
+        type: string
+        xml:
+          name: DateOfBirth
+      dateOfDeath:
+        type: string
+        xml:
+          name: DateOfDeath
+      ssnfirstPossibleIssuanceYear:
+        type: string
+      ssnlastPossibleIssuanceYear:
+        type: string
+  FraudShield:
+    type: object
+    properties:
+      fs07:
+        type: string
+        xml:
+          name: FS07
+      fs08:
+        type: string
+        xml:
+          name: FS08
+      fs09:
+        type: string
+        xml:
+          name: FS09
+      fs19:
+        type: string
+        xml:
+          name: FS19
+      fs20:
+        type: string
+        xml:
+          name: FS20
+      fs22:
+        type: string
+        xml:
+          name: FS22
+      fs27:
+        type: string
+        xml:
+          name: FS27
+    xml:
+      name: FraudShield
+  FullNameVerifiesToAddress:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FullNameVerifiesToAddress
+  FullNameVerifiesToDL:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FullNameVerifiesToDL
+  FullNameVerifiesToDOB:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FullNameVerifiesToDOB
+  FullNameVerifiesToPhone:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FullNameVerifiesToPhone
+  FullNameVerifiesToSSN:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: FullNameVerifiesToSSN
+  GLBDetail:
+    type: object
+    properties:
+      checkpointSummary:
+        xml:
+          name: CheckpointSummary
+        $ref: '#/definitions/CheckpointSummary'
+      fraudShield:
+        xml:
+          name: FraudShield
+        $ref: '#/definitions/FraudShield'
+      sharedApplication:
+        xml:
+          name: SharedApplication
+        $ref: '#/definitions/SharedApplication'
+    xml:
+      name: GLBDetail
+  GLBRule1:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule1
+  GLBRule10:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule10
+  GLBRule11:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule11
+  GLBRule12:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule12
+  GLBRule13:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule13
+  GLBRule14:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule14
+  GLBRule15:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule15
+  GLBRule16:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule16
+  GLBRule17:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule17
+  GLBRule18:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule18
+  GLBRule19:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule19
+  GLBRule2:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule2
+  GLBRule20:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule20
+  GLBRule3:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule3
+  GLBRule4:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule4
+  GLBRule5:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule5
+  GLBRule6:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule6
+  GLBRule7:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule7
+  GLBRule8:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule8
+  GLBRule9:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: GLBRule9
+  Gen:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  General:
+    type: object
+    properties:
+      sessionID:
+        type: string
+        xml:
+          name: SessionID
+      numberOfQuestions:
+        type: integer
+        format: int32
+        xml:
+          name: NumberOfQuestions
+      kbaresultCodeDescription:
+        type: string
+      kbaresultCode:
+        type: integer
+        format: int32
+    xml:
+      name: General
+  GeneralDetails:
+    type: object
+    properties:
+      priorUsage:
+        xml:
+          name: PriorUsage
+        $ref: '#/definitions/PriorUsage'
+      kbaresultCodeDescription:
+        type: string
+      kbaresultCode:
+        type: integer
+        format: int32
+  GeneralResults:
+    type: object
+    properties:
+      profileID:
+        type: string
+        xml:
+          name: ProfileID
+      accountInformation:
+        type: string
+        xml:
+          name: AccountInformation
+      version:
+        type: string
+        xml:
+          name: Version
+      primaryResult:
+        xml:
+          name: PrimaryResult
+        $ref: '#/definitions/PrimaryResult'
+      bestPickAcceptDeny:
+        xml:
+          name: BestPickAcceptDeny
+        $ref: '#/definitions/BestPickAcceptDeny'
+      sourceFlag:
+        type: string
+        xml:
+          name: SourceFlag
+      checkpointTemplate:
+        type: string
+        xml:
+          name: CheckpointTemplate
+      nameFlipIndicator:
+        xml:
+          name: NameFlipIndicator
+        $ref: '#/definitions/NameFlipIndicator'
+      addressVerificationResult:
+        xml:
+          name: AddressVerificationResult
+        $ref: '#/definitions/AddressVerificationResult'
+      addressUnitMismatchResult:
+        xml:
+          name: AddressUnitMismatchResult
+        $ref: '#/definitions/AddressUnitMismatchResult'
+      phoneVerificationResult:
+        xml:
+          name: PhoneVerificationResult
+        $ref: '#/definitions/PhoneVerificationResult'
+      phoneUnitMismatchResult:
+        xml:
+          name: PhoneUnitMismatchResult
+        $ref: '#/definitions/PhoneUnitMismatchResult'
+      addressTypeResult:
+        xml:
+          name: AddressTypeResult
+        $ref: '#/definitions/AddressTypeResult'
+      addressVerificationResidentialMatches:
+        type: string
+        xml:
+          name: AddressVerificationResidentialMatches
+      addressVerificationBusinessMatches:
+        type: string
+        xml:
+          name: AddressVerificationBusinessMatches
+      phoneVerificationResidentialMatches:
+        type: string
+        xml:
+          name: PhoneVerificationResidentialMatches
+      phoneVerificationBusinessMatches:
+        type: string
+        xml:
+          name: PhoneVerificationBusinessMatches
+      addressHighRiskResult:
+        xml:
+          name: AddressHighRiskResult
+        $ref: '#/definitions/AddressHighRiskResult'
+      phoneHighRiskResult:
+        xml:
+          name: PhoneHighRiskResult
+        $ref: '#/definitions/PhoneHighRiskResult'
+      acceptDeclineFlag:
+        xml:
+          name: AcceptDeclineFlag
+        $ref: '#/definitions/AcceptDeclineFlag'
+      checkpointScore:
+        type: string
+        xml:
+          name: CheckpointScore
+      result:
+        xml:
+          name: Result
+        $ref: '#/definitions/Result'
+      auditNumber:
+        type: string
+        xml:
+          name: AuditNumber
+      shortAuditNumber:
+        type: string
+        xml:
+          name: ShortAuditNumber
+      driverLicenseResult:
+        xml:
+          name: DriverLicenseResult
+        $ref: '#/definitions/DriverLicenseResult'
+      monthOfBirth:
+        type: string
+        xml:
+          name: MonthOfBirth
+      dayOfBirth:
+        type: string
+        xml:
+          name: DayOfBirth
+      yearOfBirth:
+        type: string
+        xml:
+          name: YearOfBirth
+      dateOfBirthMatch:
+        xml:
+          name: DateOfBirthMatch
+        $ref: '#/definitions/DateOfBirthMatch'
+      standardizedAddresRecordsReturned:
+        type: string
+        xml:
+          name: StandardizedAddresRecordsReturned
+      residentialAddressDetailRecordsReturned:
+        type: string
+        xml:
+          name: ResidentialAddressDetailRecordsReturned
+      businessAddressDetailRecordsReturned:
+        type: string
+        xml:
+          name: BusinessAddressDetailRecordsReturned
+      addressHighRiskDetailRecordsReturned:
+        type: string
+        xml:
+          name: AddressHighRiskDetailRecordsReturned
+      addressHighRiskDescriptionRecordsReturned:
+        type: string
+        xml:
+          name: AddressHighRiskDescriptionRecordsReturned
+      residentialPhoneDetailRecordsReturned:
+        type: string
+        xml:
+          name: ResidentialPhoneDetailRecordsReturned
+      businessPhoneDetailRecordsReturned:
+        type: string
+        xml:
+          name: BusinessPhoneDetailRecordsReturned
+      phoneHighRiskDetailRecordsReturned:
+        type: string
+        xml:
+          name: PhoneHighRiskDetailRecordsReturned
+      phoneHighRiskDescriptionRecordsReturned:
+        type: string
+        xml:
+          name: PhoneHighRiskDescriptionRecordsReturned
+      validationSegmentsReturned:
+        type: string
+        xml:
+          name: ValidationSegmentsReturned
+      driverLicenseSegmentsReturned:
+        type: string
+        xml:
+          name: DriverLicenseSegmentsReturned
+      auditRequestInformationRecordsReturned:
+        type: string
+        xml:
+          name: AuditRequestInformationRecordsReturned
+      previousAddressesReturned:
+        type: string
+        xml:
+          name: PreviousAddressesReturned
+      ssnaddressDetailRecordsReturned:
+        type: string
+      edabestPickScore:
+        type: string
+      edarecordsReturned:
+        type: string
+      ssnfinderAddressesReturned:
+        type: string
+      coadescriptionRecordsReturned:
+        type: string
+      coarecordsReturned:
+        type: string
+      ofacrecordSegmentsReturned:
+        type: string
+      ssnresult:
+        $ref: '#/definitions/SSNResult'
+      ofacresult:
+        $ref: '#/definitions/OFACResult'
+      edaresult:
+        $ref: '#/definitions/EDAResult'
+      coaresult:
+        $ref: '#/definitions/COAResult'
+    xml:
+      name: GeneralResults
+  GradedAnswer:
+    type: object
+    properties:
+      answerSet:
+        type: array
+        xml:
+          name: AnswerSet
+        items:
+          xml:
+            name: AnswerSet
+          $ref: '#/definitions/AnswerSet'
+    xml:
+      name: GradedAnswer
+  Header:
+    type: object
+    required:
+      - preamble
+      - reportDate
+      - reportTime
+    properties:
+      reportDate:
+        type: string
+        xml:
+          name: ReportDate
+      reportTime:
+        type: string
+        xml:
+          name: ReportTime
+      preamble:
+        type: string
+        xml:
+          name: Preamble
+      referenceNumber:
+        type: string
+        xml:
+          name: ReferenceNumber
+    xml:
+      name: Header
+  HomeOwnership:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  HouseStreetSuffixCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: HouseStreetSuffixCode
+  IPAddress:
+    type: object
+    properties:
+      ipaddressMatchCity:
+        $ref: '#/definitions/IPAddressMatchCity'
+      ipaddressZipCode:
+        type: string
+      ipaddressState:
+        type: string
+      ipaddressCountry:
+        type: string
+      ipaddressMatchState:
+        $ref: '#/definitions/IPAddressMatchState'
+      ipaddressMatchZipCode:
+        $ref: '#/definitions/IPAddressMatchZipCode'
+      ipaddressLongitude:
+        type: string
+      ipaddressMatchCountry:
+        $ref: '#/definitions/IPAddressMatchCountry'
+      ipaddressLatitude:
+        type: string
+      ipaddressCity:
+        type: string
+      ipaddressMSA:
+        type: string
+    xml:
+      name: IPAddress
+  IPAddressMatchCity:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: IPAddressMatchCity
+  IPAddressMatchCountry:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: IPAddressMatchCountry
+  IPAddressMatchState:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: IPAddressMatchState
+  IPAddressMatchZipCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: IPAddressMatchZipCode
+  IdentificationType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: IdentificationType
+  InformationalMessage:
+    type: object
+    properties:
+      messageNumber:
+        type: string
+        xml:
+          name: MessageNumber
+      messageText:
+        type: string
+        xml:
+          name: MessageText
+  InitialResults:
+    type: object
+    required:
+      - finalDecision
+    properties:
+      authenticationIndex:
+        type: string
+        xml:
+          name: AuthenticationIndex
+      mostLikelyFraudType:
+        xml:
+          name: MostLikelyFraudType
+        $ref: '#/definitions/MostLikelyFraudType'
+      reasons:
+        xml:
+          name: Reasons
+        $ref: '#/definitions/Reasons'
+      initialDecision:
+        type: string
+        xml:
+          name: InitialDecision
+      finalDecision:
+        type: string
+        xml:
+          name: FinalDecision
+      actionPath:
+        type: string
+        xml:
+          name: ActionPath
+    xml:
+      name: InitialResults
+  Inquiry:
+    type: object
+    properties:
+      date:
+        type: string
+        xml:
+          name: Date
+      amount:
+        type: string
+        xml:
+          name: Amount
+      type:
+        xml:
+          name: Type
+        $ref: '#/definitions/Type'
+      terms:
+        xml:
+          name: Terms
+        $ref: '#/definitions/Terms'
+      accountNumber:
+        type: string
+        xml:
+          name: AccountNumber
+      subcode:
+        type: string
+        xml:
+          name: Subcode
+      kob:
+        xml:
+          name: KOB
+        $ref: '#/definitions/KOB'
+      subscriberDisplayName:
+        type: string
+        xml:
+          name: SubscriberDisplayName
+  InquiryPhone1:
+    type: object
+    properties:
+      inquiryPhoneType:
+        xml:
+          name: InquiryPhoneType
+        $ref: '#/definitions/InquiryPhoneType'
+      nfdphone2Type:
+        $ref: '#/definitions/NFDPhone2Type'
+      nfdphone1Type:
+        $ref: '#/definitions/NFDPhone1Type'
+      nfdphone3Type:
+        $ref: '#/definitions/NFDPhone3Type'
+    xml:
+      name: InquiryPhone1
+  InquiryPhone2:
+    type: object
+    properties:
+      inquiryPhoneType:
+        xml:
+          name: InquiryPhoneType
+        $ref: '#/definitions/InquiryPhoneType'
+      nfdphone2Type:
+        $ref: '#/definitions/NFDPhone2Type'
+      nfdphone1Type:
+        $ref: '#/definitions/NFDPhone1Type'
+      nfdphone3Type:
+        $ref: '#/definitions/NFDPhone3Type'
+    xml:
+      name: InquiryPhone2
+  InquiryPhone3:
+    type: object
+    properties:
+      inquiryPhoneType:
+        xml:
+          name: InquiryPhoneType
+        $ref: '#/definitions/InquiryPhoneType'
+      nfdphone2Type:
+        $ref: '#/definitions/NFDPhone2Type'
+      nfdphone1Type:
+        $ref: '#/definitions/NFDPhone1Type'
+      nfdphone3Type:
+        $ref: '#/definitions/NFDPhone3Type'
+    xml:
+      name: InquiryPhone3
+  InquiryPhoneType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: InquiryPhoneType
+  InquirySSNStatus:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: InquirySSNStatus
+  InstallmentAccountSummary:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      monthIndicator:
+        type: string
+        xml:
+          name: MonthIndicator
+      totalBalance:
+        type: string
+        xml:
+          name: TotalBalance
+      installmentBalanceToLoanPercent:
+        type: string
+        xml:
+          name: InstallmentBalanceToLoanPercent
+      numberOfTrades:
+        type: string
+        xml:
+          name: NumberOfTrades
+      numberOfTradesWithBalance:
+        type: string
+        xml:
+          name: NumberOfTradesWithBalance
+  KBA:
+    type: object
+    required:
+      - general
+    properties:
+      general:
+        xml:
+          name: General
+        $ref: '#/definitions/General'
+      questionSet:
+        type: array
+        xml:
+          name: QuestionSet
+        items:
+          xml:
+            name: QuestionSet
+          $ref: '#/definitions/QuestionSet'
+      creditQuestionSet:
+        type: array
+        xml:
+          name: CreditQuestionSet
+        items:
+          xml:
+            name: CreditQuestionSet
+          $ref: '#/definitions/CreditQuestionSet'
+      nonCreditQuestionSet:
+        type: array
+        xml:
+          name: NonCreditQuestionSet
+        items:
+          xml:
+            name: NonCreditQuestionSet
+          $ref: '#/definitions/NonCreditQuestionSet'
+      xmlversion:
+        type: string
+    xml:
+      name: KBA
+  KBAScore:
+    type: object
+    required:
+      - general
+      - scoreSummary
+    properties:
+      general:
+        xml:
+          name: General
+        $ref: '#/definitions/GeneralDetails'
+      scoreSummary:
+        xml:
+          name: ScoreSummary
+        $ref: '#/definitions/ScoreSummary'
+      gradedAnswer:
+        xml:
+          name: GradedAnswer
+        $ref: '#/definitions/GradedAnswer'
+    xml:
+      name: KBAScore
+  KOB:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  KindOfBusiness:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: KindOfBusiness
+  LossType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: LossType
+  Match:
+    type: object
+    properties:
+      matchType:
+        type: string
+        xml:
+          name: MatchType
+      matchField:
+        type: string
+        xml:
+          name: MatchField
+      matchData:
+        type: string
+        xml:
+          name: MatchData
+    xml:
+      name: Match
+  MatchCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: MatchCode
+  MatchConfidenceLevel:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: MatchConfidenceLevel
+  MatchRecord:
+    type: object
+    required:
+      - severity
+    properties:
+      severity:
+        type: string
+        xml:
+          name: Severity
+      match:
+        type: array
+        xml:
+          name: Match
+        items:
+          xml:
+            name: Match
+          $ref: '#/definitions/Match'
+      consumer:
+        xml:
+          name: Consumer
+        $ref: '#/definitions/Consumer'
+      account:
+        xml:
+          name: Account
+        $ref: '#/definitions/Account'
+      contributor:
+        xml:
+          name: Contributor
+        $ref: '#/definitions/Contributor'
+    xml:
+      name: MatchRecord
+  MatchResults:
+    type: object
+    properties:
+      matchCode:
+        xml:
+          name: MatchCode
+        $ref: '#/definitions/MatchCode'
+      decision:
+        xml:
+          name: Decision
+        $ref: '#/definitions/Decision'
+      cardNumber:
+        type: object
+        xml:
+          name: CardNumber
+      cardType:
+        xml:
+          name: CardType
+        $ref: '#/definitions/CardType'
+      subscriber:
+        type: object
+        xml:
+          name: Subscriber
+      dateOpened:
+        type: object
+        xml:
+          name: DateOpened
+      creditLimit:
+        type: object
+        xml:
+          name: CreditLimit
+      cardBalance:
+        type: object
+        xml:
+          name: CardBalance
+    xml:
+      name: MatchResults
+  MatchedFormatCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: MatchedFormatCode
+  MaxPayment:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Message:
+    type: object
+    required:
+      - text
+    properties:
+      number:
+        type: string
+        xml:
+          name: Number
+      text:
+        type: string
+        xml:
+          name: Text
+      addrMismatch:
+        type: string
+        xml:
+          name: AddrMismatch
+    xml:
+      name: Message
+  Messages:
+    type: object
+    properties:
+      consumerStatement:
+        type: array
+        xml:
+          name: ConsumerStatement
+        items:
+          xml:
+            name: ConsumerStatement
+          $ref: '#/definitions/ConsumerStatement'
+      Message:
+        readOnly: true
+        $ref: '#/definitions/Message'
+    xml:
+      name: Messages
+  ModelAttributes:
+    type: object
+    properties:
+      modelTypeIndicator:
+        xml:
+          name: ModelTypeIndicator
+        $ref: '#/definitions/ModelTypeIndicator'
+      attribute:
+        type: array
+        xml:
+          name: Attribute
+        items:
+          xml:
+            name: Attribute
+          $ref: '#/definitions/Attribute'
+  ModelIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  ModelTypeIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  MonthlyPaymentPartialFlag:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  MonthlyPaymentType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  MortgageAccountSummary:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      monthIndicator:
+        type: string
+        xml:
+          name: MonthIndicator
+      totalBalance:
+        type: string
+        xml:
+          name: TotalBalance
+      mortgageBalanceToLoanPercent:
+        type: string
+        xml:
+          name: MortgageBalanceToLoanPercent
+      numberOfTrades:
+        type: string
+        xml:
+          name: NumberOfTrades
+      numberOfTradesWithBalance:
+        type: string
+        xml:
+          name: NumberOfTradesWithBalance
+  MostLikelyFraudType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: MostLikelyFraudType
+  NFDPhone1Type:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: NFDPhone1Type
+  NFDPhone2Type:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: NFDPhone2Type
+  NFDPhone3Type:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: NFDPhone3Type
+  NFDResults:
+    type: object
+    properties:
+      reasons:
+        xml:
+          name: Reasons
+        $ref: '#/definitions/Reasons'
+      nfdindex:
+        type: string
+      nfdscorecard:
+        type: string
+    xml:
+      name: NFDResults
+  NFDSummary:
+    type: object
+    properties:
+      recordHits:
+        type: string
+        xml:
+          name: RecordHits
+      fraudFieldHits:
+        type: string
+        xml:
+          name: FraudFieldHits
+      victimRecordHits:
+        type: string
+        xml:
+          name: VictimRecordHits
+      victimFieldHits:
+        type: string
+        xml:
+          name: VictimFieldHits
+      fieldHitsByInputAddress:
+        type: string
+        xml:
+          name: FieldHitsByInputAddress
+      fieldHitsBySSN:
+        type: string
+        xml:
+          name: FieldHitsBySSN
+      fieldHitsByDriversLicense:
+        type: string
+        xml:
+          name: FieldHitsByDriversLicense
+      fieldHitsByPhone:
+        type: string
+        xml:
+          name: FieldHitsByPhone
+    xml:
+      name: NFDSummary
+  NameFlipIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: NameFlipIndicator
+  NationalFraudDatabase:
+    type: object
+    properties:
+      summary:
+        xml:
+          name: Summary
+        $ref: '#/definitions/iSummary'
+      detail:
+        type: array
+        xml:
+          name: Detail
+        items:
+          xml:
+            name: Detail
+          $ref: '#/definitions/Detail'
+    xml:
+      name: NationalFraudDatabase
+  NetConnectResponse:
+    type: object
+    required:
+      - completionCode
+    properties:
+      completionCode:
+        type: string
+        xml:
+          name: CompletionCode
+      referenceId:
+        type: string
+        xml:
+          name: ReferenceId
+      products:
+        xml:
+          name: Products
+        $ref: '#/definitions/Products'
+      errorMessage:
+        type: string
+        xml:
+          name: ErrorMessage
+      errorTag:
+        type: string
+        xml:
+          name: ErrorTag
+    xml:
+      name: NetConnectResponse
+  NonCreditQuestionSet:
+    type: object
+    required:
+      - questionSelect
+      - questionText
+      - questionType
+      - relativeOrder
+    properties:
+      relativeOrder:
+        type: integer
+        format: int32
+        xml:
+          name: RelativeOrder
+      questionType:
+        type: integer
+        format: int32
+        xml:
+          name: QuestionType
+      questionText:
+        type: string
+        xml:
+          name: QuestionText
+      questionSelect:
+        xml:
+          name: QuestionSelect
+        $ref: '#/definitions/QuestionSelect'
+    xml:
+      name: NonCreditQuestionSet
+  OFACRecordSegment:
+    type: object
+    properties:
+      ofacrecord:
+        type: string
+    xml:
+      name: OFACRecordSegment
+  OFACResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: OFACResult
+  OFACValidationResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: OFACValidationResult
+  OpenOrClosed:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  OriginalInquiryEcho:
+    type: object
+    properties:
+      originalInput:
+        type: string
+        xml:
+          name: OriginalInput
+    xml:
+      name: OriginalInquiryEcho
+  Origination:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  PIDResult:
+    type: object
+    properties:
+      errorCode:
+        type: integer
+        format: int64
+      internalErrorCode:
+        type: string
+      success:
+        type: boolean
+      fullPIDResponse:
+        $ref: '#/definitions/NetConnectResponse'
+      summaryResponse:
+        $ref: '#/definitions/SummaryPIDResponse'
+      xmlRequest:
+        type: string
+  PaidStatus:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PaidStatus
+  PaymentStatus:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Phone:
+    type: object
+    properties:
+      phoneType:
+        xml:
+          name: PhoneType
+        $ref: '#/definitions/PhoneType'
+      phoneNumber:
+        type: string
+        xml:
+          name: PhoneNumber
+  PhoneHighRiskDescription:
+    type: object
+    properties:
+      highRiskDescription:
+        type: string
+        xml:
+          name: HighRiskDescription
+    xml:
+      name: PhoneHighRiskDescription
+  PhoneHighRiskDetail:
+    type: object
+    properties:
+      businessName:
+        type: string
+        xml:
+          name: BusinessName
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+    xml:
+      name: PhoneHighRiskDetail
+  PhoneHighRiskResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneHighRiskResult
+  PhoneMatch:
+    type: object
+    properties:
+      inquiryPhone1:
+        xml:
+          name: InquiryPhone1
+        $ref: '#/definitions/InquiryPhone1'
+      inquiryPhone2:
+        xml:
+          name: InquiryPhone2
+        $ref: '#/definitions/InquiryPhone2'
+      inquiryPhone3:
+        xml:
+          name: InquiryPhone3
+        $ref: '#/definitions/InquiryPhone3'
+    xml:
+      name: PhoneMatch
+  PhoneType:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneType
+  PhoneUnitMismatchResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneUnitMismatchResult
+  PhoneVerificationResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneVerificationResult
+  PhoneVerifiesToAddress:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneVerifiesToAddress
+  PhoneVerifiesToFullName:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneVerifiesToFullName
+  PhoneVerifiesToSurnameOnly:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PhoneVerifiesToSurnameOnly
+  PrePostUnitMatchCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PrePostUnitMatchCode
+  PreciseIDServer:
+    type: object
+    properties:
+      error:
+        xml:
+          name: Error
+        $ref: '#/definitions/Error'
+      header:
+        xml:
+          name: Header
+        $ref: '#/definitions/Header'
+      messages:
+        xml:
+          name: Messages
+        $ref: '#/definitions/Messages'
+      summary:
+        xml:
+          name: Summary
+        $ref: '#/definitions/Summary'
+      checkpoint:
+        xml:
+          name: Checkpoint
+        $ref: '#/definitions/Checkpoint'
+      nationalFraudDatabase:
+        xml:
+          name: NationalFraudDatabase
+        $ref: '#/definitions/NationalFraudDatabase'
+      additionalAddresses:
+        xml:
+          name: AdditionalAddresses
+        $ref: '#/definitions/AdditionalAddresses'
+      kba:
+        xml:
+          name: KBA
+        $ref: '#/definitions/KBA'
+      creditCardVerificationResults:
+        xml:
+          name: CreditCardVerificationResults
+        $ref: '#/definitions/CreditCardVerificationResults'
+      emailAddress:
+        xml:
+          name: EmailAddress
+        $ref: '#/definitions/EmailAddress'
+      xmlversion:
+        type: string
+      glbdetail:
+        $ref: '#/definitions/GLBDetail'
+      ccnumerics:
+        $ref: '#/definitions/CCNumerics'
+      ccstrings:
+        $ref: '#/definitions/CCStrings'
+      fcradetail:
+        $ref: '#/definitions/FCRADetail'
+      kbascore:
+        $ref: '#/definitions/KBAScore'
+      ipaddress:
+        $ref: '#/definitions/IPAddress'
+    xml:
+      name: PreciseIDServer
+  PreviousAddress:
+    type: object
+    properties:
+      matchedFormatCode:
+        xml:
+          name: MatchedFormatCode
+        $ref: '#/definitions/MatchedFormatCode'
+      matchConfidenceLevel:
+        xml:
+          name: MatchConfidenceLevel
+        $ref: '#/definitions/MatchConfidenceLevel'
+      houseStreetSuffixCode:
+        xml:
+          name: HouseStreetSuffixCode
+        $ref: '#/definitions/HouseStreetSuffixCode'
+      prePostUnitMatchCode:
+        xml:
+          name: PrePostUnitMatchCode
+        $ref: '#/definitions/PrePostUnitMatchCode'
+      cityStateZipMatchCode:
+        xml:
+          name: CityStateZipMatchCode
+        $ref: '#/definitions/CityStateZipMatchCode'
+      unitTypeZipPlus4Code:
+        xml:
+          name: UnitTypeZipPlus4Code
+        $ref: '#/definitions/UnitTypeZipPlus4Code'
+    xml:
+      name: PreviousAddress
+  PreviousAddressSegment:
+    type: object
+    properties:
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      reportedDate:
+        type: string
+        xml:
+          name: ReportedDate
+      lastUpdatedDate:
+        type: string
+        xml:
+          name: LastUpdatedDate
+    xml:
+      name: PreviousAddressSegment
+  PrimaryResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PrimaryResult
+  PrimaryResultCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: PrimaryResultCode
+  PriorUsage:
+    type: object
+    properties:
+      exceededUseLimitCode:
+        type: string
+        xml:
+          name: ExceededUseLimitCode
+      consumerTotal:
+        type: string
+        xml:
+          name: ConsumerTotal
+      clientUseLimitPeriod:
+        type: integer
+        xml:
+          name: ClientUseLimitPeriod
+      clientUseLimitCount:
+        type: integer
+        xml:
+          name: ClientUseLimitCount
+      totalUseLimitPeriod:
+        type: integer
+        xml:
+          name: TotalUseLimitPeriod
+      totalUseLimitCount:
+        type: integer
+        xml:
+          name: TotalUseLimitCount
+      consumerSSNTotal:
+        type: string
+        xml:
+          name: ConsumerSSNTotal
+      clientSSNUseLimitPeriod:
+        type: integer
+        xml:
+          name: ClientSSNUseLimitPeriod
+      clientSSNUseLimitCount:
+        type: integer
+        xml:
+          name: ClientSSNUseLimitCount
+      totalSSNUseLimitPeriod:
+        type: integer
+        xml:
+          name: TotalSSNUseLimitPeriod
+      totalSSNUseLimitCount:
+        type: integer
+        xml:
+          name: TotalSSNUseLimitCount
+      concurrentPINTotal:
+        type: integer
+        xml:
+          name: ConcurrentPINTotal
+      clientConcurrentPINLimitCount:
+        type: string
+        xml:
+          name: ClientConcurrentPINLimitCount
+      companyConcurrentPINLimitCount:
+        type: string
+        xml:
+          name: CompanyConcurrentPINLimitCount
+      globalConcurrentPINLimitCount:
+        type: string
+        xml:
+          name: GlobalConcurrentPINLimitCount
+    xml:
+      name: PriorUsage
+  Products:
+    type: object
+    required:
+      - preciseIDServer
+    properties:
+      preciseIDServer:
+        xml:
+          name: PreciseIDServer
+        $ref: '#/definitions/PreciseIDServer'
+      creditProfile:
+        xml:
+          name: CreditProfile
+        $ref: '#/definitions/CreditProfile'
+      earlyWarningResponse:
+        xml:
+          name: EarlyWarningResponse
+        $ref: '#/definitions/EarlyWarningResponse'
+      deviceIDResponse:
+        xml:
+          name: DeviceIDResponse
+        $ref: '#/definitions/DeviceIDResponse'
+    xml:
+      name: Products
+  ProfileSummary:
+    type: object
+    properties:
+      disputedAccountsExcluded:
+        type: string
+        xml:
+          name: DisputedAccountsExcluded
+      publicRecordsCount:
+        type: string
+        xml:
+          name: PublicRecordsCount
+      installmentBalance:
+        type: string
+        xml:
+          name: InstallmentBalance
+      realEstateBalance:
+        type: string
+        xml:
+          name: RealEstateBalance
+      revolvingBalance:
+        type: string
+        xml:
+          name: RevolvingBalance
+      pastDueAmount:
+        type: string
+        xml:
+          name: PastDueAmount
+      monthlyPayment:
+        type: string
+        xml:
+          name: MonthlyPayment
+      monthlyPaymentPartialFlag:
+        xml:
+          name: MonthlyPaymentPartialFlag
+        $ref: '#/definitions/MonthlyPaymentPartialFlag'
+      realEstatePayment:
+        type: string
+        xml:
+          name: RealEstatePayment
+      realEstatePaymentPartialFlag:
+        xml:
+          name: RealEstatePaymentPartialFlag
+        $ref: '#/definitions/RealEstatePaymentPartialFlag'
+      revolvingAvailablePercent:
+        type: string
+        xml:
+          name: RevolvingAvailablePercent
+      revolvingAvailablePartialFlag:
+        xml:
+          name: RevolvingAvailablePartialFlag
+        $ref: '#/definitions/RevolvingAvailablePartialFlag'
+      totalInquiries:
+        type: string
+        xml:
+          name: TotalInquiries
+      inquiriesDuringLast6Months:
+        type: string
+        xml:
+          name: InquiriesDuringLast6Months
+      totalTradeItems:
+        type: string
+        xml:
+          name: TotalTradeItems
+      paidAccounts:
+        type: string
+        xml:
+          name: PaidAccounts
+      satisfactoryAccounts:
+        type: string
+        xml:
+          name: SatisfactoryAccounts
+      nowDelinquentDerog:
+        type: string
+        xml:
+          name: NowDelinquentDerog
+      wasDelinquentDerog:
+        type: string
+        xml:
+          name: WasDelinquentDerog
+      oldestTradeOpenDate:
+        type: string
+        xml:
+          name: OldestTradeOpenDate
+      delinquenciesOver30Days:
+        type: string
+        xml:
+          name: DelinquenciesOver30Days
+      delinquenciesOver60Days:
+        type: string
+        xml:
+          name: DelinquenciesOver60Days
+      delinquenciesOver90Days:
+        type: string
+        xml:
+          name: DelinquenciesOver90Days
+      derogCounter:
+        type: string
+        xml:
+          name: DerogCounter
+  PublicRecord:
+    type: object
+    properties:
+      status:
+        xml:
+          name: Status
+        $ref: '#/definitions/Status'
+      statusDate:
+        type: string
+        xml:
+          name: StatusDate
+      filingDate:
+        type: string
+        xml:
+          name: FilingDate
+      evaluation:
+        xml:
+          name: Evaluation
+        $ref: '#/definitions/Evaluation'
+      amount:
+        type: string
+        xml:
+          name: Amount
+      consumerComment:
+        type: string
+        xml:
+          name: ConsumerComment
+      court:
+        xml:
+          name: Court
+        $ref: '#/definitions/Court'
+      referenceNumber:
+        type: string
+        xml:
+          name: ReferenceNumber
+      plaintiffName:
+        type: string
+        xml:
+          name: PlaintiffName
+      disputeFlag:
+        type: string
+        xml:
+          name: DisputeFlag
+      ecoa:
+        xml:
+          name: ECOA
+        $ref: '#/definitions/ECOA'
+      bankruptcy:
+        xml:
+          name: Bankruptcy
+        $ref: '#/definitions/Bankruptcy'
+      bookPageSequence:
+        type: string
+        xml:
+          name: BookPageSequence
+  Qualifier:
+    type: object
+    properties:
+      desc:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  QuestionSelect:
+    type: object
+    required:
+      - questionChoice
+    properties:
+      questionChoice:
+        type: array
+        xml:
+          name: QuestionChoice
+        items:
+          type: string
+          xml:
+            name: QuestionChoice
+  QuestionSet:
+    type: object
+    required:
+      - questionSelect
+      - questionText
+      - questionType
+    properties:
+      questionType:
+        type: integer
+        format: int32
+        xml:
+          name: QuestionType
+      questionText:
+        type: string
+        xml:
+          name: QuestionText
+      questionSelect:
+        xml:
+          name: QuestionSelect
+        $ref: '#/definitions/QuestionSelect'
+    xml:
+      name: QuestionSet
+  RealEstatePaymentPartialFlag:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Reason:
+    type: object
+    properties:
+      code:
+        type: string
+      text:
+        type: string
+  Reason1:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Reason1
+  Reason2:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Reason2
+  Reason3:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Reason3
+  Reason4:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Reason4
+  Reason5:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Reason5
+  Reasons:
+    type: object
+    properties:
+      reason1:
+        xml:
+          name: Reason1
+        $ref: '#/definitions/Reason1'
+      reason2:
+        xml:
+          name: Reason2
+        $ref: '#/definitions/Reason2'
+      reason3:
+        xml:
+          name: Reason3
+        $ref: '#/definitions/Reason3'
+      reason4:
+        xml:
+          name: Reason4
+        $ref: '#/definitions/Reason4'
+      reason5:
+        xml:
+          name: Reason5
+        $ref: '#/definitions/Reason5'
+    xml:
+      name: Reasons
+  ResidentialAddressDetail:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      initial:
+        type: string
+        xml:
+          name: Initial
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+      spouseName:
+        type: string
+        xml:
+          name: SpouseName
+      otherHouseholdMemberName1:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName1
+      otherHouseholdMemberName2:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName2
+      otherHouseholdMemberName3:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName3
+      lastUpdatedDate:
+        type: string
+        xml:
+          name: LastUpdatedDate
+      monthsAtResidence:
+        type: string
+        xml:
+          name: MonthsAtResidence
+    xml:
+      name: ResidentialAddressDetail
+  ResidentialPhoneDetail:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      initial:
+        type: string
+        xml:
+          name: Initial
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+      spouseName:
+        type: string
+        xml:
+          name: SpouseName
+      otherHouseholdMemberName1:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName1
+      otherHouseholdMemberName2:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName2
+      otherHouseholdMemberName3:
+        type: string
+        xml:
+          name: OtherHouseholdMemberName3
+      lastTouched:
+        type: string
+        xml:
+          name: LastTouched
+      monthsAtResidence:
+        type: string
+        xml:
+          name: MonthsAtResidence
+    xml:
+      name: ResidentialPhoneDetail
+  Result:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: Result
+  Results:
+    type: object
+    required:
+      - summary
+    properties:
+      summary:
+        xml:
+          name: Summary
+        $ref: '#/definitions/iSummary'
+      details:
+        xml:
+          name: Details
+        $ref: '#/definitions/Details'
+    xml:
+      name: Results
+  RetailCardAccountSummary:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      monthIndicator:
+        type: string
+        xml:
+          name: MonthIndicator
+      totalBalance:
+        type: string
+        xml:
+          name: TotalBalance
+      averageBalance:
+        type: string
+        xml:
+          name: AverageBalance
+      percentUtilized:
+        type: string
+        xml:
+          name: PercentUtilized
+      numberOfCards:
+        type: string
+        xml:
+          name: NumberOfCards
+      numberOfCardsWithBalance:
+        type: string
+        xml:
+          name: NumberOfCardsWithBalance
+  RevolvingAccountSummary:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      monthIndicator:
+        type: string
+        xml:
+          name: MonthIndicator
+      totalRevolvingBalance:
+        type: string
+        xml:
+          name: TotalRevolvingBalance
+      averageRevolvingBalance:
+        type: string
+        xml:
+          name: AverageRevolvingBalance
+      percentUtilized:
+        type: string
+        xml:
+          name: PercentUtilized
+      bankAndNationalCards:
+        type: string
+        xml:
+          name: BankAndNationalCards
+      retailCards:
+        type: string
+        xml:
+          name: RetailCards
+      cardWithBalance:
+        type: string
+        xml:
+          name: CardWithBalance
+  RevolvingAvailablePartialFlag:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  RevolvingOrInstallment:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  SIC:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  SSN:
+    type: object
+    properties:
+      variationIndicator:
+        xml:
+          name: VariationIndicator
+        $ref: '#/definitions/VariationIndicator'
+      number:
+        type: string
+        xml:
+          name: Number
+  SSNDeceased:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNDeceased
+  SSNFinderDetail:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      initial:
+        type: string
+        xml:
+          name: Initial
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+      areaCode:
+        type: string
+        xml:
+          name: AreaCode
+      phone:
+        type: string
+        xml:
+          name: Phone
+      monthOfBirth:
+        type: string
+        xml:
+          name: MonthOfBirth
+      dayOfBirth:
+        type: string
+        xml:
+          name: DayOfBirth
+      yearOfBirth:
+        type: string
+        xml:
+          name: YearOfBirth
+      dateOfBirthMatchCode:
+        xml:
+          name: DateOfBirthMatchCode
+        $ref: '#/definitions/DateOfBirthMatchCode'
+      inputSSN:
+        type: string
+        xml:
+          name: InputSSN
+      reportedDate:
+        type: string
+        xml:
+          name: ReportedDate
+      lastTouched:
+        type: string
+        xml:
+          name: LastTouched
+      ssnonFile:
+        type: string
+      ssnresultCode:
+        $ref: '#/definitions/SSNResultCode'
+    xml:
+      name: SSNFinderDetail
+  SSNFormat:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNFormat
+  SSNIssueResultCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNIssueResultCode
+  SSNMatchStatus:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNMatchStatus
+  SSNResult:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNResult
+  SSNResultCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNResultCode
+  SSNVerifiesToAddress:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNVerifiesToAddress
+  SSNVerifiesToFullName:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNVerifiesToFullName
+  SSNVerifiesToSurnameOnly:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SSNVerifiesToSurnameOnly
+  STAGG:
+    type: object
+    required:
+      - message
+    properties:
+      message:
+        xml:
+          name: Message
+        $ref: '#/definitions/iMessage'
+      attribute:
+        type: array
+        xml:
+          name: Attribute
+        items:
+          xml:
+            name: Attribute
+          $ref: '#/definitions/Attribute'
+  ScoreSummary:
+    type: object
+    required:
+      - acceptReferCode
+      - championChallengerIndicator
+      - decisionMatrixDescription
+      - decisionMatrixNum
+      - decisionOverrideIndicator
+      - decisionOverrideReason
+      - outWalletFormula
+      - outWalletScore
+      - preciseIDScore
+      - progressiveQuestionAchieved
+      - questionConfigDescription
+      - questionConfigNum
+      - riskStrategyDescription
+      - riskStrategyNum
+    properties:
+      acceptReferCode:
+        type: string
+        xml:
+          name: AcceptReferCode
+      decisionOverrideIndicator:
+        type: string
+        xml:
+          name: DecisionOverrideIndicator
+      decisionOverrideReason:
+        type: string
+        xml:
+          name: DecisionOverrideReason
+      preciseIDScore:
+        type: string
+        xml:
+          name: PreciseIDScore
+      outWalletScore:
+        type: string
+        xml:
+          name: OutWalletScore
+      outWalletFormula:
+        type: string
+        xml:
+          name: OutWalletFormula
+      progressiveQuestionAchieved:
+        type: string
+        xml:
+          name: ProgressiveQuestionAchieved
+      championChallengerIndicator:
+        type: string
+        xml:
+          name: ChampionChallengerIndicator
+      riskStrategyNum:
+        type: string
+        xml:
+          name: RiskStrategyNum
+      riskStrategyDescription:
+        type: string
+        xml:
+          name: RiskStrategyDescription
+      questionConfigNum:
+        type: string
+        xml:
+          name: QuestionConfigNum
+      questionConfigDescription:
+        type: string
+        xml:
+          name: QuestionConfigDescription
+      decisionMatrixNum:
+        type: string
+        xml:
+          name: DecisionMatrixNum
+      decisionMatrixDescription:
+        type: string
+        xml:
+          name: DecisionMatrixDescription
+      userDefinedParameters:
+        xml:
+          name: UserDefinedParameters
+        $ref: '#/definitions/UserDefinedParameters'
+    xml:
+      name: ScoreSummary
+  SharedApplication:
+    type: object
+    properties:
+      adverseActionCode1:
+        xml:
+          name: AdverseActionCode1
+        $ref: '#/definitions/AdverseActionCode1'
+      adverseActionCode2:
+        xml:
+          name: AdverseActionCode2
+        $ref: '#/definitions/AdverseActionCode2'
+      adverseActionCode3:
+        xml:
+          name: AdverseActionCode3
+        $ref: '#/definitions/AdverseActionCode3'
+      adverseActionCode4:
+        xml:
+          name: AdverseActionCode4
+        $ref: '#/definitions/AdverseActionCode4'
+      fcrarule3:
+        $ref: '#/definitions/FCRARule3'
+      fcrarule10:
+        $ref: '#/definitions/FCRARule10'
+      fcrarule15:
+        $ref: '#/definitions/FCRARule15'
+      fcrarule2:
+        $ref: '#/definitions/FCRARule2'
+      fcrarule1:
+        $ref: '#/definitions/FCRARule1'
+      fcrarule5:
+        $ref: '#/definitions/FCRARule5'
+      fcrarule8:
+        $ref: '#/definitions/FCRARule8'
+      fcrarule9:
+        $ref: '#/definitions/FCRARule9'
+      fcrarule14:
+        $ref: '#/definitions/FCRARule14'
+      fcrarule17:
+        $ref: '#/definitions/FCRARule17'
+      fcrarule20:
+        $ref: '#/definitions/FCRARule20'
+      fcrarule18:
+        $ref: '#/definitions/FCRARule18'
+      fcrarule16:
+        $ref: '#/definitions/FCRARule16'
+      fcrarule11:
+        $ref: '#/definitions/FCRARule11'
+      fcrarule12:
+        $ref: '#/definitions/FCRARule12'
+      fcrarule13:
+        $ref: '#/definitions/FCRARule13'
+      fcrarule4:
+        $ref: '#/definitions/FCRARule4'
+      fcrarule19:
+        $ref: '#/definitions/FCRARule19'
+      fcrarule7:
+        $ref: '#/definitions/FCRARule7'
+      fcrarule6:
+        $ref: '#/definitions/FCRARule6'
+    xml:
+      name: SharedApplication
+  SocialErrorCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Source:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  SpecialComment:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  SpecialPayment:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Spouse:
+    type: object
+    properties:
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      ssn:
+        type: string
+        xml:
+          name: SSN
+  StackTraceElement:
+    type: object
+    properties:
+      methodName:
+        type: string
+      fileName:
+        type: string
+      lineNumber:
+        type: integer
+        format: int32
+      className:
+        type: string
+      nativeMethod:
+        type: boolean
+  StandardizedAddressDetail:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      initial:
+        type: string
+        xml:
+          name: Initial
+      address:
+        type: string
+        xml:
+          name: Address
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zipCode:
+        type: string
+        xml:
+          name: ZipCode
+      zipPlus4:
+        type: string
+        xml:
+          name: ZipPlus4
+    xml:
+      name: StandardizedAddressDetail
+  Statement:
+    type: object
+    properties:
+      type:
+        xml:
+          name: Type
+        $ref: '#/definitions/Type'
+      dateReported:
+        type: string
+        xml:
+          name: DateReported
+      statementText:
+        type: string
+        xml:
+          name: StatementText
+  Status:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Summary:
+    type: object
+    required:
+      - initialResults
+      - preciseIDType
+      - reviewReferenceID
+    properties:
+      reviewReferenceID:
+        type: string
+        xml:
+          name: ReviewReferenceID
+      preciseIDType:
+        type: string
+        xml:
+          name: PreciseIDType
+      preciseIDScore:
+        type: string
+        xml:
+          name: PreciseIDScore
+      preciseIDScorecard:
+        type: string
+        xml:
+          name: PreciseIDScorecard
+      validationScore:
+        type: string
+        xml:
+          name: ValidationScore
+      validationScorecard:
+        type: string
+        xml:
+          name: ValidationScorecard
+      verificationScore:
+        type: string
+        xml:
+          name: VerificationScore
+      verificationScorecard:
+        type: string
+        xml:
+          name: VerificationScorecard
+      complianceIndicator:
+        type: string
+        xml:
+          name: ComplianceIndicator
+      complianceDescription:
+        type: string
+        xml:
+          name: ComplianceDescription
+      utilityFunction:
+        type: string
+        xml:
+          name: UtilityFunction
+      initialResults:
+        xml:
+          name: InitialResults
+        $ref: '#/definitions/InitialResults'
+      call2Results:
+        xml:
+          name: Call2Results
+        $ref: '#/definitions/Call2Results'
+      crossReferenceIndicatorsGrid:
+        xml:
+          name: CrossReferenceIndicatorsGrid
+        $ref: '#/definitions/CrossReferenceIndicatorsGrid'
+      dateOfBirthMatch:
+        xml:
+          name: DateOfBirthMatch
+        $ref: '#/definitions/DateOfBirthMatch'
+      fpdscore:
+        type: string
+      fpdscorecard:
+        type: string
+      nfdresults:
+        $ref: '#/definitions/NFDResults'
+    xml:
+      name: Summary
+  SummaryPIDResponse:
+    type: object
+    properties:
+      completionCode:
+        type: string
+      xmlVersion:
+        type: string
+      consumerStatement:
+        type: array
+        items:
+          $ref: '#/definitions/iConsumerStatement'
+      pin:
+        type: string
+      kbaResultCode:
+        type: string
+      sessionID:
+        type: string
+      errorCode:
+        type: string
+      errorDescription:
+        type: string
+      numberOfQuestions:
+        type: integer
+        format: int32
+      preciseIDScore:
+        type: string
+      initialDecision:
+        type: string
+      finalDecision:
+        type: string
+      consumerIDVerification:
+        $ref: '#/definitions/iConsumerIDVerification'
+      generalOFACResult:
+        type: string
+      validationOFACResult:
+        type: string
+      summaryOFACResult:
+        type: string
+      message:
+        type: string
+      exceeded:
+        type: string
+      kbaAcceptReferCode:
+        type: string
+      kbaPreciseIDScore:
+        type: string
+      kbaOutWalletScore:
+        type: string
+      kbaDecisionOverrideIndicator:
+        type: string
+      reason1:
+        $ref: '#/definitions/Reason'
+      reason2:
+        $ref: '#/definitions/Reason'
+      reason3:
+        $ref: '#/definitions/Reason'
+      reason4:
+        $ref: '#/definitions/Reason'
+      reason5:
+        $ref: '#/definitions/Reason'
+      reasonList:
+        type: array
+        items:
+          type: string
+      apipin:
+        type: string
+  SurnameOnlyVerifiesToAddress:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SurnameOnlyVerifiesToAddress
+  SurnameOnlyVerifiesToDL:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SurnameOnlyVerifiesToDL
+  SurnameOnlyVerifiesToPhone:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SurnameOnlyVerifiesToPhone
+  SurnameOnlyVerifiesToSSN:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: SurnameOnlyVerifiesToSSN
+  Terms:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  TermsDuration:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  TermsFrequency:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  Throwable:
+    type: object
+    properties:
+      cause:
+        $ref: '#/definitions/Throwable'
+      stackTrace:
+        type: array
+        items:
+          $ref: '#/definitions/StackTraceElement'
+      localizedMessage:
+        type: string
+      message:
+        type: string
+      suppressed:
+        type: array
+        items:
+          $ref: '#/definitions/Throwable'
+  Type:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  UnitTypeZipPlus4Code:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: UnitTypeZipPlus4Code
+  UserDefinedParameters:
+    type: object
+    properties:
+      userDefinedTextName1:
+        type: string
+        xml:
+          name: UserDefinedTextName1
+      userDefinedTextValue1:
+        type: string
+        xml:
+          name: UserDefinedTextValue1
+      userDefinedTextName2:
+        type: string
+        xml:
+          name: UserDefinedTextName2
+      userDefinedTextValue2:
+        type: string
+        xml:
+          name: UserDefinedTextValue2
+      userDefinedTextName3:
+        type: string
+        xml:
+          name: UserDefinedTextName3
+      userDefinedTextValue3:
+        type: string
+        xml:
+          name: UserDefinedTextValue3
+      userDefinedTextName4:
+        type: string
+        xml:
+          name: UserDefinedTextName4
+      userDefinedTextValue4:
+        type: string
+        xml:
+          name: UserDefinedTextValue4
+      userDefinedNumName1:
+        type: string
+        xml:
+          name: UserDefinedNumName1
+      userDefinedNumValue1:
+        type: string
+        xml:
+          name: UserDefinedNumValue1
+      userDefinedNumName2:
+        type: string
+        xml:
+          name: UserDefinedNumName2
+      userDefinedNumValue2:
+        type: string
+        xml:
+          name: UserDefinedNumValue2
+      userDefinedNumName3:
+        type: string
+        xml:
+          name: UserDefinedNumName3
+      userDefinedNumValue3:
+        type: string
+        xml:
+          name: UserDefinedNumValue3
+      userDefinedNumName4:
+        type: string
+        xml:
+          name: UserDefinedNumName4
+      userDefinedNumValue4:
+        type: string
+        xml:
+          name: UserDefinedNumValue4
+      userDefinedDateName1:
+        type: string
+        xml:
+          name: UserDefinedDateName1
+      userDefinedDateValue1:
+        type: string
+        xml:
+          name: UserDefinedDateValue1
+      userDefinedDateName2:
+        type: string
+        xml:
+          name: UserDefinedDateName2
+      userDefinedDateValue2:
+        type: string
+        xml:
+          name: UserDefinedDateValue2
+    xml:
+      name: UserDefinedParameters
+  UserTokenResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      value:
+        type: string
+        xml:
+          name: UserToken
+      preciseIDServer:
+        $ref: '#/definitions/PreciseIDServer'
+      pidResult:
+        $ref: '#/definitions/PIDResult'
+      referenceID:
+        type: integer
+        format: int64
+    xml:
+      name: response
+  ValidationResultCode:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+    xml:
+      name: ValidationResultCode
+  ValidationSegment:
+    type: object
+    properties:
+      surname:
+        type: string
+        xml:
+          name: Surname
+      firstName:
+        type: string
+        xml:
+          name: FirstName
+      middleInitial:
+        type: string
+        xml:
+          name: MiddleInitial
+      ssn:
+        type: string
+        xml:
+          name: SSN
+      driversLicenseFormatValidation:
+        xml:
+          name: DriversLicenseFormatValidation
+        $ref: '#/definitions/DriversLicenseFormatValidation'
+      ofacvalidationResult:
+        $ref: '#/definitions/OFACValidationResult'
+      ssnissueEndRange:
+        type: string
+      ssnissueResultCode:
+        $ref: '#/definitions/SSNIssueResultCode'
+      ssnissueStartRange:
+        type: string
+      ssnissueState:
+        type: string
+      ssndeceased:
+        $ref: '#/definitions/SSNDeceased'
+      ssnformat:
+        $ref: '#/definitions/SSNFormat'
+    xml:
+      name: ValidationSegment
+  VariationIndicator:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  iAddressInformation:
+    type: object
+    properties:
+      firstReportedDate:
+        type: string
+        xml:
+          name: FirstReportedDate
+      lastUpdatedDate:
+        type: string
+        xml:
+          name: LastUpdatedDate
+      origination:
+        xml:
+          name: Origination
+        $ref: '#/definitions/Origination'
+      timesReported:
+        type: string
+        xml:
+          name: TimesReported
+      lastReportingSubcode:
+        type: string
+        xml:
+          name: LastReportingSubcode
+      dwellingType:
+        xml:
+          name: DwellingType
+        $ref: '#/definitions/DwellingType'
+      homeOwnership:
+        xml:
+          name: HomeOwnership
+        $ref: '#/definitions/HomeOwnership'
+      streetPrefix:
+        type: string
+        xml:
+          name: StreetPrefix
+      streetName:
+        type: string
+        xml:
+          name: StreetName
+      streetSuffix:
+        type: string
+        xml:
+          name: StreetSuffix
+      unitType:
+        type: string
+        xml:
+          name: UnitType
+      unitID:
+        type: string
+        xml:
+          name: UnitID
+      city:
+        type: string
+        xml:
+          name: City
+      state:
+        type: string
+        xml:
+          name: State
+      zip:
+        type: string
+        xml:
+          name: Zip
+      censusGeoCode:
+        type: string
+        xml:
+          name: CensusGeoCode
+      countyCode:
+        type: string
+        xml:
+          name: CountyCode
+      stateCode:
+        type: string
+        xml:
+          name: StateCode
+      msacode:
+        type: string
+  iConsumerIDVerification:
+    type: object
+    properties:
+      surname:
+        type: string
+      firstName:
+        type: string
+      initial:
+        type: string
+      address:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      zipCode:
+        type: string
+      zipPlus4:
+        type: string
+      areaCode:
+        type: string
+      phone:
+        type: string
+      monthOfBirth:
+        type: string
+      dayOfBirth:
+        type: string
+      yearOfBirth:
+        type: string
+      reportedDate:
+        type: string
+      lastTouched:
+        type: string
+  iConsumerIdentity:
+    type: object
+    properties:
+      name:
+        xml:
+          name: Name
+        $ref: '#/definitions/iName'
+      yob:
+        type: string
+        xml:
+          name: YOB
+      dob:
+        type: string
+        xml:
+          name: DOB
+      spouse:
+        xml:
+          name: Spouse
+        $ref: '#/definitions/Spouse'
+      phone:
+        type: array
+        xml:
+          name: Phone
+        items:
+          xml:
+            name: Phone
+          $ref: '#/definitions/Phone'
+      driverLicense:
+        xml:
+          name: DriverLicense
+        $ref: '#/definitions/DriverLicense'
+  iDetail:
+    type: object
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        xml:
+          name: Name
+      value:
+        type: string
+        xml:
+          name: Value
+  iHeader:
+    type: object
+    required:
+      - providerCode
+      - tranID
+    properties:
+      tranID:
+        type: string
+        xml:
+          name: TranID
+      providerCode:
+        type: string
+        xml:
+          name: ProviderCode
+        default: '1'
+  iMessage:
+    type: object
+    properties:
+      value:
+        type: string
+      code:
+        type: string
+        xml:
+          attribute: true
+  iName:
+    type: object
+    properties:
+      type:
+        xml:
+          name: Type
+        $ref: '#/definitions/Type'
+      surname:
+        type: string
+        xml:
+          name: Surname
+      secondSurname:
+        type: string
+        xml:
+          name: SecondSurname
+      first:
+        type: string
+        xml:
+          name: First
+      middle:
+        type: string
+        xml:
+          name: Middle
+      gen:
+        xml:
+          name: Gen
+        $ref: '#/definitions/Gen'
+  iRiskModel:
+    type: object
+    properties:
+      modelIndicator:
+        xml:
+          name: ModelIndicator
+        $ref: '#/definitions/ModelIndicator'
+      score:
+        type: string
+        xml:
+          name: Score
+      scoreFactorCodeOne:
+        type: string
+        xml:
+          name: ScoreFactorCodeOne
+      scoreFactorCodeTwo:
+        type: string
+        xml:
+          name: ScoreFactorCodeTwo
+      scoreFactorCodeThree:
+        type: string
+        xml:
+          name: ScoreFactorCodeThree
+      scoreFactorCodeFour:
+        type: string
+        xml:
+          name: ScoreFactorCodeFour
+      evaluation:
+        xml:
+          name: Evaluation
+        $ref: '#/definitions/Evaluation'
+    xml:
+      name: RiskModel
+  iSummary:
+    type: object
+    required:
+      - providerTranID
+      - resultCode
+    properties:
+      resultCode:
+        type: string
+        xml:
+          name: ResultCode
+      score:
+        type: string
+        xml:
+          name: Score
+      providerTranID:
+        type: string
+        xml:
+          name: ProviderTranID
+      deviceAlias:
+        type: string
+        xml:
+          name: DeviceAlias
+  iTradeLine:
+    type: object
+    properties:
+      specialComment:
+        xml:
+          name: SpecialComment
+        $ref: '#/definitions/SpecialComment'
+      evaluation:
+        xml:
+          name: Evaluation
+        $ref: '#/definitions/Evaluation'
+      openDate:
+        type: string
+        xml:
+          name: OpenDate
+      statusDate:
+        type: string
+        xml:
+          name: StatusDate
+      initialPaymentLevelDate:
+        type: string
+        xml:
+          name: InitialPaymentLevelDate
+      accountCondition:
+        xml:
+          name: AccountCondition
+        $ref: '#/definitions/AccountCondition'
+      paymentStatus:
+        xml:
+          name: PaymentStatus
+        $ref: '#/definitions/PaymentStatus'
+      maxDelinquencyDate:
+        type: string
+        xml:
+          name: MaxDelinquencyDate
+      accountType:
+        xml:
+          name: AccountType
+        $ref: '#/definitions/AccountType'
+      termsDuration:
+        xml:
+          name: TermsDuration
+        $ref: '#/definitions/TermsDuration'
+      termsFrequency:
+        xml:
+          name: TermsFrequency
+        $ref: '#/definitions/TermsFrequency'
+      ecoa:
+        xml:
+          name: ECOA
+        $ref: '#/definitions/ECOA'
+      amount:
+        type: array
+        xml:
+          name: Amount
+        items:
+          xml:
+            name: Amount
+          $ref: '#/definitions/Amount'
+      limitAmount:
+        type: string
+        xml:
+          name: LimitAmount
+      highBalanceAmount:
+        type: string
+        xml:
+          name: HighBalanceAmount
+      originalLoanAmount:
+        type: string
+        xml:
+          name: OriginalLoanAmount
+      chargedOffAmount:
+        type: string
+        xml:
+          name: ChargedOffAmount
+      balanceDate:
+        type: string
+        xml:
+          name: BalanceDate
+      balanceAmount:
+        type: string
+        xml:
+          name: BalanceAmount
+      status:
+        xml:
+          name: Status
+        $ref: '#/definitions/Status'
+      amountPastDue:
+        type: string
+        xml:
+          name: AmountPastDue
+      openOrClosed:
+        xml:
+          name: OpenOrClosed
+        $ref: '#/definitions/OpenOrClosed'
+      revolvingOrInstallment:
+        xml:
+          name: RevolvingOrInstallment
+        $ref: '#/definitions/RevolvingOrInstallment'
+      consumerComment:
+        type: string
+        xml:
+          name: ConsumerComment
+      accountNumber:
+        type: string
+        xml:
+          name: AccountNumber
+      specialPayment:
+        xml:
+          name: SpecialPayment
+        $ref: '#/definitions/SpecialPayment'
+      specialPaymentDate:
+        type: string
+        xml:
+          name: SpecialPaymentDate
+      specialPaymentAmount:
+        type: string
+        xml:
+          name: SpecialPaymentAmount
+      balloon:
+        type: array
+        xml:
+          name: Balloon
+        items:
+          xml:
+            name: Balloon
+          $ref: '#/definitions/Balloon'
+      monthsHistory:
+        type: string
+        xml:
+          name: MonthsHistory
+      delinquenciesOver30Days:
+        type: string
+        xml:
+          name: DelinquenciesOver30Days
+      delinquenciesOver60Days:
+        type: string
+        xml:
+          name: DelinquenciesOver60Days
+      delinquenciesOver90Days:
+        type: string
+        xml:
+          name: DelinquenciesOver90Days
+      derogCounter:
+        type: string
+        xml:
+          name: DerogCounter
+      collateral:
+        type: array
+        xml:
+          name: Collateral
+        items:
+          type: string
+          xml:
+            name: Collateral
+      paymentProfile:
+        type: string
+        xml:
+          name: PaymentProfile
+      monthlyPaymentAmount:
+        type: string
+        xml:
+          name: MonthlyPaymentAmount
+      monthlyPaymentType:
+        xml:
+          name: MonthlyPaymentType
+        $ref: '#/definitions/MonthlyPaymentType'
+      lastPaymentDate:
+        type: string
+        xml:
+          name: LastPaymentDate
+      subcode:
+        type: string
+        xml:
+          name: Subcode
+      kob:
+        xml:
+          name: KOB
+        $ref: '#/definitions/KOB'
+      subscriberDisplayName:
+        type: string
+        xml:
+          name: SubscriberDisplayName
+      originalCreditorName:
+        type: array
+        xml:
+          name: OriginalCreditorName
+        items:
+          type: string
+          xml:
+            name: OriginalCreditorName
+      soldToName:
+        type: array
+        xml:
+          name: SoldToName
+        items:
+          type: string
+          xml:
+            name: SoldToName
+      disputeFlag:
+        type: string
+        xml:
+          name: DisputeFlag
+      maxPayment:
+        xml:
+          name: MaxPayment
+        $ref: '#/definitions/MaxPayment'
+      firstDelinquencyDate:
+        type: string
+        xml:
+          name: FirstDelinquencyDate
+      secondDelinquencyDate:
+        type: string
+        xml:
+          name: SecondDelinquencyDate
+      enhancedPaymentData:
+        xml:
+          name: EnhancedPaymentData
+        $ref: '#/definitions/EnhancedPaymentData'
+  QuestionsResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      authSession:
+        type: string
+      preciseIDServer:
+        $ref: '#/definitions/PreciseIDServer'
+      pidResult:
+        $ref: '#/definitions/PIDResult'
+      referenceID:
+        type: integer
+        format: int64
+    xml:
+      name: response
+  PassiveAuthResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      referenceID:
+        type: integer
+        format: int64
+      UserToken:
+        type: string
+      authSession:
+        type: string
+      userAuthenticated:
+        type: boolean
+      otpEnabled:
+        type: boolean
+      kiqEnabled:
+        type: boolean
+      crossCoreFullResponse:
+        type: string
+    xml:
+      name: response  
+  BaseResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+    xml:
+      name: response
+  AnswersResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      pidResult:
+        $ref: '#/definitions/PIDResult'
+    xml:
+      name: response
+  IsAuthenticatedResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      error:
+        $ref: '#/definitions/BaseError'
+      authenticated:
+        type: boolean
+      type:
+        type: string
+      expiration:
+        type: string
+        format: date-time
+    xml:
+      name: response
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: password
+    tokenUrl: https://sandbox-us-api.experian.com/oauth2/v1/token
+    scopes:
+      user: user scope
